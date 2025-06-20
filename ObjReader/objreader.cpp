@@ -1,4 +1,5 @@
 #include "objreader.h"
+#include "Model/model.h"
 
 #include <QCoreApplication>
 #include <QVector>
@@ -9,12 +10,7 @@
 #include <QDebug>
 #include <QtGlobal>
 
-bool parseObjvertices(
-        const QString &filePath,
-        QVector<QVector3D> &vertices,
-        QVector<QVector2D> &texCoords,
-        QVector<QVector3D> &normals,
-        QVector<Face> &faces)
+bool parseObjvertices(const QString &filePath, Model &model)
 {
 
     QFile file(filePath);
@@ -50,7 +46,7 @@ bool parseObjvertices(
             float y = tokens[2].toFloat(&okY);
             float z = tokens[3].toFloat(&okZ);
             if (okX && okY && okZ){
-                vertices.append(QVector3D(x, y, z));
+                model.vertices.append(QVector3D(x, y, z));
                 continue;
             }
         }
@@ -60,7 +56,7 @@ bool parseObjvertices(
             float u = tokens[1].toFloat(&okU);
             float v = tokens[2].toFloat(&okV);
             if (okU && okV){
-                texCoords.append(QVector2D(u, v));
+                model.texCoords.append(QVector2D(u, v));
                 continue;
             }
         }
@@ -72,7 +68,7 @@ bool parseObjvertices(
             float y = tokens[2].toFloat(&okY);
             float z = tokens[3].toFloat(&okZ);
             if (okX && okY && okZ){
-                normals.append(QVector3D(x, y, z));
+                model.normals.append(QVector3D(x, y, z));
                 continue;
             }
         }
@@ -102,8 +98,13 @@ bool parseObjvertices(
                     }
                 }
             }
+
+            Q_ASSERT_X(face.vertexIndices.size() >= 3, "", "");
+
             if (!face.vertexIndices.isEmpty()){
-                faces.append(face);
+                model.faces.append(face);
+            } else {
+                qWarning() << "Пропущена грань, не достаточно вершин";
             }
         }
     }

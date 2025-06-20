@@ -18,4 +18,6 @@ struct Model {
     QVector<Face> faces;
 };
 
+bool validateModel(const Model &model);
+
 #endif // MODEL_H

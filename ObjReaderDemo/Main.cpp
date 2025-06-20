@@ -21,41 +21,33 @@
 #include "foo.h"
 
 
-
-
-
-
-void printStats(
-        const QVector<QVector3D> &vertices,
-        const QVector<QVector2D> &texCoords,
-        const QVector<QVector3D> &normals,
-        const QVector<Face> &faces)
+void printStats(Model &model)
 {
     qDebug() << "|----------------------------------------------|";
-    qDebug() << "Вершин: " << vertices.size();
-    qDebug() << "Текстурных Вершин: "<<texCoords.size();
-    qDebug() << "Нормалей: "<<normals.size();
-    qDebug() << "Полигонов: "<<faces.size();
+    qDebug() << "Вершин: " << model.vertices.size();
+    qDebug() << "Текстурных Вершин: " << model.texCoords.size();
+    qDebug() << "Нормалей: " << model.normals.size();
+    qDebug() << "Полигонов: " << model.faces.size();
     qDebug() << "|----------------------------------------------|";
 
-    for (int i = 0; i < vertices.size(); ++i){
-        qDebug() << "v" << i+1 << ":" << vertices[i];
+    for (int i = 0; i < model.vertices.size(); ++i){
+        qDebug() << "v" << i+1 << ":" << model.vertices[i];
     }
 
 
-    for (int i = 0; i < texCoords.size(); ++i){
-        qDebug() << "vt" << i+1 << ":" << texCoords[i];
+    for (int i = 0; i < model.texCoords.size(); ++i){
+        qDebug() << "vt" << i+1 << ":" << model.texCoords[i];
     }
 
-    for (int i = 0; i < normals.size(); ++i){
-        qDebug() << "vn" << i+1 << ":" << normals[i];
+    for (int i = 0; i < model.normals.size(); ++i){
+        qDebug() << "vn" << i+1 << ":" << model.normals[i];
     }
 
-    for (int i = 0; i < faces.size(); ++i){
+    for (int i = 0; i < model.faces.size(); ++i){
         qDebug() << "f" << i+1 << ":"
-                 << "v" << faces[i].vertexIndices
-                 << "vt" << faces[i].texCoordIndices
-                 << "vn" << faces[i].normalIndices;
+                 << "v" << model.faces[i].vertexIndices
+                 << "vt" << model.faces[i].texCoordIndices
+                 << "vn" << model.faces[i].normalIndices;
     }
 
 }
@@ -64,19 +56,18 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    QVector<QVector3D> vertices;
-    QVector<QVector2D> texCoords;
-    QVector<QVector3D> normals;
-    QVector<Face> faces;
+    Model model;
 
     QString filename = "/home/r3ds/Internship/ObjReaderDemo/cube.obj";
 
-    if (!parseObjvertices(filename, vertices, texCoords, normals, faces)) {
+    if (!parseObjvertices(filename, model)) {
         qCritical() << "Ошибка при запуске файла";
         return 1;
     }
 
-    printStats(vertices, texCoords, normals, faces);
+    Q_ASSERT(validateModel(model));
+
+    printStats(model);
 
     return 0;
 
