@@ -76,26 +76,44 @@ bool parseObjvertices(const QString &filePath, Model &model)
             Face face;
             for (int i = 1; i < tokens.size(); ++i){
                 QStringList parts = tokens[i].split('/');
+                qDebug() << parts;
                 if (parts.size() >= 1){
                     bool ok = false;
-                    int vertexIndex = parts[1].toInt(&ok);
-                    if (ok && vertexIndex > 0){
-                        face.vertexIndices.append(vertexIndex - 1);
+                    int vertexIndex = parts[0].toInt(&ok);
+                    if (ok) {
+                        if (vertexIndex > 0) {
+                            face.vertexIndices.append(vertexIndex);
+                            qDebug() << vertexIndex;
+                        } else {
+
+                        }
                     }
+                } else {
+
                 }
                 if (parts.size() >= 2){
                     bool ok = false;
-                    int normalIndex = parts[2].toInt(&ok);
-                    if (ok && normalIndex > 0){
-                        face.vertexIndices.append(normalIndex - 1);
+                    int texCoordIndex = parts[1].toInt(&ok);
+                    if (ok && texCoordIndex > 0){
+                        face.texCoordIndices.append(texCoordIndex);
+                        qDebug() << texCoordIndex;
                     }
+                } else {
+
                 }
                 if (parts.size() >= 3){
                     bool ok = false;
-                    int vertexIndex = parts[1].toInt(&ok);
-                    if (ok && vertexIndex > 0){
-                        face.vertexIndices.append(vertexIndex - 1);
+                    int normalIndex = parts[2].toInt(&ok);
+                    if (ok) {
+                        if (normalIndex > 0) {
+                            face.normalIndices.append(normalIndex);
+                            qDebug() << normalIndex;
+                        } else {
+
+                        }
                     }
+                }else{
+
                 }
             }
 

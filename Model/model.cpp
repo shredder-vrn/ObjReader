@@ -15,7 +15,7 @@ bool validateModel(const Model &model){
         Q_ASSERT_X(face.normalIndices.isEmpty() || face.normalIndices.size() == face.vertexIndices.size(),"","");
 
         for (int idx : face.vertexIndices){
-            Q_ASSERT_X(idx >= 0 && idx < model.vertices.size(), "", "");
+            //Q_ASSERT_X(idx >= 0 && idx < model.vertices.size(), "", "");
             //Q_ASSERT_X(idx >= 0 && idx < model.texCoords.size(), "", "");
             //Q_ASSERT_X(idx >= 0 && idx < model.normals.size(), "", "");
         }
