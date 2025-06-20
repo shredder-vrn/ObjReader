@@ -1,0 +1,31 @@
+# Ignore user-specific files
+*.user
+.qmake.stash
+
+# Ignore build directories
+build-*/
+Build-*/
+debug/
+release/
+
+# Ignore compiled objects and binaries
+*.o
+*.a
+*.so
+*.dll
+*.exe
+
+# Ignore temporary files
+*.tmp
+*.log
+*.ilk
+*.pdb
+*.pch
+*.qpf
+
+# CMake (если будешь использовать)
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
