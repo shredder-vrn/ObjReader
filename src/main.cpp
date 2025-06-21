@@ -1,9 +1,3 @@
-//! REVIEW: Qt classes вместо std
-//! std::vector -> QVector
-//! iostream -> QStream
-//! QFile
-//! QVector2D, QVector3D, QVector4D, QMatrix4x4
-
 #include <QCoreApplication>
 #include <QVector>
 #include <QVector2D>
@@ -13,22 +7,21 @@
 #include <QDebug>
 #include <QtGlobal>
 
-#include "ObjReader/objreader.h"
-#include "ObjReaderTest/objreadertest.h"
-#include "Model/model.h"
-#include "ModelTest/modeltest.h"
 
-#include "foo.h"
+#include "../src/obj_reader/meshdata.h"
+#include "../src/obj_reader/objreader.h"
 
 
 void printStats(Model &model)
 {
-    qDebug() << "|----------------------------------------------|";
-    qDebug() << "Вершин: " << model.vertices.size();
-    qDebug() << "Текстурных Вершин: " << model.texCoords.size();
-    qDebug() << "Нормалей: " << model.normals.size();
-    qDebug() << "Полигонов: " << model.faces.size();
-    qDebug() << "|----------------------------------------------|";
+    {
+        qDebug() << "|----------------------------------------------|";
+        qDebug() << "Вершин: " << model.vertices.size();
+        qDebug() << "Текстурных Вершин: " << model.texCoords.size();
+        qDebug() << "Нормалей: " << model.normals.size();
+        qDebug() << "Полигонов: " << model.faces.size();
+        qDebug() << "|----------------------------------------------|";
+    }
 
     for (int i = 0; i < model.vertices.size(); ++i){
         qDebug() << "v" << i+1 << ":" << model.vertices[i];
@@ -58,7 +51,7 @@ int main(int argc, char *argv[])
 
     Model model;
 
-    QString filename = "/home/r3ds/Internship/ObjReaderDemo/cube.obj";
+    QString filename = "/home/r3ds/Internship/resources/cube.obj";
 
     if (!parseObjvertices(filename, model)) {
         qCritical() << "Ошибка при запуске файла";

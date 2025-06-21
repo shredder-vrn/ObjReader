@@ -60,30 +60,32 @@ bool parseObjvertices(const QString &filePath, Model &model)
                 continue;
             }
         }
-        else if (type == "vn" && tokens.size() >= 4){
-            bool okX = false;
-            bool okY = false;
-            bool okZ = false;
-            float x = tokens[1].toFloat(&okX);
-            float y = tokens[2].toFloat(&okY);
-            float z = tokens[3].toFloat(&okZ);
-            if (okX && okY && okZ){
-                model.normals.append(QVector3D(x, y, z));
-                continue;
+        else if (type == "vn"){
+            if (tokens.size() >= 4){
+                bool okX = false;
+                bool okY = false;
+                bool okZ = false;
+                float x = tokens[1].toFloat(&okX);
+                float y = tokens[2].toFloat(&okY);
+                float z = tokens[3].toFloat(&okZ);
+                if (okX && okY && okZ){
+                    model.normals.append(QVector3D(x, y, z));
+                    continue;
+                }
+            } else {
+
             }
         }
         else if (type == "f"){
             Face face;
             for (int i = 1; i < tokens.size(); ++i){
                 QStringList parts = tokens[i].split('/');
-                qDebug() << parts;
                 if (parts.size() >= 1){
                     bool ok = false;
                     int vertexIndex = parts[0].toInt(&ok);
                     if (ok) {
                         if (vertexIndex > 0) {
-                            face.vertexIndices.append(vertexIndex);
-                            qDebug() << vertexIndex;
+                            face.vertexIndices.append(vertexIndex-1);
                         } else {
 
                         }
@@ -95,8 +97,8 @@ bool parseObjvertices(const QString &filePath, Model &model)
                     bool ok = false;
                     int texCoordIndex = parts[1].toInt(&ok);
                     if (ok && texCoordIndex > 0){
-                        face.texCoordIndices.append(texCoordIndex);
-                        qDebug() << texCoordIndex;
+                        face.texCoordIndices.append(texCoordIndex-1);
+                        qDebug() << texCoordIndex-1;
                     }
                 } else {
 
@@ -106,8 +108,8 @@ bool parseObjvertices(const QString &filePath, Model &model)
                     int normalIndex = parts[2].toInt(&ok);
                     if (ok) {
                         if (normalIndex > 0) {
-                            face.normalIndices.append(normalIndex);
-                            qDebug() << normalIndex;
+                            face.normalIndices.append(normalIndex-1);
+                            qDebug() << normalIndex-1;
                         } else {
 
                         }

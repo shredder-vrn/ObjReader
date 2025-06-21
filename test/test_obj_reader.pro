@@ -19,13 +19,16 @@ CONFIG -= app_bundle
 
 
 SOURCES += \
-        $$PWD/../src/main.cpp \
-        $$PWD/../src/obj_reader/objreader.cpp \
-        $$PWD/../src/obj_reader/meshdata.cpp
+#        $$PWD/../src/main.cpp \
+#        $$PWD/../src/obj_reader/objreader.cpp \
+ \#        $$PWD/../src/obj_reader/meshdata.cpp
+    $$PWD/obj_reader/meshdatatest.cpp \
+    $$PWD/obj_reader/objreadertest.cpp \
+    main.cpp
 
 
 
-HEADERS += \
-        $$PWD/../src/obj_reader/objreader.h \
-        $$PWD/../src/obj_reader/meshdata.h
+HEADERS +=
+#        $$PWD/../src/obj_reader/objreader.h \
+ #        $$PWD/../src/obj_reader/meshdata.h
 
