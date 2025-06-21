@@ -15,20 +15,23 @@ CONFIG -= app_bundle
 #include($$PWD/../ModelTest/ModelTest.pro)
 
 # include($$PWD/../Model/Model.pri)
-# include($$PWD/../ModelTest/ModelTest.pri)
+
+include($$PWD/../ObjReaderDemo/ObjReaderDemo.pro)
 
 
 SOURCES += \
 #        $$PWD/../src/main.cpp \
 #        $$PWD/../src/obj_reader/objreader.cpp \
- \#        $$PWD/../src/obj_reader/meshdata.cpp
+#        $$PWD/../src/obj_reader/meshdata.cpp
     $$PWD/obj_reader/meshdatatest.cpp \
     $$PWD/obj_reader/objreadertest.cpp \
-    main.cpp
+    $$PWD/main.cpp
 
 
 
-HEADERS +=
+HEADERS += \
+    $$PWD/obj_reader/meshdatatest.h \
+    $$PWD/obj_reader/objreadertest.h
 #        $$PWD/../src/obj_reader/objreader.h \
- #        $$PWD/../src/obj_reader/meshdata.h
+#        $$PWD/../src/obj_reader/meshdata.h
 

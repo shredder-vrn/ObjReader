@@ -1,7 +1,7 @@
-int main(int argc, char *argv[])
-{
+#include <QtTest/QtTest>
+#include "obj_reader/meshdatatest.h"
+#include "../src/obj_reader/meshdata.h"
 
-    return 0;
 
-}
+QTEST_APPLESS_MAIN(MeshDataTest)
 

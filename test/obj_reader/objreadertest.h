@@ -1,0 +1,4 @@
+#ifndef OBJREADERTEST_H
+#define OBJREADERTEST_H
+
+#endif // OBJREADERTEST_H

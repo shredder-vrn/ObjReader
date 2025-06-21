@@ -19,7 +19,7 @@ CONFIG -= app_bundle
 
 
 SOURCES += \
-        $$PWD/../src/main.cpp \
+#        $$PWD/../src/main.cpp \
         $$PWD/../src/obj_reader/objreader.cpp \
         $$PWD/../src/obj_reader/meshdata.cpp
 
