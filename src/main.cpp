@@ -68,9 +68,6 @@ int main(int argc, char *argv[])
 
 
 
-
-
-
 /*
         // !REVIEW: проверки на валидность данных
         if (type == "v"){

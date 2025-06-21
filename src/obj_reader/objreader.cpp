@@ -105,7 +105,6 @@ bool parseFaceLine(const QStringList &tokens, Model &model, const QString &line,
                 qWarning() << "Индекс вершины не число: (строка: " << lineNum << "): " << line << parts[0];
                 return false;
             }
-
             if (vertexIndex > 0) {
                 face.vertexIndices.append(vertexIndex-1);
             } else {
@@ -117,44 +116,38 @@ bool parseFaceLine(const QStringList &tokens, Model &model, const QString &line,
             return false;
         }
 
-        if (parts.size() >= 2){
+        if (parts.size() >= 2 && !parts[1].isEmpty()){
             bool ok = false;
             int texCoordIndex = parts[1].toInt(&ok);
-
             if (!ok) {
                 qWarning() << "Индекс текстурной координаты не число:  (строка: " << lineNum << "): " << line << parts[1];
-                return false;
-            }
-
-            if (texCoordIndex > 0) {
+                face.texCoordIndices.append(-1);
+            } else if (texCoordIndex > 0) {
                 face.texCoordIndices.append(texCoordIndex-1);
             } else {
                 qWarning() << "Индекс текстурной координаты <= 0: (строка: " << lineNum << "): " << line << parts[0];
-                return false;
+                face.texCoordIndices.append(-1);
             }
         } else {
             qWarning() << "Недостаточно данных для текстурной координаты в полигоне (строка: " << lineNum << "): " << line;
-            return false;
+            face.texCoordIndices.append(-1);
         }
 
-        if (parts.size() >= 3){
+        if (parts.size() >= 3 && !parts[2].isEmpty()){
             bool ok = false;
             int normalIndex = parts[2].toInt(&ok);
-
             if (!ok) {
                 qWarning() << "Индекс нормали не число: (строка: " << lineNum << "): " << line << parts[1];
-                return false;
-            }
-
-            if (normalIndex > 0) {
+                face.normalIndices.append(-1);
+            } else if (normalIndex > 0) {
                 face.normalIndices.append(normalIndex-1);
             } else {
                 qWarning() << "Индекс нормали <= 0: (строка: " << lineNum << "): " << line << parts[0];
-                return false;
+                face.normalIndices.append(-1);
             }
         } else {
             qWarning() << "Недостаточно данных для нормали в полигоне (строка: " << lineNum << "): " << line;
-            return false;
+            face.normalIndices.append(-1);
         }
     }
 
