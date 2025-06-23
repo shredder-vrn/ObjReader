@@ -47,3 +47,31 @@ void MeshDataTest::testMismatchedNormalCount()
 
     QVERIFY(face.normalIndices.isEmpty() || face.normalIndices.size() == face.vertexIndices.size() == false);
 }
+
+void MeshDataTest::testIndexParsing_data()
+{
+    QTest::addColumn<QString>("token");
+    QTest::addColumn<int>("expectedVertexIndex");
+    QTest::addColumn<int>("expectedTexCoordIndex");
+    QTest::addColumn<int>("expectedNormalIndex");
+
+    QTest::newRow("v") << "1/2/3 1/3/4 1/4/5" << 0 << -1 << -1;
+}
+
+void MeshDataTest::testIndexParsing()
+{
+    QFETCH(QString, token);
+    QFETCH(int, expectedVertexIndex);
+    QFETCH(int, expectedTexCoordIndex);
+    QFETCH(int, expectedNormalIndex);
+
+    QStringList tokens = QStringList{"f", token};
+
+    Model model;
+    QString errorMessage;
+    int lineNum = 1;
+
+    //bool result = ObjReader::parseFaceLine(tokens, model, "", lineNum, errorMessage);
+
+    //QVERIFY(result);
+}

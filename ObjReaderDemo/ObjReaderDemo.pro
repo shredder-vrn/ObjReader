@@ -18,8 +18,9 @@ CONFIG -= app_bundle
 # include($$PWD/../ModelTest/ModelTest.pri)
 
 
+# $$PWD/../ObjReader/objreader.cpp
 SOURCES += \
-#        $$PWD/../src/main.cpp \
+        #$$PWD/../src/main.cpp \
         $$PWD/../src/obj_reader/objreader.cpp \
         $$PWD/../src/obj_reader/meshdata.cpp
 

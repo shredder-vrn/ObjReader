@@ -10,10 +10,13 @@ class ObjReaderTest : public QObject
 private slots:
     void testParseVertexLine_data();
     void testParseVertexLine();
+    void testParseTexCoordLine_data();
+    void testParseTexCoordLine();
+    void testParseNormalLine_data();
+    void testParseNormalLine();
+    void testParseFaceLine_data();
+    void testParseFaceLine();
 
-    void testParseFaceLine1();
-    void testParseFaceLine2();
-    void testParseFaceLine3();
 };
 
 #endif // OBJREADERTEST_H

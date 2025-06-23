@@ -1,9 +1,10 @@
 #include "meshdata.h"
 #include <QDebug>
 
-namespace{
+namespace MeshData{
 
-bool checkVertices(const Model &model){
+bool checkVertices(const Model &model)
+{
     if (model.vertices.isEmpty()){
         qInfo("[Ошибка!] Нет вершин: модель не может быть отрисована.");
         return false;
@@ -102,10 +103,10 @@ bool checkNormals(const Model &model){
 
 
 bool validateModel(const Model &model){
-    bool hasVertexData = checkVertices(model);
-    bool hasFaceData = checkFaces(model);
-    bool hasTexCoorData = checkTexCords(model);
-    bool hasNormalData = checkNormals(model);
+    bool hasVertexData = MeshData::checkVertices(model);
+    bool hasFaceData = MeshData::checkFaces(model);
+    bool hasTexCoorData = MeshData::checkTexCords(model);
+    bool hasNormalData = MeshData::checkNormals(model);
 
     bool canDrawWireframe = hasVertexData && hasFaceData;
     bool canDrawWithTextures = canDrawWireframe && hasTexCoorData;

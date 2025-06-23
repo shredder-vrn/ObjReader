@@ -12,7 +12,8 @@ private slots:
     void testValidFace();
     void testMismatchedTexCoordsCount();
     void testMismatchedNormalCount();
-
+    void testIndexParsing_data();
+    void testIndexParsing();
 };
 
 #endif // MESHDATATEST_H
