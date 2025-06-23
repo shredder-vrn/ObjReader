@@ -16,6 +16,8 @@ private slots:
     void testParseNormalLine();
     void testParseFaceLine_data();
     void testParseFaceLine();
+    void testValidateModel_data();
+    void testValidateModel();
 
 };
 

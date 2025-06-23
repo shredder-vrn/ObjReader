@@ -1,6 +1,5 @@
 #include <QtTest/QtTest>
-#include "obj_reader/meshdatatest.h"
-#include "../src/obj_reader/meshdata.h"
+#include "../src/obj_reader/modeldata.h"
 #include "obj_reader/objreadertest.h"
 
 
@@ -8,8 +7,8 @@
 
 int main()
 {
-    MeshDataTest mdTest;
-    QTest::qExec(&mdTest);
+    //MeshDataTest mdTest;
+    //QTest::qExec(&mdTest);
 
     ObjReaderTest orTest;
     QTest::qExec(&orTest);

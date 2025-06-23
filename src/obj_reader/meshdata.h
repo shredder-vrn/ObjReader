@@ -18,10 +18,20 @@ struct Model
     QVector<QVector2D> texCoords;
     QVector<QVector3D> normals;
     QVector<Face> faces;
+};
 
 
-//    QVector<QVector<int>> vertexIndicesPerFace;
-//    QVector<QVector<int>> texCoordIndicesPerFace;
+struct ModelV2 {
+    QVector<float> vertexData;
+    QVector<float> texCoordData;
+    QVector<float> normalData;
+
+    QVector<int> faceVertexIndices;
+    QVector<int> faceTexCoordIndices;
+    QVector<int> faceNormalIndices;
+
+    QVector<int> polygonStarts;
+    QVector<int> polygonLengths;
 };
 
 namespace MeshData{
