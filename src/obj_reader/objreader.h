@@ -16,8 +16,12 @@ bool parseFace(
         QVector<int> &polygonLengths,
         int &lineNum,
         const QString &line);
-bool checkVertices(const ModelV2 &model);
-bool checkTexCoords(const ModelV2 &model);
+bool checkVertices(const QVector<int> &vertexData);
+bool checkTexCoords(
+        QVector<float> &texCoordData,
+        const QVector<int> &faceTexCoordIndices,
+        const QVector<int> &polygonStarts,
+        const QVector<int> &polygonLengths);
 bool checkNormals(const ModelV2 &model);
 bool checkFaces(const ModelV2 &model);
 bool validateModel(const ModelV2 &model);

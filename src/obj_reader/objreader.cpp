@@ -238,54 +238,58 @@ bool parseFace(
 }
 
 
-bool checkVertices(const ModelV2 &model)
+bool checkVertices(const QVector<float> &vertexData)
 {
-    if (model.vertexData.isEmpty()) {
+    if (vertexData.isEmpty()) {
         logError(ParseError::EmptyData);
         return false;
     }
-    if (model.vertexData.size() % 3 != 0) {
+    if (vertexData.size() % 3 != 0) {
         logError(ParseError::CorruptedDataStructure);
         return false;
     }
     return true;
 }
 
-bool checkTexCoords(const ModelV2 &model)
+bool checkTexCoords(
+        const QVector<float> &texCoordData,
+        const QVector<int> &faceTexCoordIndices,
+        const QVector<int> &polygonStarts,
+        const QVector<int> &polygonLengths)
 {
-    if (model.texCoordData.isEmpty()) {
-        if (!model.faceTexCoordIndices.isEmpty()) {
+    if (texCoordData.isEmpty()) {
+        if (!faceTexCoordIndices.isEmpty()) {
             logError(ParseError::CorruptedDataStructure);
             return false;
         }
         return true;
     }
 
-    if (model.texCoordData.size() % 2 != 0) {
+    if (texCoordData.size() % 2 != 0) {
         logError(ParseError::CorruptedDataStructure);
         return false;
     }
 
-    if (model.faceTexCoordIndices.isEmpty()) {
+    if (faceTexCoordIndices.isEmpty()) {
         return true;
     }
 
-    int maxTexCoord = model.texCoordData.size() / 2;
+    int maxTexCoord = texCoordData.size() / 2;
     bool allValid = true;
 
-    for (int i = 0; i < model.polygonLengths.size(); ++i) {
+    for (int i = 0; i < polygonLengths.size(); ++i) {
 
-        int start = model.polygonStarts[i];
-        int count = model.polygonLengths[i];
+        int start = polygonStarts[i];
+        int count = polygonLengths[i];
 
-        if (start + count > model.faceTexCoordIndices.size()) {
+        if (start + count > faceTexCoordIndices.size()) {
             logError(ParseError::FaceIndexOutOfBounds);
             allValid = false;
             continue;
         }
 
         for (int j = 0; j < count; ++j) {
-            int idx = model.faceTexCoordIndices[start + j];
+            int idx = faceTexCoordIndices[start + j];
             if (idx < 0 || idx >= maxTexCoord) {
                 logError(ParseError::FaceIndexOutOfBounds);
                 allValid = false;
@@ -295,42 +299,46 @@ bool checkTexCoords(const ModelV2 &model)
     return allValid;
 }
 
-bool checkNormals(const ModelV2 &model)
+bool checkNormals(
+        const QVector<float> &normalData,
+        const QVector<int> &faceNormalIndices,
+        const QVector<int> &polygonStarts,
+        const QVector<int> &polygonLengths)
 {
-    if (model.normalData.isEmpty()) {
-        if (!model.faceNormalIndices.isEmpty()) {
+    if (normalData.isEmpty()) {
+        if (!faceNormalIndices.isEmpty()) {
             logError(ParseError::CorruptedDataStructure);
             return false;
         }
         return true;
     }
 
-    if (model.normalData.size() % 3 != 0) {
+    if (normalData.size() % 3 != 0) {
         logError(ParseError::CorruptedDataStructure);
         return false;
     }
 
-    if (!model.faceNormalIndices.isEmpty()) {
+    if (!faceNormalIndices.isEmpty()) {
         return true;
     }
 
-    int maxNormal = model.normalData.size() / 3;
+    int maxNormal = normalData.size() / 3;
     bool allValid = true;
 
 
-    for (int i = 0; i < model.polygonLengths.size(); ++i) {
+    for (int i = 0; i < polygonLengths.size(); ++i) {
 
-        int start = model.polygonStarts[i];
-        int count = model.polygonLengths[i];
+        int start = polygonStarts[i];
+        int count = polygonLengths[i];
 
-        if (start + count > model.faceNormalIndices.size()) {
+        if (start + count > faceNormalIndices.size()) {
             logError(ParseError::FaceIndexOutOfBounds);
             allValid = false;
             continue;
         }
 
         for (int j = 0; j < count; ++j) {
-            int idx = model.faceNormalIndices[start + j];
+            int idx = faceNormalIndices[start + j];
             if (idx < 0 || idx >= maxNormal) {
                 logError(ParseError::FaceIndexOutOfBounds);
                 allValid = false;
@@ -340,28 +348,32 @@ bool checkNormals(const ModelV2 &model)
     return allValid;
 }
 
-bool checkFaces(const ModelV2 &model)
+bool checkFaces(
+        const QVector<float> &vertexData,
+        const QVector<int> &faceVertexIndices,
+        const QVector<int> &polygonStarts,
+        const QVector<int> &polygonLengths)
 {
-    if (model.polygonStarts.isEmpty() || model.polygonLengths.isEmpty()) {
+    if (polygonStarts.isEmpty() || polygonLengths.isEmpty()) {
         logError(ParseError::EmptyData);
         return false;
     }
-    if (model.polygonStarts.size() != model.polygonLengths.size()) {
+    if (polygonStarts.size() != polygonLengths.size()) {
         logError(ParseError::CorruptedDataStructure);
         return false;
     }
 
     int totalIndices = 0;
-    int maxVertex = model.vertexData.size() / 3;
-    for (int i = 0; i < model.polygonLengths.size(); ++i) {
-        int start = model.polygonStarts[i];
-        int count = model.polygonLengths[i];
+    int maxVertex = vertexData.size() / 3;
+    for (int i = 0; i < polygonLengths.size(); ++i) {
+        int start = polygonStarts[i];
+        int count = polygonLengths[i];
         if (count < 3) {
             logError(ParseError::FaceLessThanThreeVertices);
             return false;
         }
         for (int j = 0; j < count; ++j) {
-            int idx = model.faceVertexIndices[start + j];
+            int idx = faceVertexIndices[start + j];
             if (idx < 0 || idx >= maxVertex) {
                 logError(ParseError::FaceIndexOutOfBounds);
                 return false;
@@ -370,7 +382,7 @@ bool checkFaces(const ModelV2 &model)
         totalIndices += count;
     }
 
-    if (totalIndices != model.faceVertexIndices.size()) {
+    if (totalIndices != faceVertexIndices.size()) {
         logError(ParseError::CorruptedDataStructure);
         return false;
     }
@@ -380,10 +392,10 @@ bool checkFaces(const ModelV2 &model)
 
 bool validateModel(const ModelV2 &model)
 {
-    return checkVertices(model) &&
-           checkTexCoords(model) &&
-           checkNormals(model) &&
-           checkFaces(model);
+    return checkVertices(model.vertexData) &&
+           checkTexCoords(model.texCoordData, model.faceTexCoordIndices, model.polygonStarts, model.polygonLengths) &&
+           checkNormals(model.normalData, model.faceNormalIndices, model.polygonStarts, model.polygonLengths) &&
+           checkFaces(model.vertexData, model.faceVertexIndices, model.polygonStarts, model.polygonLengths);
 }
 
 bool parseObj(
