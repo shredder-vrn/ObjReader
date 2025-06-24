@@ -1,23 +1,23 @@
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef MODELDATA_H
+#define MODELDATA_H
 
 #include <QVector>
-#include <QVector2D>
-#include <QVector3D>
+#include <QMetaType>
 
-struct Face {
-    QVector<int> vertexIndices;
-    QVector<int> texCoordIndices;
-    QVector<int> normalIndices;
+struct ModelV2
+{
+    QVector<float> vertexData;
+    QVector<float> texCoordData;
+    QVector<float> normalData;
+
+    QVector<int> faceVertexIndices;
+    QVector<int> faceTexCoordIndices;
+    QVector<int> faceNormalIndices;
+
+    QVector<int> polygonStarts;
+    QVector<int> polygonLengths;
 };
 
-struct Model {
-    QVector<QVector3D> vertices;
-    QVector<QVector2D> texCoords;
-    QVector<QVector3D> normals;
-    QVector<Face> faces;
-};
+Q_DECLARE_METATYPE(ModelV2)
 
-bool validateModel(const Model &model);
-
-#endif // MODEL_H
+#endif // MODELDATA_H

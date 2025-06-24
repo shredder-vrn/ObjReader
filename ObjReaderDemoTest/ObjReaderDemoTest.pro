@@ -5,7 +5,7 @@ QT += testlib
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
-include($$PWD/ObjReaderDemo.pri)
+include($$PWD/../ObjReaderDemoTest/ObjReaderDemoTest.pri)
 
 SOURCES += \
-        $$PWD/main.cpp \
+    $$PWD/main.cpp

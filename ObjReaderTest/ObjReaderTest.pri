@@ -1,21 +1,15 @@
-!OBJ_READER_DEMO_TEST_PRI {
-
-CONFIG += OBJ_READER_DEMO_TEST_PRI
+!MODEL {
+CONFIG += MODEL
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
 HEADERS += \
-    $$PWD/objreadertest.h
+    $$PWD/model.h
 
 SOURCES += \
-    $$PWD/objreadertest.cpp
+    $$PWD/model.cpp
 
 }
-
-
-
-
-
 
 
 

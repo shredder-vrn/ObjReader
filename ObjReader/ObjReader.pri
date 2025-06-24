@@ -5,7 +5,6 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 
 include($$PWD/../Model/Model.pri)
 
-
 HEADERS += \
     $$PWD/objreader.h
 

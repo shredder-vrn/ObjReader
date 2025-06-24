@@ -8,8 +8,8 @@
 #include <QtGlobal>
 
 
-#include "../src/obj_reader/modeldata.h"
-#include "../src/obj_reader/objreader.h"
+#include "ObjReader/objreader.h"
+#include "Model/model.h"
 
 
 void printStats(const ModelV2 &model)

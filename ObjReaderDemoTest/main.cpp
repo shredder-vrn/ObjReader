@@ -1,6 +1,5 @@
 #include <QtTest/QtTest>
-#include "../src/obj_reader/modeldata.h"
-#include "obj_reader/objreadertest.h"
+#include "ObjReaderTest/objreadertest.h"
 
 
 //QTEST_APPLESS_MAIN(MeshDataTest)
