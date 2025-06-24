@@ -3,28 +3,50 @@
 
 #include "Model/model.h"
 
+#include <QTextStream>
 
-bool parseVertex(const QStringList &tokens, QVector<float> &vertexData, int &lineNum, const QString &line);
-bool parseTexCoord(const QStringList &tokens, QVector<float> &texCoordData, int &lineNum, const QString &line);
-bool parseNormal(const QStringList &tokens, QVector<float> &normalData, int &lineNum, const QString &line);
+//! REVIEW nam
+
+bool parseVertex(
+        const QStringList &tokens,
+        const QString &line,
+        QVector<QVector3D> &outVertices,
+        int &outLineNum);
+bool parseTexCoord(
+        const QStringList &tokens,
+        const QString &line,
+        QVector<QVector2D> &outTextureVertices,
+        int &outLineNum);
+bool parseNormal(
+        const QStringList &tokens,
+        const QString &line,
+        QVector<QVector3D> &outNormals,
+        int &outLineNum);
 bool parseFace(
         const QStringList &tokens,
+        const QString &line,
         QVector<int> &faceVertexIndices,
         QVector<int> &faceTexCoordIndices,
         QVector<int> &faceNormalIndices,
         QVector<int> &polygonStarts,
         QVector<int> &polygonLengths,
-        int &lineNum,
-        const QString &line);
-bool checkVertices(const QVector<int> &vertexData);
+        int &outLineNum);
+bool checkVertices(
+        const QVector<int> &vertices);
 bool checkTexCoords(
-        QVector<float> &texCoordData,
         const QVector<int> &faceTexCoordIndices,
         const QVector<int> &polygonStarts,
-        const QVector<int> &polygonLengths);
-bool checkNormals(const ModelV2 &model);
-bool checkFaces(const ModelV2 &model);
-bool validateModel(const ModelV2 &model);
-bool parseObj(const QString &filePath, ModelV2 &model);
+        const QVector<int> &polygonLengths,
+        QVector<QVector2D> &outTextureVertices);
+bool checkNormals(
+        const Model &model);
+bool checkFaces(
+        const Model &model);
+bool validateModel(
+        const Model &model);
+bool parseTokens(
+        QTextStream &in,
+        Model &model);
+
 
 #endif // OBJREADER_H

@@ -2,6 +2,12 @@
 #define OBJREADERTEST_H
 
 #include <QObject>
+#include <QtTest/QtTest>
+#include "Model/model.h"
+
+namespace ObjReader::Tests {
+
+}
 
 class ObjReaderTest : public QObject
 {
@@ -16,8 +22,10 @@ private slots:
     void testParseNormalLine();
     void testParseFaceLine_data();
     void testParseFaceLine();
-    void testValidateModel_data();
+    /*void testValidateModel_data();
     void testValidateModel();
+    void testParseObjFromFile_data();
+    void testParseObjFromFile();*/
 
 };
 

@@ -1,0 +1,16 @@
+v 1 1 1
+v 2 2 2
+v 3 3 3
+v 4 4 4
+
+vn 1 1 1
+vn 2 2 2
+vn 3 3 3
+vn 4 4 4
+
+vt 0.1 0.1
+vt 0.1 0.1
+vt 0.1 0.1
+vt 0.1 0.1
+
+f 1/1/1 2/2/2 3//3 4//4 # https://paulbourke.net/dataformats/obj/

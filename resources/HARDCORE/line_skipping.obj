@@ -1,0 +1,4 @@
+v 1 1 1
+v 2 2 2
+
+l 1 2 # at least line element should be skipped silently

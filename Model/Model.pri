@@ -1,5 +1,5 @@
-!MODEL {
-CONFIG += MODEL
+!OBJREADER_MODEL {
+CONFIG += OBJREADER_MODEL
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
@@ -10,8 +10,4 @@ SOURCES += \
     $$PWD/model.cpp
 
 }
-
-
-
-
 

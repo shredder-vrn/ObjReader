@@ -1,0 +1,6 @@
+# BAD: v is out of any UDIM possible
+vt 0.2 0.3
+
+vt 5.2 5.3 # udim 5
+
+vt 5005.2 5005.3 # udim 5005

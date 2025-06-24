@@ -12,61 +12,62 @@
 #include "Model/model.h"
 
 
-void printStats(const ModelV2 &model)
+void printStats(const Model &model)
 {
     qDebug() << "|----------------------------------------------|";
-    qDebug() << "Вершин: " << model.vertexData.size() / 3;
-    qDebug() << "Текстурных координат: " << model.texCoordData.size() / 2;
-    qDebug() << "Нормалей: " << model.normalData.size() / 3;
-    qDebug() << "Полигонов: " << model.polygonLengths.size();
+    qDebug() << "Вершин (v):" << model.vertices.size();
+    qDebug() << "Текстурных координат (vt):" << model.textureVertices.size();
+    qDebug() << "Нормалей (vn):" << model.normals.size();
+    qDebug() << "Полигонов (f):" << model.polygonLengths.size();
     qDebug() << "|----------------------------------------------|";
 
-    for (int i = 0; i < model.vertexData.size(); i += 3) {
-        QVector3D v(model.vertexData[i], model.vertexData[i+1], model.vertexData[i+2]);
-        qDebug() << "v" << (i / 3 + 1) << ":" << v;
+    if (!model.vertices.isEmpty()) qDebug() << "Вершины:";
+    for (int i = 0; i < model.vertices.size(); ++i) {
+        qDebug() << "v" << (i + 1) << ":" << model.vertices[i];
     }
 
-    for (int i = 0; i < model.texCoordData.size(); i += 2) {
-        QVector2D vt(model.texCoordData[i], model.texCoordData[i+1]);
-        qDebug() << "vt" << (i / 2 + 1) << ":" << vt;
+    if (!model.textureVertices.isEmpty()) qDebug() << "Текстурные координаты:";
+    for (int i = 0; i < model.textureVertices.size(); ++i) {
+        qDebug() << "vt" << (i + 1) << ":" << model.textureVertices[i];
     }
 
-    for (int i = 0; i < model.normalData.size(); i += 3) {
-        QVector3D vn(model.normalData[i], model.normalData[i+1], model.normalData[i+2]);
-        qDebug() << "vn" << (i / 3 + 1) << ":" << vn;
+    if (!model.normals.isEmpty()) qDebug() << "Нормали:";
+    for (int i = 0; i < model.normals.size(); ++i) {
+        qDebug() << "vn" << (i + 1) << ":" << model.normals[i];
     }
 
+    if (!model.polygonLengths.isEmpty()) qDebug() << "Полигоны:";
     for (int i = 0; i < model.polygonLengths.size(); ++i) {
         int start = model.polygonStarts[i];
         int count = model.polygonLengths[i];
 
-        QVector<int> vertexIndices;
-        QVector<int> texCoordIndices;
-        QVector<int> normalIndices;
+        QStringList faceParts;
 
         for (int j = 0; j < count; ++j) {
-            if (start + j < model.faceVertexIndices.size())
-                vertexIndices << model.faceVertexIndices[start + j];
-            if (start + j < model.faceTexCoordIndices.size())
-                texCoordIndices << model.faceTexCoordIndices[start + j];
-            if (start + j < model.faceNormalIndices.size())
-                normalIndices << model.faceNormalIndices[start + j];
+            QString part = QString::number(model.faceVertexIndices[start + j] + 1);
+
+            if (!model.faceTexCoordIndices.isEmpty() && start + j < model.faceTexCoordIndices.size())
+                part += "/" + QString::number(model.faceTexCoordIndices[start + j] + 1);
+
+            if (!model.faceNormalIndices.isEmpty() && start + j < model.faceNormalIndices.size())
+                part += "/" + QString::number(model.faceNormalIndices[start + j] + 1);
+
+            faceParts << part;
         }
 
-        qDebug() << "f" << i+1 << ":"
-                 << "v" << vertexIndices
-                 << "vt" << texCoordIndices
-                 << "vn" << normalIndices;
+        qDebug() << "f" << (i + 1) << ":" << faceParts.join(" ");
     }
+
+    qDebug() << "|----------------------------------------------|";
 }
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    ModelV2 model;
+    Model model;
 
-    QString filename = "/home/r3ds/Internship/resources/cube.obj";
+    QString filename = "/home/r3ds/Internship/resources/HARDCORE/cube.obj";
 
     QFile file(filename);
     if (!file.exists()) {
@@ -74,8 +75,15 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    if (!parseObj(filename, model)) {
-        qCritical() << "Ошибка при чтении файла";
+    // Открываем файл и читаем содержимое
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCritical() << "Не удалось открыть файл для чтения:" << filename;
+        return 1;
+    }
+
+    QTextStream in(&file);
+    if (!parseTokens(in, model)) {
+        qCritical() << "Ошибка при разборе файла OBJ.";
         return 1;
     }
 

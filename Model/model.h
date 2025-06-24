@@ -2,13 +2,17 @@
 #define MODELDATA_H
 
 #include <QVector>
+#include <QVector2D>
+#include <QVector3D>
 #include <QMetaType>
 
-struct ModelV2
+//! REVIEW: namespace
+
+struct Model
 {
-    QVector<float> vertexData;
-    QVector<float> texCoordData;
-    QVector<float> normalData;
+    QVector<QVector3D> vertices;
+    QVector<QVector2D> textureVertices;
+    QVector<QVector3D> normals;
 
     QVector<int> faceVertexIndices;
     QVector<int> faceTexCoordIndices;
@@ -18,6 +22,6 @@ struct ModelV2
     QVector<int> polygonLengths;
 };
 
-Q_DECLARE_METATYPE(ModelV2)
+Q_DECLARE_METATYPE(Model)
 
 #endif // MODELDATA_H
