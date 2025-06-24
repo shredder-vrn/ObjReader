@@ -18,13 +18,10 @@ include($$PWD/../ObjReaderDemo/ObjReaderDemo.pro)
 
 
 SOURCES += \
-#        $$PWD/../src/main.cpp \
 #        $$PWD/../src/obj_reader/objreader.cpp \
 #        $$PWD/../src/obj_reader/meshdata.cpp
-    #$$PWD/obj_reader/meshdatatest.cpp \
     $$PWD/obj_reader/objreadertest.cpp \
-    $$PWD/../src/obj_reader/modeldata.cpp \
-    $$PWD/main.cpp
+    #$$PWD/main.cpp
 
 
 

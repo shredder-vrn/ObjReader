@@ -13,6 +13,7 @@ CONFIG -= app_bundle
 
 SOURCES += \
         $$PWD/../src/obj_reader/objreader.cpp \
+        $$PWD/../src/main.cpp
 
 
 

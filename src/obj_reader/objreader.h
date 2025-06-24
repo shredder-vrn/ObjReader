@@ -4,10 +4,18 @@
 #include "modeldata.h"
 
 
-bool parseVertex(const QStringList &tokens, ModelV2 &model, int &lineNum, const QString &line);
-bool parseTexCoord(const QStringList &tokens, ModelV2 &model, int &lineNum, const QString &line);
-bool parseNormal(const QStringList &tokens, ModelV2 &model, int &lineNum, const QString &line);
-bool parseFace(const QStringList &tokens, ModelV2 &model, int &lineNum, const QString &line);
+bool parseVertex(const QStringList &tokens, QVector<float> &vertexData, int &lineNum, const QString &line);
+bool parseTexCoord(const QStringList &tokens, QVector<float> &texCoordData, int &lineNum, const QString &line);
+bool parseNormal(const QStringList &tokens, QVector<float> &normalData, int &lineNum, const QString &line);
+bool parseFace(
+        const QStringList &tokens,
+        QVector<int> &faceVertexIndices,
+        QVector<int> &faceTexCoordIndices,
+        QVector<int> &faceNormalIndices,
+        QVector<int> &polygonStarts,
+        QVector<int> &polygonLengths,
+        int &lineNum,
+        const QString &line);
 bool checkVertices(const ModelV2 &model);
 bool checkTexCoords(const ModelV2 &model);
 bool checkNormals(const ModelV2 &model);

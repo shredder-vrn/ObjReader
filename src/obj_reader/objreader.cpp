@@ -75,7 +75,7 @@ void logError (
 
 bool parseVertex(
         const QStringList &tokens,
-        ModelV2 &model,
+        QVector<float> &vertexData,
         int &lineNum,
         const QString &line)
 {
@@ -102,15 +102,15 @@ bool parseVertex(
         return false;
     }
 
-    model.vertexData.append(x);
-    model.vertexData.append(y);
-    model.vertexData.append(z);
+    vertexData.append(x);
+    vertexData.append(y);
+    vertexData.append(z);
     return true;
 }
 
 bool parseTexCoord(
         const QStringList &tokens,
-        ModelV2 &model,
+        QVector<float> &texCoordData,
         int &lineNum,
         const QString &line)
 {
@@ -131,14 +131,14 @@ bool parseTexCoord(
         return false;
     }
 
-    model.texCoordData.append(u);
-    model.texCoordData.append(v);
+    texCoordData.append(u);
+    texCoordData.append(v);
     return true;
 }
 
 bool parseNormal(
         const QStringList &tokens,
-        ModelV2 &model,
+        QVector<float> &normalData,
         int &lineNum,
         const QString &line)
 {
@@ -147,6 +147,7 @@ bool parseNormal(
         logError(ParseError::NormalNotEnoughCoords, lineNum, line);
         return false;
     }
+
     if (tokens.size() > 4){
         logError(ParseError::NormalTooManyCoords, lineNum, line);
         return false;
@@ -165,15 +166,19 @@ bool parseNormal(
         return false;
     }
 
-    model.normalData.append(x);
-    model.normalData.append(y);
-    model.normalData.append(z);
+    normalData.append(x);
+    normalData.append(y);
+    normalData.append(z);
     return true;
 }
 
 bool parseFace(
         const QStringList &tokens,
-        ModelV2 &model,
+        QVector<int> &faceVertexIndices,
+        QVector<int> &faceTexCoordIndices,
+        QVector<int> &faceNormalIndices,
+        QVector<int> &polygonStarts,
+        QVector<int> &polygonLengths,
         int &lineNum,
         const QString &line)
 {
@@ -204,7 +209,7 @@ bool parseFace(
                 ti = -1;
             }
         }
-        texCoordIndices.append(ti);
+        texCoordIndices.append(ti - 1);
 
         int ni = -1;
         if (parts.size() >= 3 && !parts[2].isEmpty()) {
@@ -214,7 +219,7 @@ bool parseFace(
                 ni = -1;
             }
         }
-        normalIndices.append(ni);
+        normalIndices.append(ni - 1);
     }
 
     if (vertexIndices.size() < 3) {
@@ -222,12 +227,12 @@ bool parseFace(
         return false;
     }
 
-    int start = model.faceVertexIndices.size();
-    model.faceVertexIndices.append(vertexIndices);
-    model.faceTexCoordIndices.append(texCoordIndices);
-    model.faceNormalIndices.append(normalIndices);
-    model.polygonStarts.append(start);
-    model.polygonLengths.append(vertexIndices.size());
+    int start = faceVertexIndices.size();
+    faceVertexIndices.append(vertexIndices);
+    faceTexCoordIndices.append(texCoordIndices);
+    faceNormalIndices.append(normalIndices);
+    polygonStarts.append(start);
+    polygonLengths.append(vertexIndices.size());
 
     return true;
 }
@@ -249,32 +254,36 @@ bool checkVertices(const ModelV2 &model)
 bool checkTexCoords(const ModelV2 &model)
 {
     if (model.texCoordData.isEmpty()) {
-        logError(ParseError::EmptyData);
-        return false;
+        if (!model.faceTexCoordIndices.isEmpty()) {
+            logError(ParseError::CorruptedDataStructure);
+            return false;
+        }
+        return true;
     }
+
     if (model.texCoordData.size() % 2 != 0) {
         logError(ParseError::CorruptedDataStructure);
         return false;
     }
+
     if (model.faceTexCoordIndices.isEmpty()) {
-        logError(ParseError::EmptyData);
-        return false;
-    }
-    if (model.polygonStarts.size() != model.polygonLengths.size()) {
-        logError(ParseError::CorruptedDataStructure);
-        return false;
+        return true;
     }
 
-    bool allValid = true;
     int maxTexCoord = model.texCoordData.size() / 2;
+    bool allValid = true;
+
     for (int i = 0; i < model.polygonLengths.size(); ++i) {
+
         int start = model.polygonStarts[i];
         int count = model.polygonLengths[i];
+
         if (start + count > model.faceTexCoordIndices.size()) {
             logError(ParseError::FaceIndexOutOfBounds);
             allValid = false;
             continue;
         }
+
         for (int j = 0; j < count; ++j) {
             int idx = model.faceTexCoordIndices[start + j];
             if (idx < 0 || idx >= maxTexCoord) {
@@ -289,28 +298,37 @@ bool checkTexCoords(const ModelV2 &model)
 bool checkNormals(const ModelV2 &model)
 {
     if (model.normalData.isEmpty()) {
-        logError(ParseError::EmptyData);
-        return false;
+        if (!model.faceNormalIndices.isEmpty()) {
+            logError(ParseError::CorruptedDataStructure);
+            return false;
+        }
+        return true;
     }
+
     if (model.normalData.size() % 3 != 0) {
         logError(ParseError::CorruptedDataStructure);
         return false;
     }
-    if (model.faceNormalIndices.isEmpty()) {
-        logError(ParseError::EmptyData);
-        return false;
+
+    if (!model.faceNormalIndices.isEmpty()) {
+        return true;
     }
 
-    bool allValid = true;
     int maxNormal = model.normalData.size() / 3;
+    bool allValid = true;
+
+
     for (int i = 0; i < model.polygonLengths.size(); ++i) {
+
         int start = model.polygonStarts[i];
         int count = model.polygonLengths[i];
+
         if (start + count > model.faceNormalIndices.size()) {
             logError(ParseError::FaceIndexOutOfBounds);
             allValid = false;
             continue;
         }
+
         for (int j = 0; j < count; ++j) {
             int idx = model.faceNormalIndices[start + j];
             if (idx < 0 || idx >= maxNormal) {
@@ -391,15 +409,49 @@ bool parseObj(
 
         QString type = tokens[0];
 
+        /*
+        // --- DEBUG: до обработки строки ---
+        qDebug() << "\n[DEBUG] Строка" << lineNum << "(" << type << ")";
+        qDebug() << "  Исходная строка:" << line;
+        qDebug() << "  vertexData:" << model.vertexData;
+        qDebug() << "  texCoordData:" << model.texCoordData;
+        qDebug() << "  normalData:" << model.normalData;
+        qDebug() << "  faceVertexIndices:" << model.faceVertexIndices;
+        qDebug() << "  faceTexCoordIndices:" << model.faceTexCoordIndices;
+        qDebug() << "  faceNormalIndices:" << model.faceNormalIndices;
+        qDebug() << "  polygonStarts:" << model.polygonStarts;
+        qDebug() << "  polygonLengths:" << model.polygonLengths;
+        */
         if (type == "#") continue;
-        else if (type == "v" && !parseVertex(tokens, model, lineNum, line))
+        else if (type == "v" && !parseVertex(tokens, model.vertexData, lineNum, line))
             return false;
-        else if (type == "vt" && !parseTexCoord(tokens, model, lineNum, line))
+        else if (type == "vt" && !parseTexCoord(tokens, model.texCoordData, lineNum, line))
             return false;
-        else if (type == "vn" && !parseNormal(tokens, model, lineNum, line))
+        else if (type == "vn" && !parseNormal(tokens, model.normalData, lineNum, line))
             return false;
-        else if (type == "f" && !parseFace(tokens, model, lineNum, line))
+        else if (type == "f" && !parseFace(
+                     tokens,
+                     model.faceVertexIndices,
+                     model.faceTexCoordIndices,
+                     model.faceNormalIndices,
+                     model.polygonStarts,
+                     model.polygonLengths,
+                     lineNum,
+                     line))
             return false;
+
+        qDebug() << "\n[DEBUG] После обработки строки" << lineNum << ":" << line;
+        qDebug() << "  vertexData.size()" << model.vertexData.size();
+        qDebug() << "  texCoordData.size()" << model.texCoordData.size();
+        qDebug() << "  normalData.size()" << model.normalData.size();
+        qDebug() << "  faceVertexIndices.size()" << model.faceVertexIndices.size();
+        qDebug() << "  faceTexCoordIndices.size()" << model.faceTexCoordIndices.size();
+        qDebug() << "  faceNormalIndices.size()" << model.faceNormalIndices.size();
+        qDebug() << "  polygonStarts.size()" << model.polygonStarts.size();
+        qDebug() << "  polygonLengths.size()" << model.polygonLengths.size();
+
+        qDebug() << "--------------------------------------------------";
+
     }
 
     return validateModel(model);
