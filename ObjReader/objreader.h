@@ -23,7 +23,6 @@ bool parseNormal(
         QVector<QVector3D> &outNormals,
         int &outLineNum);
 bool parseFace(
-        const QStringList &tokens,
         const QString &line,
         QVector<int> &faceVertexIndices,
         QVector<int> &faceTexCoordIndices,

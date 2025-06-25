@@ -5,10 +5,6 @@
 #include <QtTest/QtTest>
 #include "Model/model.h"
 
-namespace ObjReader::Tests {
-
-}
-
 class ObjReaderTest : public QObject
 {
     Q_OBJECT

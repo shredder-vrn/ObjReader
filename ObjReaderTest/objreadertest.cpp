@@ -29,7 +29,7 @@ static bool parseSingleLine(const QString& line, Model &model)
     if (type == "vn")
         return parseNormal(tokens, line, model.normals, lineNum);
     if (type == "f")
-        return parseFace(tokens, line,
+        return parseFace(line,
                          model.faceVertexIndices,
                          model.faceTexCoordIndices,
                          model.faceNormalIndices,
@@ -396,7 +396,7 @@ void ObjReaderTest::testParseFaceLine()
     QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
     int lineNum = 1;
 
-    bool result = parseFace(tokens, line, model.faceVertexIndices,
+    bool result = parseFace(line, model.faceVertexIndices,
                             model.faceTexCoordIndices, model.faceNormalIndices,
                             model.polygonStarts, model.polygonLengths, lineNum);
 

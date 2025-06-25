@@ -6,10 +6,12 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QtGlobal>
+#include <QApplication>
 
 
 #include "ObjReader/objreader.h"
 #include "Model/model.h"
+#include "viewport.h"
 
 
 void printStats(const Model &model)
@@ -83,14 +85,22 @@ void launchReader(const QString &filename){
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc, argv);
-    QString filename = "/home/r3ds/Internship/resources/HARDCORE/cube.obj";
-    const bool launchOk = true;
+    QApplication app(argc, argv);
+
+    QString filename = "/home/r3ds/Internship/resources/cube.obj";
+    const bool launchOk = false;
 
     if (launchOk){
         launchReader(filename);
     }
-    return 0;
+
+
+    Viewport viewport;
+    viewport.resize(800, 600);
+    viewport.show();
+
+    return app.exec();
 }
+
 
 
