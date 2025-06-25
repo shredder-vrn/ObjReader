@@ -319,6 +319,7 @@ void ObjReaderTest::testParseFaceLine_data()
     QTest::addColumn<bool>("expectedResult");
 
     QTest::newRow("f v v v") << "f 1 2 3" << true;
+    QTest::newRow("Extra data after") << "f 0 0 0" << false;
     QTest::newRow("f v/vt/vn") << "f 1/1/1 2/2/2 3/3/3" << true;
     QTest::newRow("f v//vn") << "f 1//1 2//2 3//3" << true;
     QTest::newRow("f v/vt") << "f 1/1 2/2 3/3" << true;
@@ -327,12 +328,18 @@ void ObjReaderTest::testParseFaceLine_data()
     QTest::newRow("Face with 10 vertices") << "f 1 2 3 4 5 6 7 8 9 10" << true;
     QTest::newRow("Face with same indices") << "f 1 1 1" << true;
     QTest::newRow("Face with duplicate pairs") << "f 1/1/1 1/1/1 1/1/1" << true;
+    QTest::newRow("f with leading/trailing spaces") << "1/1/1 2/2/2 3/-1/3 4/-1/4" << false;
 
     QTest::newRow("Only two vertices") << "f 1 2" << false;
     QTest::newRow("One vertex") << "f 1" << false;
     QTest::newRow("Empty face") << "f" << false;
 
-    QTest::newRow("f with leading/trailing spaces") << "   f 1 2 3   " << true;
+    QTest::newRow("f with leading/trailing spaces") << "   f   1   2   3   " << true;
+    //QTest::newRow("f with leading/trailing spaces") << "f 0 / 0 / 0 0 / 0 / 0 0 / 0 / 0 # no spaces" << true;
+    QTest::newRow("f with leading/trailing spaces") << "f 0  /0/0 0/0/0 0/0/0  # no spaces" << false;
+    QTest::newRow("f with leading/trailing spaces") << "f 0  / 0 / 0 0 / 0 / 0 0 / 0 / 0  # no spaces" << false;
+    QTest::newRow("f with leading/trailing spaces") << "f 0  /0/0 0/ 0 /0 0/  0/  0  # no spaces" << false;
+    QTest::newRow("f with leading/trailing spaces") << "f 0  /0/ 0 0/0/0 0/0/0  # no spaces" << false;
     QTest::newRow("f with tabs") << "f\t1\t2\t3" << true;
     QTest::newRow("With tab and space mix") << "f\t1 \t 2   \t3" << true;
     QTest::newRow("With carriage return") << "f 1 2 3\r" << true;

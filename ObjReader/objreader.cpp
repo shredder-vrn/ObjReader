@@ -241,7 +241,7 @@ bool parseFace(
 
         bool isOk = false;
 
-        int vi = parts[0].toInt(&isOk);
+        int vi = parts[0].trimmed().toInt(&isOk);
         if (!isOk || vi <= 0) {
             buildLogErrorAndPrint(ParseError::FaceVertexIndexInvalid, outLineNum, line);
             return false;
@@ -250,8 +250,8 @@ bool parseFace(
 
         int ti = -1;
         if (parts.size() >= 2) {
-            if (!parts[1].isEmpty()) {
-                ti = parts[1].toInt(&isOk);
+            if (!parts[1].trimmed().isEmpty()) {
+                ti = parts[1].trimmed().toInt(&isOk);
                 if (!isOk || ti <= 0) {
                     buildLogErrorAndPrint(ParseError::FaceTexCoordIndexInvalid, outLineNum, line);
                     ti = -1;
@@ -262,7 +262,7 @@ bool parseFace(
 
         int ni = -1;
         if (parts.size() >= 3) {
-            if (!parts[2].isEmpty()) {
+            if (!parts[2].trimmed().isEmpty()) {
                 ni = parts[2].toInt(&isOk);
                 if (!isOk || ni <= 0) {
                     buildLogErrorAndPrint(ParseError::FaceNormalIndexInvalid, outLineNum, line);
@@ -320,7 +320,7 @@ bool checkTexCoords(
 
 
         if (start + count > faceTexCoordIndices.size()) {
-            buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
+            //buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
             allValid = false;
             continue;
         }
@@ -328,7 +328,7 @@ bool checkTexCoords(
         for (int j = 0; j < count; ++j) {
             int idx = faceTexCoordIndices[start + j];
             if (idx < 0 || idx >= maxTexCoord) {
-                buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
+                //buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
                 allValid = false;
             }
         }
@@ -356,7 +356,7 @@ bool checkNormals(
 
 
         if (start + count > faceNormalIndices.size()) {
-            buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
+            //buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
             allValid = false;
 
             continue;
@@ -365,7 +365,7 @@ bool checkNormals(
         for (int j = 0; j < count; ++j) {
             int idx = faceNormalIndices[start + j];
             if (idx < 0 || idx >= maxNormal) {
-                buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
+                //buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
                 allValid = false;
 
             }
@@ -409,8 +409,7 @@ bool checkFaces(
             if (idx < 0 || idx >= maxVertex) {
                 buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
                            return false;
-            } else {
-               }
+            }
         }
 
         totalIndices += count;
@@ -418,7 +417,7 @@ bool checkFaces(
 
     if (totalIndices != faceVertexIndices.size()) {
         buildLogErrorAndPrint(ParseError::CorruptedDataStructure);
-           return false;
+        return false;
     }
 
        return true;
@@ -444,21 +443,30 @@ bool validateModel(const Model &model)
 
     return result;
 }
+
+
 bool parseTokens(QTextStream &in, Model &model)
 {
     int lineNum = 0;
+
+    QVector<QString> rejectedLines;
+
     while (!in.atEnd()) {
         QString line = in.readLine().trimmed();
         ++lineNum;
 
-        if (line.isEmpty())
-            continue;
+        //qDebug() << "[DEBUG] Строка" << lineNum << ":" << line;
 
-        QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-        if (tokens.isEmpty()) {
+        if (line.isEmpty()) {
+            rejectedLines.append(QString("Line %1: [Empty]").arg(lineNum));
             continue;
         }
 
+        QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+        if (tokens.isEmpty()) {
+            rejectedLines.append(QString("Line %1: [Whitespace only]").arg(lineNum));
+            continue;
+        }
 
         const QString type = tokens[0];
 
@@ -468,18 +476,24 @@ bool parseTokens(QTextStream &in, Model &model)
 
         if (type == "v") {
             if (!parseVertex(tokens, line, model.vertices, lineNum)) {
+                //qDebug() << "[ERROR] Ошибка при обработке вершины на строке" << lineNum;
+                rejectedLines.append(QString("Line %1: Vertex parsing failed").arg(lineNum));
                 return false;
             }
         }
 
         else if (type == "vt") {
             if (!parseTexCoord(tokens, line, model.textureVertices, lineNum)) {
+                //qDebug() << "[ERROR] Ошибка при обработке текстурной координаты на строке" << lineNum;
+                rejectedLines.append(QString("Line %1: Texture coord parsing failed").arg(lineNum));
                 return false;
             }
         }
 
         else if (type == "vn") {
             if (!parseNormal(tokens, line, model.normals, lineNum)) {
+                //qDebug() << "[ERROR] Ошибка при обработке нормали на строке" << lineNum;
+                rejectedLines.append(QString("Line %1: Normal parsing failed").arg(lineNum));
                 return false;
             }
         }
@@ -491,15 +505,35 @@ bool parseTokens(QTextStream &in, Model &model)
                            model.faceNormalIndices,
                            model.polygonStarts,
                            model.polygonLengths,
-                           lineNum)){
+                           lineNum))
+            {
+                //qDebug() << "[ERROR] Ошибка при обработке полигона на строке" << lineNum;
+                rejectedLines.append(QString("Line %1: Face parsing failed").arg(lineNum));
                 return false;
             }
-
         }
 
-
-
+        else {
+            //qDebug() << "[WARNING] Неизвестный тип строки:" << type;
+            rejectedLines.append(QString("Line %1: Unknown command '%2'").arg(lineNum).arg(type));
+            continue;
+        }
     }
+
+
+
+    if (!rejectedLines.isEmpty()) {
+        //qDebug() << "\n===============================";
+        //qDebug() << "[REPORT] Строки, которые не прошли валидацию первого символа:";
+        for (const QString& msg : rejectedLines) {
+            //qDebug() << "  " << msg;
+        }
+        //qDebug() << "===============================\n";
+    } else {
+        //qDebug() << "[INFO] Все строки успешно прошли начальную валидацию.";
+    }
+
+    //qDebug() << "[INFO] Парсинг завершён успешно.";
 
     return true;
 }

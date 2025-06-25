@@ -1,5 +1,4 @@
 #include <QCoreApplication>
-#include <QApplication>
 #include <QVector>
 #include <QVector2D>
 #include <QVector3D>
@@ -8,10 +7,9 @@
 #include <QDebug>
 #include <QtGlobal>
 
-#include "ObjReader/objreader.h"
-#include <Viewport/viewport.h>
-#include "Model/model.h"
 
+#include "ObjReader/objreader.h"
+#include "Model/model.h"
 
 
 void printStats(const Model &model)
@@ -80,27 +78,19 @@ void launchReader(const QString &filename){
         qCritical() << "Ошибка при разборе файла OBJ.";
     }
 
-    //printStats(model);
+    printStats(model);
 }
 
 int main(int argc, char *argv[])
 {
-   // QCoreApplication app(argc, argv);
-    QApplication app(argc, argv); // ← ВАЖНО: именно QApplication
-
-    QString filename = "/home/r3ds/Internship/resources/cube.obj";
-    const bool launchOk = false;
+    QCoreApplication app(argc, argv);
+    QString filename = "/home/r3ds/Internship/resources/HARDCORE/cube.obj";
+    const bool launchOk = true;
 
     if (launchOk){
         launchReader(filename);
     }
-
-
-    Viewport viewport;
-    viewport.resize(800, 600);
-    viewport.show();
-
-    return app.exec();
+    return 0;
 }
 
 
