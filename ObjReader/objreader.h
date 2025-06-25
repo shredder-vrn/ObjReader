@@ -47,6 +47,9 @@ bool validateModel(
 bool parseTokens(
         QTextStream &in,
         Model &model);
+bool parseObj(
+        const QString &filePath,
+        Model &model);
 
 
 #endif // OBJREADER_H

@@ -22,11 +22,12 @@ private slots:
     void testParseNormalLine();
     void testParseFaceLine_data();
     void testParseFaceLine();
-    /*void testValidateModel_data();
+    void testValidateModel_data();
     void testValidateModel();
-    void testParseObjFromFile_data();
-    void testParseObjFromFile();*/
-
+    void testParseTokens_data();
+    void testParseTokens();
+    void testParseObj_data();
+    void testParseObj();
 };
 
 #endif // OBJREADERTEST_H

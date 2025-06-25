@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
     Model model;
 
-    QString filename = "/home/r3ds/Internship/resources/HARDCORE/cube.obj";
+    QString filename = "/home/r3ds/Internship/resources/cube.obj";
 
     QFile file(filename);
     if (!file.exists()) {

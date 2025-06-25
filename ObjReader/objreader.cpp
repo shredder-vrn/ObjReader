@@ -193,11 +193,6 @@ bool parseNormal(
     return true;
 }
 
-
-
-#include <QDebug>
-#include <QRegularExpression>
-
 bool parseFace(
     const QStringList &tokens,
     const QString &line,
@@ -208,16 +203,11 @@ bool parseFace(
     QVector<int> &polygonLengths,
     int &outLineNum)
 {
-    qDebug() << "=== Начало парсинга грани ===";
 
-    // --- Шаг 1: Удаление комментариев ---
     QString cleanLine = line.section('#', 0, 0);
-    qDebug() << "[DEBUG] После удаления комментария:" << cleanLine;
 
-    // --- Шаг 2: Разбиение на токены ---
     QRegularExpression re("\\s+");
     QStringList tokensCleaned = cleanLine.split(re, QString::SkipEmptyParts);
-    qDebug() << "[DEBUG] Токены после split:" << tokensCleaned;
 
     if (tokensCleaned.isEmpty() || tokensCleaned[0] != "f") {
         buildLogErrorAndPrint(ParseError::FaceInvalidCommand, outLineNum, line);
@@ -228,86 +218,66 @@ bool parseFace(
     QVector<int> texCoordIndices;
     QVector<int> normalIndices;
 
-    int expectedFormat = -1; // Проверка единообразия формата
+    int expectedFormat = -1;
 
-    // --- Цикл по вершинам ---
     for (int i = 1; i < tokensCleaned.size(); ++i) {
-        qDebug() << "[DEBUG] Парсим вершину #" << i << ":" << tokensCleaned[i];
 
         QStringList parts = tokensCleaned[i].split('/');
-        qDebug() << "        Разделено на части:" << parts;
 
 
-        // --- Проверяем, что вершина имеет максимум 3 компонента ---
         if (parts.size() > 3) {
-            qDebug() << "[ERROR] Слишком много частей в вершине:" << parts;
             buildLogErrorAndPrint(ParseError::FaceInvalidVertexFormat, outLineNum, line);
             return false;
         }
 
 
-        // --- Проверяем единообразие форматов ---
         int currentFormat = parts.size();
         if (expectedFormat == -1) {
             expectedFormat = currentFormat;
-            qDebug() << "[DEBUG] Установлен ожидаемый формат:" << expectedFormat;
         } else if (currentFormat != expectedFormat) {
-            qDebug() << "[ERROR] Неоднородные форматы вершин.";
             buildLogErrorAndPrint(ParseError::FaceMixedVertexFormats, outLineNum, line);
             return false;
         }
 
         bool isOk = false;
 
-        // --- Парсим вершину ---
         int vi = parts[0].toInt(&isOk);
         if (!isOk || vi <= 0) {
-            qDebug() << "[ERROR] Вершина невалидна:" << parts[0];
             buildLogErrorAndPrint(ParseError::FaceVertexIndexInvalid, outLineNum, line);
             return false;
         }
-        vertexIndices.append(vi - 1); // OpenGL-style indexing
-        qDebug() << "        vertexIndices =" << vertexIndices;
+        vertexIndices.append(vi - 1);
 
-        // --- Парсим текстурную координату ---
         int ti = -1;
         if (parts.size() >= 2) {
             if (!parts[1].isEmpty()) {
                 ti = parts[1].toInt(&isOk);
                 if (!isOk || ti <= 0) {
-                    qDebug() << "[ERROR] Texture coord невалиден:" << parts[1];
                     buildLogErrorAndPrint(ParseError::FaceTexCoordIndexInvalid, outLineNum, line);
                     ti = -1;
                 }
             }
         }
         texCoordIndices.append(ti - 1);
-        qDebug() << "        texCoordIndices =" << texCoordIndices;
 
-        // --- Парсим нормаль ---
         int ni = -1;
         if (parts.size() >= 3) {
             if (!parts[2].isEmpty()) {
                 ni = parts[2].toInt(&isOk);
                 if (!isOk || ni <= 0) {
-                    qDebug() << "[ERROR] Нормаль невалидна:" << parts[2];
                     buildLogErrorAndPrint(ParseError::FaceNormalIndexInvalid, outLineNum, line);
                     ni = -1;
                 }
             }
         }
         normalIndices.append(ni - 1);
-        qDebug() << "        normalIndices =" << normalIndices;
     }
 
-    // --- Проверка количества вершин ---
     if (vertexIndices.size() < 3) {
-        qDebug() << "[ERROR] Меньше трёх вершин";
         buildLogErrorAndPrint(ParseError::FaceLessThanThreeVertices, outLineNum, line);
         return false;
     }
 
-    // --- Сохранение результата ---
     int start = faceVertexIndices.size();
     faceVertexIndices.append(vertexIndices);
     faceTexCoordIndices.append(texCoordIndices);
@@ -315,23 +285,18 @@ bool parseFace(
     polygonStarts.append(start);
     polygonLengths.append(vertexIndices.size());
 
-    qDebug() << "[INFO] Грань успешно добавлена:";
-    qDebug() << "        faceVertexIndices:" << faceVertexIndices;
-    qDebug() << "        faceTexCoordIndices:" << faceTexCoordIndices;
-    qDebug() << "        faceNormalIndices:" << faceNormalIndices;
-    qDebug() << "        polygonStarts:" << polygonStarts;
-    qDebug() << "        polygonLengths:" << polygonLengths;
-
     return true;
 }
 
 
 bool checkVertices(const QVector<QVector3D> &vertices)
 {
+
     if (vertices.isEmpty()) {
         buildLogErrorAndPrint(ParseError::EmptyData);
         return false;
     }
+
     return true;
 }
 
@@ -341,7 +306,6 @@ bool checkTexCoords(
         const QVector<int> &polygonStarts,
         const QVector<int> &polygonLengths)
 {
-    Q_UNUSED(texCoordData); // больше не нужна для проверок длины (%2)
 
     if (faceTexCoordIndices.isEmpty()) {
         return true;
@@ -353,6 +317,7 @@ bool checkTexCoords(
     for (int i = 0; i < polygonLengths.size(); ++i) {
         int start = polygonStarts[i];
         int count = polygonLengths[i];
+
 
         if (start + count > faceTexCoordIndices.size()) {
             buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
@@ -368,17 +333,14 @@ bool checkTexCoords(
             }
         }
     }
-
     return allValid;
 }
-
 bool checkNormals(
         const QVector<QVector3D> &normalData,
         const QVector<int> &faceNormalIndices,
         const QVector<int> &polygonStarts,
         const QVector<int> &polygonLengths)
 {
-    Q_UNUSED(normalData); // аналогично
 
     if (faceNormalIndices.isEmpty()) {
         return true;
@@ -391,9 +353,12 @@ bool checkNormals(
         int start = polygonStarts[i];
         int count = polygonLengths[i];
 
+
+
         if (start + count > faceNormalIndices.size()) {
             buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
             allValid = false;
+
             continue;
         }
 
@@ -402,19 +367,20 @@ bool checkNormals(
             if (idx < 0 || idx >= maxNormal) {
                 buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
                 allValid = false;
+
             }
         }
     }
 
     return allValid;
 }
-
 bool checkFaces(
         const QVector<QVector3D> &vertexData,
         const QVector<int> &faceVertexIndices,
         const QVector<int> &polygonStarts,
         const QVector<int> &polygonLengths)
 {
+
     if (polygonStarts.isEmpty() || polygonLengths.isEmpty()) {
         buildLogErrorAndPrint(ParseError::EmptyData);
         return false;
@@ -432,6 +398,7 @@ bool checkFaces(
         int start = polygonStarts[i];
         int count = polygonLengths[i];
 
+
         if (count < 3) {
             buildLogErrorAndPrint(ParseError::FaceLessThanThreeVertices);
             return false;
@@ -441,8 +408,9 @@ bool checkFaces(
             int idx = faceVertexIndices[start + j];
             if (idx < 0 || idx >= maxVertex) {
                 buildLogErrorAndPrint(ParseError::FaceIndexOutOfBounds);
-                return false;
-            }
+                           return false;
+            } else {
+               }
         }
 
         totalIndices += count;
@@ -450,20 +418,32 @@ bool checkFaces(
 
     if (totalIndices != faceVertexIndices.size()) {
         buildLogErrorAndPrint(ParseError::CorruptedDataStructure);
-        return false;
+           return false;
     }
 
-    return true;
+       return true;
 }
-
 bool validateModel(const Model &model)
 {
-    return checkVertices(model.vertices) &&
-           checkTexCoords(model.textureVertices, model.faceTexCoordIndices, model.polygonStarts, model.polygonLengths) &&
-           checkNormals(model.normals, model.faceNormalIndices, model.polygonStarts, model.polygonLengths) &&
-           checkFaces(model.vertices, model.faceVertexIndices, model.polygonStarts, model.polygonLengths);
-}
+    qDebug() << "=== Starting model validation ===";
 
+    bool verticesOk = checkVertices(model.vertices);
+    qDebug() << "Vertices check:" << verticesOk;
+
+    bool texCoordsOk = checkTexCoords(model.textureVertices, model.faceTexCoordIndices, model.polygonStarts, model.polygonLengths);
+    qDebug() << "Texture coordinates check:" << texCoordsOk;
+
+    bool normalsOk = checkNormals(model.normals, model.faceNormalIndices, model.polygonStarts, model.polygonLengths);
+    qDebug() << "Normals check:" << normalsOk;
+
+    bool facesOk = checkFaces(model.vertices, model.faceVertexIndices, model.polygonStarts, model.polygonLengths);
+    qDebug() << "Faces check:" << facesOk;
+
+    bool result = verticesOk && texCoordsOk && normalsOk && facesOk;
+    qDebug() << "=== Final result: " << result << " ===";
+
+    return result;
+}
 bool parseTokens(QTextStream &in, Model &model)
 {
     int lineNum = 0;
@@ -474,85 +454,52 @@ bool parseTokens(QTextStream &in, Model &model)
         if (line.isEmpty())
             continue;
 
-        qDebug() << "[DEBUG] Строка" << lineNum << ":" << line;
-
         QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
         if (tokens.isEmpty()) {
-            qDebug() << "  [SKIP] Пустая строка или только пробелы";
             continue;
         }
 
-        qDebug() << "  Токены:" << tokens;
 
         const QString type = tokens[0];
 
         if (type == "#") {
-            qDebug() << "  [COMMENT] Пропущено.";
             continue;
         }
 
         if (type == "v") {
-            qDebug() << "  [VERTEX] Обработка вершины...";
             if (!parseVertex(tokens, line, model.vertices, lineNum)) {
-                qDebug() << "  [ERROR] Ошибка при обработке вершины на строке" << lineNum;
                 return false;
             }
-            qDebug() << "  [SUCCESS] Вершина добавлена. Текущее количество вершин:" << model.vertices.size();
         }
 
         else if (type == "vt") {
-            qDebug() << "  [TEXCOORD] Обработка текстурной координаты...";
             if (!parseTexCoord(tokens, line, model.textureVertices, lineNum)) {
-                qDebug() << "  [ERROR] Ошибка при обработке текстурной координаты на строке" << lineNum;
                 return false;
             }
-            qDebug() << "  [SUCCESS] Текстурная координата добавлена. Количество:" << model.textureVertices.size();
         }
 
         else if (type == "vn") {
-            qDebug() << "  [NORMAL] Обработка нормали...";
             if (!parseNormal(tokens, line, model.normals, lineNum)) {
-                qDebug() << "  [ERROR] Ошибка при обработке нормали на строке" << lineNum;
                 return false;
             }
-            qDebug() << "  [SUCCESS] Нормаль добавлена. Количество:" << model.normals.size();
         }
 
         else if (type == "f") {
-            qDebug() << "  [FACE] Обработка полигона...";
             if (!parseFace(tokens, line,
                            model.faceVertexIndices,
                            model.faceTexCoordIndices,
                            model.faceNormalIndices,
                            model.polygonStarts,
                            model.polygonLengths,
-                           lineNum))
-            {
-                qDebug() << "  [ERROR] Ошибка при обработке полигона на строке" << lineNum;
+                           lineNum)){
                 return false;
             }
-            qDebug() << "  [SUCCESS] Полигон добавлен.";
-            qDebug() << "    Индексы вершин:" << model.faceVertexIndices;
-            qDebug() << "    Индексы текстур:" << model.faceTexCoordIndices;
-            qDebug() << "    Индексы нормалей:" << model.faceNormalIndices;
-            qDebug() << "    polygonStarts:" << model.polygonStarts;
-            qDebug() << "    polygonLengths:" << model.polygonLengths;
+
         }
 
-        else {
-            qDebug() << "  [WARNING] Неизвестный тип строки:" << type;
-        }
 
-        qDebug() << "--------------------------------------------------";
+
     }
-
-    qDebug() << "[INFO] Парсинг завершён успешно.";
-    qDebug() << "  Вершин всего:" << model.vertices.size();
-    qDebug() << "  Текстурных координат:" << model.textureVertices.size();
-    qDebug() << "  Нормалей:" << model.normals.size();
-    qDebug() << "  Индексы вершин полигонов:" << model.faceVertexIndices.size();
-    qDebug() << "  Индексы текстур полигонов:" << model.faceTexCoordIndices.size();
-    qDebug() << "  Индексы нормалей полигонов:" << model.faceNormalIndices.size();
 
     return true;
 }
