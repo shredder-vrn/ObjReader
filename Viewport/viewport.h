@@ -2,37 +2,34 @@
 #define VIEWPORT_H
 
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions_3_3_Core>
-#include <QOpenGLShaderProgram>
-#include <QMouseEvent>
+#include <QWidget>
+#include <QVector>
+#include <QVector3D>
 
-#include "Model/model.h"
+#include "Scene/scene.h" // <-- новый класс
 
-class Viewport : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
+
+class Viewport : public QOpenGLWidget
 {
     Q_OBJECT
 
 public:
-    explicit Viewport(QWidget *parent = nullptr);
-    void loadModel(const QString &filePath);
+    explicit Viewport(QWidget* parent = nullptr);
+    ~Viewport();
+
+    void loadModel(const QString& filePath);
 
 protected:
     void initializeGL() override;
-    void resizeGL(int w, int h) override;
     void paintGL() override;
 
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
 
 private:
+    Scene scene;
     QPoint lastMousePos;
-    float angleX = 0.0f;
-    float angleY = 0.0f;
-
-    Model m_model;
-    GLuint vbo = 0;
-    GLuint vao = 0;
-    QOpenGLShaderProgram *shaderProgram = nullptr;
 };
+
 
 #endif // VIEWPORT_H

@@ -7,6 +7,8 @@
 #include "Model/model.h"
 #include "ObjReader/objreader.h"
 
+Q_DECLARE_METATYPE(Model)
+
 
 static bool parseSingleLine(const QString& line, Model &model)
 {

@@ -1,0 +1,4 @@
+#ifndef VERTEXSHADER_H
+#define VERTEXSHADER_H
+
+#endif // VERTEXSHADER_H

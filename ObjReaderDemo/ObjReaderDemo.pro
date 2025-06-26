@@ -8,7 +8,7 @@ CONFIG -= app_bundle
 
 include($$PWD/../Model/Model.pri)
 include($$PWD/../ObjReader/ObjReader.pri)
-include($$PWD/../Viewport/Viewport.pri)
+#include($$PWD/../Viewport/Viewport.pri)
 
 SOURCES += \
         $$PWD/main.cpp \

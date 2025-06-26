@@ -5,7 +5,7 @@
 
 #include <QTextStream>
 
-//! REVIEW nam
+//! REVIEW namespaces
 
 bool parseVertex(
         const QStringList &tokens,

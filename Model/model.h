@@ -1,15 +1,11 @@
-#ifndef MODELDATA_H
-#define MODELDATA_H
+#ifndef MODEL_H
+#define MODEL_H
 
 #include <QVector>
-#include <QVector2D>
 #include <QVector3D>
-#include <QMetaType>
+#include <QVector2D>
 
-//! REVIEW: namespace
-
-struct Model
-{
+struct Model {
     QVector<QVector3D> vertices;
     QVector<QVector2D> textureVertices;
     QVector<QVector3D> normals;
@@ -19,8 +15,9 @@ struct Model
     QVector<int> faceNormalIndices;
 
     QVector<int> polygonStarts;
+
+    void clear();
+    bool isValid() const;
 };
 
-Q_DECLARE_METATYPE(Model)
-
-#endif // MODELDATA_H
+#endif // MODEL_H

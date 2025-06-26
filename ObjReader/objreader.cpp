@@ -110,7 +110,7 @@ bool parseFace(
     QString cleanLine = line.section('#', 0, 0).trimmed();
 
     QRegularExpression re("\\s+");
-    QStringList tokensCleaned = cleanLine.split(re, QString::SkipEmptyParts);
+    QStringList tokensCleaned = cleanLine.split(re, Qt::SkipEmptyParts); //QString::SkipEmptyParts
 
     if (tokensCleaned.isEmpty() || tokensCleaned[0] != "f") {
         return false;
@@ -154,6 +154,8 @@ bool parseFace(
                 ti = -1;
             }
         }
+
+        std::vector<int> v = {1, 2, 3};
         texCoordIndices.append(ti == -1 ? -1 : ti - 1);
 
         int ni = -1;

@@ -6,14 +6,14 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 #include($$PWD/../Model/Model.pri)
 #include($$PWD/../ObjReader/ObjReader.pri)
 
-HEADERS += \
-    #$$PWD/mesh.h \
-    #$$PWD/vertex.h
+SOURCES += \
+    $$PWD/renderer.cpp
 
+HEADERS += \
+    $$PWD/renderer.h
 }
 
-SOURCES += \
-   # $$PWD/mesh.cpp
+
 
 
 

@@ -1,209 +1,274 @@
-#include "triangulate.h"
-#include <cmath>
+#include <QVector>
+#include <QVector3D>
+#include <QList>
 #include <QDebug>
+#include <cmath>
 
-bool isInTriangle(const QVector3D& p, const QVector3D& a, const QVector3D& b, const QVector3D& c) {
-    // Compute vectors
-    QVector3D v0 = c - a;
-    QVector3D v1 = b - a;
-    QVector3D v2 = p - a;
+void simpleTriangulateModel(
+    const QVector<QVector3D> &vertices,
+    QVector<int> &faceVertexIndices,
+    QVector<int> &faceTextureVertexIndices,
+    QVector<int> &faceNormalIndices,
+    QVector<int> &polygonStarts)
+{
+    QVector<int> newFaceVertexIndices;
+    QVector<int> newFaceTextureVertexIndices;
+    QVector<int> newFaceNormalIndices;
+    QVector<int> newPolygonStarts;
 
-    // Compute dot products
-    float dot00 = QVector3D::dotProduct(v0, v0);
-    float dot01 = QVector3D::dotProduct(v0, v1);
-    float dot02 = QVector3D::dotProduct(v0, v2);
-    float dot11 = QVector3D::dotProduct(v1, v1);
-    float dot12 = QVector3D::dotProduct(v1, v2);
+    qDebug() << "vertices" << vertices;
+    qDebug() << "faceVertexIndices" << faceVertexIndices;
+    qDebug() << "faceTextureVertexIndices" << faceTextureVertexIndices;
+    qDebug() << "faceNormalIndices" << faceNormalIndices;
+    qDebug() << "polygonStarts" << polygonStarts;
 
-    // Compute barycentric coordinates
-    float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
-    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+    int faceCount = polygonStarts.size();
 
-    qDebug() << "[isInTriangle] Точка:" << p;
-    qDebug() << "Треугольник: A" << a << "B" << b << "C" << c;
-    qDebug() << "v0 (C - A):" << v0;
-    qDebug() << "v1 (B - A):" << v1;
-    qDebug() << "v2 (P - A):" << v2;
-    qDebug() << "dot00 (v0·v0):" << dot00;
-    qDebug() << "dot01 (v0·v1):" << dot01;
-    qDebug() << "dot02 (v0·v2):" << dot02;
-    qDebug() << "dot11 (v1·v1):" << dot11;
-    qDebug() << "dot12 (v1·v2):" << dot12;
-    qDebug() << "invDenom:" << invDenom;
-    qDebug() << "u =" << u << "| v =" << v;
-    qDebug() << "Результат: точка внутри?" << ((u >= 0) && (v >= 0) && (u + v <= 1));
+    for (int i = 0; i < faceCount; ++i) {
+        int start = polygonStarts[i];
+        int end = (i + 1 < faceCount) ? polygonStarts[i + 1] : faceVertexIndices.size();
 
-    // Check if point is in triangle
-    return (u >= 0) && (v >= 0) && (u + v <= 1);
+        int vertexCount = end - start;
+        if (vertexCount != 4) {
+            qWarning() << "Поддерживаются только четырёхугольники!";
+            continue;
+        }
+
+        // Сохраняем начало этой грани в массиве новых индексов
+        newPolygonStarts.append(newFaceVertexIndices.size());
+        newPolygonStarts.append(newFaceVertexIndices.size() + 3);
+
+        // Индексы вершин четырёхугольника
+        int a = faceVertexIndices[start + 0];
+        int b = faceVertexIndices[start + 1];
+        int c = faceVertexIndices[start + 2];
+        int d = faceVertexIndices[start + 3];
+
+        // Первый треугольник: A -> B -> C
+        newFaceVertexIndices.append(a);
+        newFaceVertexIndices.append(b);
+        newFaceVertexIndices.append(c);
+
+        // Второй треугольник: A -> C -> D
+        newFaceVertexIndices.append(a);
+        newFaceVertexIndices.append(c);
+        newFaceVertexIndices.append(d);
+
+        // Обрабатываем текстурные координаты
+        if (!faceTextureVertexIndices.isEmpty()) {
+            int ta = faceTextureVertexIndices[start + 0];
+            int tb = faceTextureVertexIndices[start + 1];
+            int tc = faceTextureVertexIndices[start + 2];
+            int td = faceTextureVertexIndices[start + 3];
+
+            newFaceTextureVertexIndices.append(ta);
+            newFaceTextureVertexIndices.append(tb);
+            newFaceTextureVertexIndices.append(tc);
+
+            newFaceTextureVertexIndices.append(ta);
+            newFaceTextureVertexIndices.append(tc);
+            newFaceTextureVertexIndices.append(td);
+        }
+
+        // Обрабатываем нормали
+        if (!faceNormalIndices.isEmpty()) {
+            int na = faceNormalIndices[start + 0];
+            int nb = faceNormalIndices[start + 1];
+            int nc = faceNormalIndices[start + 2];
+            int nd = faceNormalIndices[start + 3];
+
+            newFaceNormalIndices.append(na);
+            newFaceNormalIndices.append(nb);
+            newFaceNormalIndices.append(nc);
+
+            newFaceNormalIndices.append(na);
+            newFaceNormalIndices.append(nc);
+            newFaceNormalIndices.append(nd);
+        }
+    }
+
+    // Перезаписываем старые данные новыми
+    faceVertexIndices = newFaceVertexIndices;
+    faceTextureVertexIndices = newFaceTextureVertexIndices;
+    faceNormalIndices = newFaceNormalIndices;
+    polygonStarts = newPolygonStarts;
+
+    qDebug() << "vertices" << vertices;
+    qDebug() << "newFaceVertexIndices" << faceVertexIndices;
+    qDebug() << "newPolygonStarts" << polygonStarts;
 }
 
-bool isConvex(const QVector<QVector3D>& allVertices, int prevIndex, int currIndex, int nextIndex) {
-    QVector3D prev = allVertices[prevIndex];
-    QVector3D curr = allVertices[currIndex];
-    QVector3D next = allVertices[nextIndex];
 
+bool pointsEqual(const QVector3D &a, const QVector3D &b, float epsilon = 1e-5f) {
+    Q_UNUSED(epsilon);
+    return qFuzzyCompare(a, b);
+}
+
+bool isConvex(
+    const QVector3D &prev,
+    const QVector3D &curr,
+    const QVector3D &next,
+    const QVector<QVector3D> &polygonPoints)
+{
     QVector3D edge1 = curr - prev;
     QVector3D edge2 = next - curr;
 
-    float cross = edge1.x() * edge2.y() - edge1.y() * edge2.x();
+    QVector3D normal = QVector3D::crossProduct(edge1, edge2).normalized();
+    QVector3D polygonNormal(0, 0, 0);
 
-    qDebug() << "[isConvex] Проверка выпуклости вершины";
-    qDebug() << "Предыдущая вершина:" << prev;
-    qDebug() << "Текущая вершина:" << curr;
-    qDebug() << "Следующая вершина:" << next;
-    qDebug() << "Вектор edge1 (curr - prev):" << edge1;
-    qDebug() << "Вектор edge2 (next - curr):" << edge2;
-    qDebug() << "Кросс-произведение.z() =" << cross;
-
-    if (qFuzzyIsNull(cross)) {
-        qDebug() << "[isConvex] Вершина вырожденная (коллинеарные точки)";
-        return false;
+    if (polygonPoints.size() >= 3) {
+        QVector3D v1 = polygonPoints[1] - polygonPoints[0];
+        QVector3D v2 = polygonPoints[2] - polygonPoints[0];
+        polygonNormal = QVector3D::crossProduct(v1, v2).normalized();
     }
 
-    bool isConvexResult = cross > 0;
-    qDebug() << "[isConvex] Вершина выпуклая?" << (isConvexResult ? "Да" : "Нет");
-
-    return isConvexResult;
+    float dot = QVector3D::dotProduct(normal, polygonNormal);
+    return dot > 0;
 }
 
-bool isPolygonCCW(const QVector<QVector3D>& allVertices, const QVector<int>& polygonVertexIndices) {
-    float sum = 0.0f;
-    int n = polygonVertexIndices.size();
+bool isEar(
+    const QVector3D &a,
+    const QVector3D &b,
+    const QVector3D &c,
+    const QVector<QVector3D> &polygonPoints)
+{
+    if (!isConvex(a, b, c, polygonPoints)) return false;
 
-    for (int i = 0; i < n; ++i) {
-        const QVector3D& current = allVertices[polygonVertexIndices[i]];
-        const QVector3D& next = allVertices[polygonVertexIndices[(i + 1) % n]];
-        sum += (next.x() - current.x()) * (next.y() + current.y());
+    for (const QVector3D &p : polygonPoints) {
+        if (pointsEqual(p, a) || pointsEqual(p, b) || pointsEqual(p, c))
+            continue;
+
+        auto sameSide = [](const QVector3D &p1, const QVector3D &p2,
+                           const QVector3D &a, const QVector3D &b) {
+            QVector3D cp1 = QVector3D::crossProduct(b - a, p1 - a);
+            QVector3D cp2 = QVector3D::crossProduct(b - a, p2 - a);
+            return QVector3D::dotProduct(cp1, cp2) >= 0;
+        };
+
+        bool s1 = sameSide(p, a, b, c);
+        bool s2 = sameSide(p, b, a, c);
+        bool s3 = sameSide(p, c, a, b);
+
+        if (s1 && s2 && s3) return false;
     }
 
-    bool ccw = sum < 0.0f;
-
-    qDebug() << "[isPolygonCCW] Сумма для определения направления обхода =" << sum;
-    qDebug() << "[isPolygonCCW] Направление обхода:" << (ccw ? "Против часовой стрелки (CCW)" : "По часовой стрелке (CW)");
-
-    return ccw;
+    return true;
 }
 
-QVector<int> triangulatePolygon(const QVector<QVector3D>& allVertices, const QVector<int>& polygonVertexIndices) {
-    QVector<int> triangles;
-    QVector<int> indices = polygonVertexIndices;
-    int n = indices.size();
+void triangulateModel(
+    const QVector<QVector3D> &vertices,
+    QVector<int> &faceVertexIndices,
+    QVector<int> &faceTextureVertexIndices,
+    QVector<int> &faceNormalIndices,
+    QVector<int> &polygonStarts)
+{
+    QVector<int> newFaceVertexIndices;
+    QVector<int> newFaceTextureVertexIndices;
+    QVector<int> newFaceNormalIndices;
+    QVector<int> newPolygonStarts;
 
-    qDebug() << "[triangulatePolygon] === НАЧАЛО ТРИАНГУЛЯЦИИ ===";
-    qDebug() << "[triangulatePolygon] Исходные индексы вершин:" << indices;
+    qDebug() << "vertices" << vertices;
+    qDebug() << "faceVertexIndices" << faceVertexIndices;
+    qDebug() << "faceTextureVertexIndices" << faceTextureVertexIndices;
+    qDebug() << "faceNormalIndices" << faceNormalIndices;
+    qDebug() << "polygonStarts" << polygonStarts;
 
-    qDebug() << "Перед началом все вершины:";
-    for (int i = 0; i < indices.size(); ++i) {
-        qDebug() << "  Вершина" << indices[i] << "=" << allVertices[indices[i]];
-    }
 
-    if (n < 3) {
-        qDebug() << "[triangulatePolygon] ❌ Полигон невалиден: меньше 3 вершин";
-        return triangles;
-    }
+    int faceCount = polygonStarts.size();
+    for (int i = 0; i < faceCount; ++i) {
+        int start = polygonStarts[i];
+        int end = (i + 1 < faceCount) ? polygonStarts[i + 1] : faceVertexIndices.size();
 
-    // Убедимся, что полигон задан против часовой стрелки
-    if (!isPolygonCCW(allVertices, indices)) {
-        qDebug() << "[triangulatePolygon] 🔄 Меняем направление обхода на противоположное";
-        std::reverse(indices.begin(), indices.end());
-    }
+        int vertexCount = end - start;
+        if (vertexCount < 3) continue;
 
-    // Площадь полигона для проверки вырожденности
-    float area = 0.0f;
-    for (int i = 0; i < n; ++i) {
-        const QVector3D& current = allVertices[indices[i]];
-        const QVector3D& next = allVertices[indices[(i + 1) % n]];
-        area += current.x() * next.y() - next.x() * current.y();
-    }
-    area = fabs(area) / 2.0f;
+        // Извлекаем индексы полигона
+        QList<int> indices;
+        for (int j = start; j < end; ++j) {
+            indices.append(faceVertexIndices[j]);
+        }
 
-    qDebug() << "[triangulatePolygon] Вычисленная площадь полигона:" << area;
+        // Точки для проверки геометрии
+        QVector<QVector3D> polygonPoints;
+        for (int idx : indices) {
+            polygonPoints.append(vertices[idx]);
+        }
 
-    if (qFuzzyIsNull(area)) {
-        qDebug() << "[triangulatePolygon] ⚠️ Полигон вырожденный (площадь ≈ 0)";
-        return triangles;
-    }
+        newPolygonStarts.append(newFaceVertexIndices.size());
 
-    while (n > 3) {
-        bool earFound = false;
+        // Ear Clipping
+        while (indices.size() > 3) {
+            bool foundEar = false;
+            for (int iLoop = 0; iLoop < indices.size(); ++iLoop) {
+                int prevIdx = indices[(iLoop - 1 + indices.size()) % indices.size()];
+                int currIdx = indices[iLoop];
+                int nextIdx = indices[(iLoop + 1) % indices.size()];
 
-        qDebug() << "\n[triangulatePolygon] 🔍 Поиск уха в полигоне из" << n << "вершин";
+                QVector3D prevPt = vertices[prevIdx];
+                QVector3D currPt = vertices[currIdx];
+                QVector3D nextPt = vertices[nextIdx];
 
-        for (int i = 0; i < n && !earFound; ++i) {
-            int prevIndex = (i - 1 + n) % n;
-            int currIndex = i;
-            int nextIndex = (i + 1) % n;
+                if (isEar(prevPt, currPt, nextPt, polygonPoints)) {
+                    newFaceVertexIndices.append(prevIdx);
+                    newFaceVertexIndices.append(currIdx);
+                    newFaceVertexIndices.append(nextIdx);
 
-            int a = indices[prevIndex];
-            int b = indices[currIndex];
-            int c = indices[nextIndex];
+                    newPolygonStarts.append(newFaceVertexIndices.size());
 
-            QVector3D va = allVertices[a];
-            QVector3D vb = allVertices[b];
-            QVector3D vc = allVertices[c];
 
-            qDebug() << "[triangulatePolygon] Проверка вершины" << i << "(индекс" << b << ")";
-            qDebug() << "Треугольник: A" << a << "=" << va;
-            qDebug() << "             B" << b << "=" << vb;
-            qDebug() << "             C" << c << "=" << vc;
-
-            if (isConvex(allVertices, a, b, c)) {
-                bool isEar = true;
-                QVector3D va = allVertices[a];
-                QVector3D vb = allVertices[b];
-                QVector3D vc = allVertices[c];
-
-                qDebug() << "[triangulatePolygon] ✅ Вершина" << b << "выпуклая → возможное 'ушко'";
-
-                for (int j = 0; j < n && isEar; ++j) {
-                    if (j == prevIndex || j == currIndex || j == nextIndex)
-                        continue;
-
-                    QVector3D p = allVertices[indices[j]];
-
-                    qDebug() << "[triangulatePolygon] Проверка точки" << indices[j] << "(" << p << ") внутри треугольника";
-
-                    if (isInTriangle(p, va, vb, vc)) {
-                        qDebug() << "[triangulatePolygon] ❌ Точка" << indices[j] << "внутри треугольника → не ушко";
-                        isEar = false;
+                    if (!faceTextureVertexIndices.isEmpty()) {
+                        newFaceTextureVertexIndices.append(faceTextureVertexIndices[prevIdx]);
+                        newFaceTextureVertexIndices.append(faceTextureVertexIndices[currIdx]);
+                        newFaceTextureVertexIndices.append(faceTextureVertexIndices[nextIdx]);
                     }
-                }
 
-                if (isEar) {
-                    qDebug() << "[triangulatePolygon] ✅ Ушко найдено: вершины" << a << b << c;
-                    triangles.append(a);
-                    triangles.append(b);
-                    triangles.append(c);
+                    if (!faceNormalIndices.isEmpty()) {
+                        newFaceNormalIndices.append(faceNormalIndices[prevIdx]);
+                        newFaceNormalIndices.append(faceNormalIndices[currIdx]);
+                        newFaceNormalIndices.append(faceNormalIndices[nextIdx]);
+                    }
 
-                    qDebug() << "[triangulatePolygon] 🗑 Удаление вершины" << b;
-                    indices.removeAt(currIndex);
-                    --n;
-                    earFound = true;
-                } else {
-                    qDebug() << "[triangulatePolygon] ❌ Ушко не найдено на этой итерации";
+                    indices.removeAt(iLoop);
+                    foundEar = true;
+                    break;
                 }
-            } else {
-                qDebug() << "[triangulatePolygon] ❌ Вершина" << b << "не выпуклая → пропуск";
+            }
+
+            if (!foundEar) {
+                qWarning() << "Не удалось найти ухо в полигоне" << i << ". Возможно, полигон самопересекается.";
+                break;
             }
         }
 
-        if (!earFound) {
-            qWarning("[triangulatePolygon] ⚠️ Не удалось найти ушко → остановка");
-            break;
+        // Добавляем последний треугольник
+        if (indices.size() == 3) {
+            newFaceVertexIndices.append(indices[0]);
+            newFaceVertexIndices.append(indices[1]);
+            newFaceVertexIndices.append(indices[2]);
+
+            if (!faceTextureVertexIndices.isEmpty()) {
+                newFaceTextureVertexIndices.append(faceTextureVertexIndices[indices[0]]);
+                newFaceTextureVertexIndices.append(faceTextureVertexIndices[indices[1]]);
+                newFaceTextureVertexIndices.append(faceTextureVertexIndices[indices[2]]);
+            }
+
+            if (!faceNormalIndices.isEmpty()) {
+                newFaceNormalIndices.append(faceNormalIndices[indices[0]]);
+                newFaceNormalIndices.append(faceNormalIndices[indices[1]]);
+                newFaceNormalIndices.append(faceNormalIndices[indices[2]]);
+            }
         }
     }
 
-    if (n == 3) {
-        qDebug() << "[triangulatePolygon] 🏁 Последний треугольник добавлен:" << indices[0] << indices[1] << indices[2];
-        triangles.append(indices[0]);
-        triangles.append(indices[1]);
-        triangles.append(indices[2]);
-    }
+    // Перезаписываем данные
+    faceVertexIndices = newFaceVertexIndices;
+    faceTextureVertexIndices = newFaceTextureVertexIndices;
+    faceNormalIndices = newFaceNormalIndices;
+    polygonStarts = newPolygonStarts;
 
-    qDebug() << "[triangulatePolygon] ✅ Триангуляция завершена";
-    qDebug() << "           Количество треугольников:" << triangles.size() / 3;
-    qDebug() << "           Индексы треугольников:" << triangles;
-
-    return triangles;
+    qDebug() << "vertices" << vertices;
+    qDebug() << "faceVertexIndices" << faceVertexIndices;
+    qDebug() << "faceTextureVertexIndices" << faceTextureVertexIndices;
+    qDebug() << "faceNormalIndices" << faceNormalIndices;
+    qDebug() << "polygonStarts" << polygonStarts;
 }
