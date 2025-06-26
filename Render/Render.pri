@@ -7,13 +7,13 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 #include($$PWD/../ObjReader/ObjReader.pri)
 
 HEADERS += \
-    $$PWD/mesh.h \
-    $$PWD/vertex.h
+    #$$PWD/mesh.h \
+    #$$PWD/vertex.h
 
 }
 
 SOURCES += \
-    $$PWD/mesh.cpp
+   # $$PWD/mesh.cpp
 
 
 

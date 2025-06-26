@@ -1,7 +1,9 @@
+LIBS += -lGL
 QT -= gui
 QT += core gui
 QT += testlib
 QT += core gui widgets opengl
+QT += opengl
 
 CONFIG += c++11 console
 CONFIG -= app_bundle

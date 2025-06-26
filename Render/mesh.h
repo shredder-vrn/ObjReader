@@ -1,12 +1,12 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <QOpenGLFunctions_4_1_Core>
+#include <QOpenGLFunctions_3_3_Core>
 #include <QVector>
 
 #include "vertex.h"
 
-class Mesh : protected QOpenGLFunctions_4_1_Core {
+class Mesh : protected QOpenGLFunctions_3_3_Core {
 public:
     Mesh();
     ~Mesh();
