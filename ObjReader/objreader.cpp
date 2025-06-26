@@ -105,10 +105,9 @@ bool parseFace(
     QVector<int> &faceVertexIndices,
     QVector<int> &faceTexCoordIndices,
     QVector<int> &faceNormalIndices,
-    QVector<int> &polygonStarts,
-    QVector<int> &polygonLengths)
+    QVector<int> &polygonStarts)
 {
-    QString cleanLine = line.section('#', 0, 0);
+    QString cleanLine = line.section('#', 0, 0).trimmed();
 
     QRegularExpression re("\\s+");
     QStringList tokensCleaned = cleanLine.split(re, QString::SkipEmptyParts);
@@ -132,11 +131,13 @@ bool parseFace(
 
         int currentFormat = parts.size();
 
+        if (expectedFormat == -1) {
+            expectedFormat = currentFormat;
+        }
+
         if (currentFormat != expectedFormat) {
             return false;
         }
-
-        expectedFormat = currentFormat;
 
         bool isOk = false;
 
@@ -153,7 +154,7 @@ bool parseFace(
                 ti = -1;
             }
         }
-        texCoordIndices.append(ti - 1);
+        texCoordIndices.append(ti == -1 ? -1 : ti - 1);
 
         int ni = -1;
         if (parts.size() >= 3 && !parts[2].trimmed().isEmpty()) {
@@ -162,7 +163,7 @@ bool parseFace(
                 ni = -1;
             }
         }
-        normalIndices.append(ni - 1);
+        normalIndices.append(ni == -1 ? -1 : ni - 1);
     }
 
     if (vertexIndices.size() < 3) {
@@ -171,8 +172,6 @@ bool parseFace(
 
     int start = faceVertexIndices.size();
     polygonStarts.append(start);
-    polygonLengths.append(vertexIndices.size());
-
     faceVertexIndices.append(vertexIndices);
     faceTexCoordIndices.append(texCoordIndices);
     faceNormalIndices.append(normalIndices);
@@ -192,22 +191,22 @@ bool checkVertices(const QVector<QVector3D> &vertices)
 }
 
 bool checkTexCoords(
-        const QVector<QVector2D> &texCoordData,
+        const QVector<QVector2D> &textureVertices,
         const QVector<int> &faceTexCoordIndices,
-        const QVector<int> &polygonStarts,
-        const QVector<int> &polygonLengths)
+        const QVector<int> &polygonStarts)
 {
 
     if (faceTexCoordIndices.isEmpty()) {
         return true;
     }
 
-    int maxTexCoord = texCoordData.size();
+    int maxTexCoord = textureVertices.size();
     bool allValid = true;
 
-    for (int i = 0; i < polygonLengths.size(); ++i) {
+    for (int i = 0; i < polygonStarts.size(); ++i) {
         int start = polygonStarts[i];
-        int count = polygonLengths[i];
+        int next = (i < polygonStarts.size() - 1) ? polygonStarts[i + 1] : faceTexCoordIndices.size();
+        int count = next - start;
 
         if (start + count > faceTexCoordIndices.size()) {
             allValid = false;
@@ -225,22 +224,22 @@ bool checkTexCoords(
 }
 
 bool checkNormals(
-        const QVector<QVector3D> &normalData,
+        const QVector<QVector3D> &normals,
         const QVector<int> &faceNormalIndices,
-        const QVector<int> &polygonStarts,
-        const QVector<int> &polygonLengths)
+        const QVector<int> &polygonStarts)
 {
 
     if (faceNormalIndices.isEmpty()) {
         return true;
     }
 
-    int maxNormal = normalData.size();
+    int maxNormal = normals.size();
     bool allValid = true;
 
-    for (int i = 0; i < polygonLengths.size(); ++i) {
+    for (int i = 0; i < polygonStarts.size(); ++i) {
         int start = polygonStarts[i];
-        int count = polygonLengths[i];
+        int next = (i < polygonStarts.size() - 1) ? polygonStarts[i + 1] : faceNormalIndices.size();
+        int count = next - start;
 
         if (start + count > faceNormalIndices.size()) {
             allValid = false;
@@ -259,29 +258,27 @@ bool checkNormals(
 }
 
 bool checkFaces(
-        const QVector<QVector3D> &vertexData,
+        const QVector<QVector3D> &vertices,
         const QVector<int> &faceVertexIndices,
-        const QVector<int> &polygonStarts,
-        const QVector<int> &polygonLengths)
+        const QVector<int> &polygonStarts)
 {
-
-    if (polygonStarts.isEmpty() || polygonLengths.isEmpty()) {
+    if (polygonStarts.isEmpty() || faceVertexIndices.isEmpty()) {
         return false;
     }
 
-    if (polygonStarts.size() != polygonLengths.size()) {
-        return false;
-    }
-
+    int maxVertex = vertices.size();
     int totalIndices = 0;
-    int maxVertex = vertexData.size();
 
-    for (int i = 0; i < polygonLengths.size(); ++i) {
+    for (int i = 0; i < polygonStarts.size(); ++i) {
         int start = polygonStarts[i];
-        int count = polygonLengths[i];
-
+        int next = (i < polygonStarts.size() - 1) ? polygonStarts[i + 1] : faceVertexIndices.size();
+        int count = next - start;
 
         if (count < 3) {
+            return false;
+        }
+
+        if (start + count > faceVertexIndices.size()) {
             return false;
         }
 
@@ -299,17 +296,16 @@ bool checkFaces(
         return false;
     }
 
-       return true;
+    return true;
 }
 
 bool validateModel(const Model &model)
 {
     bool verticesOk = checkVertices(model.vertices);
-    bool texCoordsOk = checkTexCoords(model.textureVertices, model.faceTexCoordIndices, model.polygonStarts, model.polygonLengths);
-    bool normalsOk = checkNormals(model.normals, model.faceNormalIndices, model.polygonStarts, model.polygonLengths);
-    bool facesOk = checkFaces(model.vertices, model.faceVertexIndices, model.polygonStarts, model.polygonLengths);
-    bool result = verticesOk && texCoordsOk && normalsOk && facesOk;
-    return result;
+    bool texCoordsOk = checkTexCoords(model.textureVertices, model.faceTextureVertexIndices, model.polygonStarts);
+    bool normalsOk = checkNormals(model.normals, model.faceNormalIndices, model.polygonStarts);
+    bool facesOk = checkFaces(model.vertices, model.faceVertexIndices, model.polygonStarts);
+    return verticesOk && texCoordsOk && normalsOk && facesOk;
 }
 
 bool parseTokens(QTextStream &in, Model &model)
@@ -327,17 +323,20 @@ bool parseTokens(QTextStream &in, Model &model)
             continue;
         }
         const QString type = tokens[0];
+        qDebug() << type;
+
         if (type == "#")
             continue;
-        if (type == "v" && !parseVertex(tokens, line, model.vertices, lineNum))
+        if (type == "v" && !parseVertex(tokens, model.vertices))
             return false;
-        if (type == "vt" && !parseTexCoord(tokens, line, model.textureVertices, lineNum))
+        if (type == "vt" && !parseTexCoord(tokens, model.textureVertices))
             return false;
-        if (type == "vn" && !parseNormal(tokens, line, model.normals, lineNum))
+        if (type == "vn" && !parseNormal(tokens, model.normals))
             return false;
-        if (type == "f" && !parseFace(line, model.faceVertexIndices, model.faceTexCoordIndices, model.faceNormalIndices, model.polygonStarts, model.polygonLengths, lineNum))
+        if (type == "f" && !parseFace(line, model.faceVertexIndices, model.faceTextureVertexIndices, model.faceNormalIndices, model.polygonStarts))
             return false;
     }
+
     return true;
 }
 

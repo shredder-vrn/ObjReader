@@ -15,11 +15,10 @@ struct Model
     QVector<QVector3D> normals;
 
     QVector<int> faceVertexIndices;
-    QVector<int> faceTexCoordIndices;
+    QVector<int> faceTextureVertexIndices;
     QVector<int> faceNormalIndices;
 
     QVector<int> polygonStarts;
-    QVector<int> polygonLengths;
 };
 
 Q_DECLARE_METATYPE(Model)

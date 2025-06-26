@@ -9,9 +9,7 @@
 
 bool parseVertex(
         const QStringList &tokens,
-        const QString &line,
-        QVector<QVector3D> &outVertices,
-        int &outLineNum);
+        QVector<QVector3D> &outVertices);
 bool parseTexCoord(
         const QStringList &tokens,
         const QString &line,
@@ -25,24 +23,23 @@ bool parseNormal(
 bool parseFace(
         const QString &line,
         QVector<int> &faceVertexIndices,
-        QVector<int> &faceTexCoordIndices,
+        QVector<int> &faceTextureVertexIndices,
         QVector<int> &faceNormalIndices,
         QVector<int> &polygonStarts,
-        QVector<int> &polygonLengths,
         int &outLineNum);
-bool checkVertices(
-        const QVector<int> &vertices);
-bool checkTexCoords(
-        const QVector<int> &faceTexCoordIndices,
-        const QVector<int> &polygonStarts,
-        const QVector<int> &polygonLengths,
-        QVector<QVector2D> &outTextureVertices);
-bool checkNormals(
-        const Model &model);
-bool checkFaces(
-        const Model &model);
-bool validateModel(
-        const Model &model);
+//bool checkVertices(
+//        const QVector<int> &vertices);
+//bool checkTexCoords(
+//        const QVector<int> &faceTexCoordIndices,
+//        const QVector<int> &polygonStarts,
+//        const QVector<int> &polygonLengths,
+//        QVector<QVector2D> &outTextureVertices);
+//bool checkNormals(
+//        const Model &model);
+//bool checkFaces(
+//        const Model &model);
+//bool validateModel(
+//        const Model &model);
 bool parseTokens(
         QTextStream &in,
         Model &model);

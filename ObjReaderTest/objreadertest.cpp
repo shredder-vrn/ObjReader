@@ -31,10 +31,9 @@ static bool parseSingleLine(const QString& line, Model &model)
     if (type == "f")
         return parseFace(line,
                          model.faceVertexIndices,
-                         model.faceTexCoordIndices,
+                         model.faceTextureVertexIndices,
                          model.faceNormalIndices,
                          model.polygonStarts,
-                         model.polygonLengths,
                          lineNum);
 
 
@@ -396,9 +395,12 @@ void ObjReaderTest::testParseFaceLine()
     QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
     int lineNum = 1;
 
-    bool result = parseFace(line, model.faceVertexIndices,
-                            model.faceTexCoordIndices, model.faceNormalIndices,
-                            model.polygonStarts, model.polygonLengths, lineNum);
+    bool result = parseFace(line,
+                            model.faceVertexIndices,
+                            model.faceTextureVertexIndices,
+                            model.faceNormalIndices,
+                            model.polygonStarts,
+                            lineNum);
 
     QCOMPARE(result, expectedResult);
 }
@@ -418,7 +420,6 @@ void ObjReaderTest::testValidateModel_data()
         model.faceVertexIndices.append(1);
         model.faceVertexIndices.append(2);
         model.polygonStarts.append(0);
-        model.polygonLengths.append(3);
 
         QTest::newRow("Valid triangle") << model << true;
     }
@@ -433,15 +434,14 @@ void ObjReaderTest::testValidateModel_data()
         model.faceVertexIndices.append(1);
         model.faceVertexIndices.append(2);
         model.polygonStarts.append(0);
-        model.polygonLengths.append(3);
 
         model.textureVertices.append(QVector2D(0.0f, 0.0f));
         model.textureVertices.append(QVector2D(1.0f, 0.0f));
         model.textureVertices.append(QVector2D(0.0f, 1.0f));
 
-        model.faceTexCoordIndices.append(0);
-        model.faceTexCoordIndices.append(1);
-        model.faceTexCoordIndices.append(2);
+        model.faceTextureVertexIndices.append(0);
+        model.faceTextureVertexIndices.append(1);
+        model.faceTextureVertexIndices.append(2);
 
         model.normals.append(QVector3D(0.0f, 0.0f, 1.0f));
         model.normals.append(QVector3D(1.0f, 0.0f, 0.0f));
@@ -464,7 +464,6 @@ void ObjReaderTest::testValidateModel_data()
         model.faceVertexIndices.append(1);
         model.faceVertexIndices.append(5);
         model.polygonStarts.append(0);
-        model.polygonLengths.append(3);
 
         QTest::newRow("Index out of bounds") << model << false;
     }
@@ -479,7 +478,6 @@ void ObjReaderTest::testValidateModel_data()
         model.faceVertexIndices.append(1);
         model.faceVertexIndices.append(-1);
         model.polygonStarts.append(0);
-        model.polygonLengths.append(3);
 
         QTest::newRow("Negative index") << model << false;
     }
@@ -505,7 +503,6 @@ void ObjReaderTest::testValidateModel_data()
         model.faceVertexIndices.append(1);
         model.faceVertexIndices.append(2);
         model.polygonStarts.append(0);
-        model.polygonLengths.append(2);
         QTest::newRow("Polygon with less than 3 vertices") << model << false;
     }
 
@@ -519,15 +516,14 @@ void ObjReaderTest::testValidateModel_data()
         model.faceVertexIndices.append(1);
         model.faceVertexIndices.append(2);
         model.polygonStarts.append(0);
-        model.polygonLengths.append(3);
 
         model.textureVertices.append(QVector2D(0.0f, 0.0f));
         model.textureVertices.append(QVector2D(1.0f, 0.0f));
         model.textureVertices.append(QVector2D(0.0f, 1.0f));
 
-        model.faceTexCoordIndices.append(0);
-        model.faceTexCoordIndices.append(1);
-        model.faceTexCoordIndices.append(5);
+        model.faceTextureVertexIndices.append(0);
+        model.faceTextureVertexIndices.append(1);
+        model.faceTextureVertexIndices.append(5);
         QTest::newRow("Texture index out of bounds") << model << false;
     }
 
@@ -541,7 +537,6 @@ void ObjReaderTest::testValidateModel_data()
         model.faceVertexIndices.append(1);
         model.faceVertexIndices.append(2);
         model.polygonStarts.append(0);
-        model.polygonLengths.append(3);
 
         model.normals.append(QVector3D(0.0f, 0.0f, 1.0f));
         model.normals.append(QVector3D(1.0f, 0.0f, 0.0f));

@@ -48,8 +48,8 @@ void printStats(const Model &model)
         for (int j = 0; j < count; ++j) {
             QString part = QString::number(model.faceVertexIndices[start + j] + 1);
 
-            if (!model.faceTexCoordIndices.isEmpty() && start + j < model.faceTexCoordIndices.size())
-                part += "/" + QString::number(model.faceTexCoordIndices[start + j] + 1);
+            if (!model.faceTextureVertices.isEmpty() && start + j < model.faceTextureVertices.size())
+                part += "/" + QString::number(model.faceTextureVertices[start + j] + 1);
 
             if (!model.faceNormalIndices.isEmpty() && start + j < model.faceNormalIndices.size())
                 part += "/" + QString::number(model.faceNormalIndices[start + j] + 1);

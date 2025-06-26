@@ -1,4 +1,3 @@
-#include <QCoreApplication>
 #include <QApplication>
 #include <QVector>
 #include <QVector2D>
@@ -20,7 +19,7 @@ void printStats(const Model &model)
     qDebug() << "Вершин (v):" << model.vertices.size();
     qDebug() << "Текстурных координат (vt):" << model.textureVertices.size();
     qDebug() << "Нормалей (vn):" << model.normals.size();
-    qDebug() << "Полигонов (f):" << model.polygonLengths.size();
+    qDebug() << "Полигонов (f):" << model.polygonStarts.size();
     qDebug() << "|----------------------------------------------|";
 
     if (!model.vertices.isEmpty()) qDebug() << "Вершины:";
@@ -38,21 +37,33 @@ void printStats(const Model &model)
         qDebug() << "vn" << (i + 1) << ":" << model.normals[i];
     }
 
-    if (!model.polygonLengths.isEmpty()) qDebug() << "Полигоны:";
-    for (int i = 0; i < model.polygonLengths.size(); ++i) {
+    if (!model.polygonStarts.isEmpty()) qDebug() << "Полигоны:";
+
+    for (int i = 0; i < model.polygonStarts.size(); ++i) {
         int start = model.polygonStarts[i];
-        int count = model.polygonLengths[i];
+        int next = (i < model.polygonStarts.size() - 1) ? model.polygonStarts[i + 1] : model.faceVertexIndices.size();
+        int count = next - start;
 
         QStringList faceParts;
 
         for (int j = 0; j < count; ++j) {
             QString part = QString::number(model.faceVertexIndices[start + j] + 1);
 
-            if (!model.faceTexCoordIndices.isEmpty() && start + j < model.faceTexCoordIndices.size())
-                part += "/" + QString::number(model.faceTexCoordIndices[start + j] + 1);
+            if (!model.faceTextureVertexIndices.isEmpty() && (start + j < model.faceTextureVertexIndices.size())) {
+                int ti = model.faceTextureVertexIndices[start + j];
+                if (ti != -1) {
+                    part += "/" + QString::number(ti + 1);
+                } else {
+                    part += "/";
+                }
+            }
 
-            if (!model.faceNormalIndices.isEmpty() && start + j < model.faceNormalIndices.size())
-                part += "/" + QString::number(model.faceNormalIndices[start + j] + 1);
+            if (!model.faceNormalIndices.isEmpty() && (start + j < model.faceNormalIndices.size())) {
+                int ni = model.faceNormalIndices[start + j];
+                if (ni != -1) {
+                    part += "/" + QString::number(ni + 1);
+                }
+            }
 
             faceParts << part;
         }
@@ -80,16 +91,15 @@ void launchReader(const QString &filename){
         qCritical() << "Ошибка при разборе файла OBJ.";
     }
 
-    //printStats(model);
+    printStats(model);
 }
 
 int main(int argc, char *argv[])
 {
-   // QCoreApplication app(argc, argv);
-    QApplication app(argc, argv); // ← ВАЖНО: именно QApplication
+    QApplication app(argc, argv);
 
     QString filename = "/home/r3ds/Internship/resources/cube.obj";
-    const bool launchOk = false;
+    const bool launchOk = true;
 
     if (launchOk){
         launchReader(filename);
