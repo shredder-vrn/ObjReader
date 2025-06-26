@@ -23,18 +23,17 @@ static bool parseSingleLine(const QString& line, Model &model)
     const QString type = tokens[0];
 
     if (type == "v")
-        return parseVertex(tokens, line, model.vertices, lineNum);
+        return parseVertex(tokens, model.vertices);
     if (type == "vt")
-        return parseTexCoord(tokens, line, model.textureVertices, lineNum);
+        return parseTexCoord(tokens, model.textureVertices);
     if (type == "vn")
-        return parseNormal(tokens, line, model.normals, lineNum);
+        return parseNormal(tokens, model.normals);
     if (type == "f")
         return parseFace(line,
                          model.faceVertexIndices,
                          model.faceTextureVertexIndices,
                          model.faceNormalIndices,
-                         model.polygonStarts,
-                         lineNum);
+                         model.polygonStarts);
 
 
     return false;
@@ -399,8 +398,7 @@ void ObjReaderTest::testParseFaceLine()
                             model.faceVertexIndices,
                             model.faceTextureVertexIndices,
                             model.faceNormalIndices,
-                            model.polygonStarts,
-                            lineNum);
+                            model.polygonStarts);
 
     QCOMPARE(result, expectedResult);
 }
@@ -497,12 +495,11 @@ void ObjReaderTest::testValidateModel_data()
         Model model;
         model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
         model.vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
 
         model.faceVertexIndices.append(0);
         model.faceVertexIndices.append(1);
-        model.faceVertexIndices.append(2);
         model.polygonStarts.append(0);
+
         QTest::newRow("Polygon with less than 3 vertices") << model << false;
     }
 

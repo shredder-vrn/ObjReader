@@ -323,7 +323,6 @@ bool parseTokens(QTextStream &in, Model &model)
             continue;
         }
         const QString type = tokens[0];
-        qDebug() << type;
 
         if (type == "#")
             continue;

@@ -12,34 +12,19 @@ bool parseVertex(
         QVector<QVector3D> &outVertices);
 bool parseTexCoord(
         const QStringList &tokens,
-        const QString &line,
-        QVector<QVector2D> &outTextureVertices,
-        int &outLineNum);
+        QVector<QVector2D> &outTextureVertices);
 bool parseNormal(
         const QStringList &tokens,
-        const QString &line,
-        QVector<QVector3D> &outNormals,
-        int &outLineNum);
+        QVector<QVector3D> &outNormals);
 bool parseFace(
         const QString &line,
         QVector<int> &faceVertexIndices,
         QVector<int> &faceTextureVertexIndices,
         QVector<int> &faceNormalIndices,
-        QVector<int> &polygonStarts,
-        int &outLineNum);
-//bool checkVertices(
-//        const QVector<int> &vertices);
-//bool checkTexCoords(
-//        const QVector<int> &faceTexCoordIndices,
-//        const QVector<int> &polygonStarts,
-//        const QVector<int> &polygonLengths,
-//        QVector<QVector2D> &outTextureVertices);
-//bool checkNormals(
-//        const Model &model);
-//bool checkFaces(
-//        const Model &model);
-//bool validateModel(
-//        const Model &model);
+        QVector<int> &polygonStarts);
+
+bool validateModel(
+        const Model &model);
 bool parseTokens(
         QTextStream &in,
         Model &model);
