@@ -3,36 +3,49 @@
 #include <QTextStream>
 #include <QDebug>
 
-ShaderProgram::ShaderProgram(QObject* parent) : QObject(parent) {
+ShaderProgram::ShaderProgram(QObject *parent) : QObject(parent) {
+    qDebug() << "ShaderProgram :: ShaderProgram : запустили конструктор";
+
     program = new QOpenGLShaderProgram(this);
+    qDebug() << "ShaderProgram :: ShaderProgram : конструктор отработал";
+
 }
+
 ShaderProgram::~ShaderProgram() {
+    qDebug() << "ShaderProgram :: ShaderProgram : запустили деструктор";
+
     delete program;
+    qDebug() << "ShaderProgram :: ShaderProgram : деструктор отработал";
+
 }
 
 bool ShaderProgram::compileFromString(const QString& vertexSrc, const QString& fragmentSrc) {
+
+    qDebug() << "ShaderProgram :: compileFromString : запустили метод compileFromString";
+
     if (!program->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexSrc.toUtf8())) {
-        qCritical() << "Vertex shader compilation error:" << program->log();
         return false;
     }
 
     if (!program->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentSrc.toUtf8())) {
-        qCritical() << "Fragment shader compilation error:" << program->log();
         return false;
     }
 
     if (!program->link()) {
-        qCritical() << "Shader program linking error:" << program->log();
         return false;
     }
+
+    qDebug() << "ShaderProgram :: compileFromString : метод compileFromString отработал";
 
     return true;
 }
 
 bool ShaderProgram::compileFromFile(const QString& vertexPath, const QString& fragmentPath) {
+    qDebug() << "ShaderProgram :: compileFromFile : запустили метод compileFromFile";
+
+
     QFile vFile(vertexPath);
     if (!vFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical() << "Failed to open vertex shader file:" << vertexPath;
         return false;
     }
     QString vSrc = QTextStream(&vFile).readAll();
@@ -40,15 +53,21 @@ bool ShaderProgram::compileFromFile(const QString& vertexPath, const QString& fr
 
     QFile fFile(fragmentPath);
     if (!fFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical() << "Failed to open fragment shader file:" << fragmentPath;
         return false;
     }
     QString fSrc = QTextStream(&fFile).readAll();
     fFile.close();
 
     return compileFromString(vSrc, fSrc);
+    qDebug() << "ShaderProgram :: compileFromFile : метод compileFromFile отработал";
+
 }
 
-QOpenGLShaderProgram* ShaderProgram::get() const {
+QOpenGLShaderProgram *ShaderProgram::get() const {
+    qDebug() << "ShaderProgram :: get : запустили метод get";
+
     return program;
+
+    qDebug() << "ShaderProgram :: get : метод get отработал";
+
 }

@@ -1,15 +1,14 @@
 #ifndef MODEL_CONTROLLER
 #define MODEL_CONTROLLER
 
-
-#include <memory>
 #include <QString>
+
 #include "Model/model.h"
 
 class ModelController {
 public:
     ModelController();
-    ~ModelController();
+    ~ModelController() = default;
 
     bool loadModel(const QString& filePath);
     void clear();
@@ -19,9 +18,10 @@ public:
     const Model &getModel() const;
 
 private:
-    std::unique_ptr<Model> model;
-    float rotationX = 0.0f;
-    float rotationY = 0.0f;
+    Model model_;
+    bool hasModel_;
+    float rotationX_ = 0.0f;
+    float rotationY_ = 0.0f;
 };
 
 #endif // MODEL_CONTROLLER

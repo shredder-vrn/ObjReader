@@ -9,25 +9,28 @@
 #include "ModelController/modelcontroller.h"
 #include "Renderer/renderer.h"
 
-class Scene {
+class Scene
+{
 public:
     Scene();
-    ~Scene();
+    ~Scene() = default;
 
     void initialize();
-    void render();
-    void resize(int w, int h);
-    void rotate(float dx, float dy);
     void loadModel();
+    void render();
+
+    void resize(int w, int h);
+
+    void rotate(float dx, float dy);
 
     void setModelPath(const QString& path);
 
     bool hasModel() const;
 
 private:
-    Camera camera;
     ModelController modelController;
     OpenGLRenderer renderer;
+    Camera camera;
 
     QString modelPath;
 };

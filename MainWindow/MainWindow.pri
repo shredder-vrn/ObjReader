@@ -4,10 +4,10 @@ CONFIG += MAIN_WINDOW
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
 HEADERS += \
-    $$PWD/mainwinndow.h
+    $$PWD/mainwindow.h
 
 SOURCES += \
-    $$PWD/mainwinndow.cpp
+    $$PWD/mainwindow.cpp
 
 }
 

@@ -312,6 +312,7 @@ bool validateModel(const Model &model)
 
 bool parseTokens(QTextStream &in, Model &model)
 {
+    qDebug() << "parseTokens :: parseTokens : запустили метод parseTokens";
     int lineNum = 0;
     while (!in.atEnd()) {
         QString line = in.readLine().trimmed();
@@ -337,6 +338,8 @@ bool parseTokens(QTextStream &in, Model &model)
         if (type == "f" && !parseFace(line, model.faceVertexIndices, model.faceTextureVertexIndices, model.faceNormalIndices, model.polygonStarts))
             return false;
     }
+
+    qDebug() << "parseTokens :: parseTokens : метод parseTokens отработал";
 
     return true;
 }

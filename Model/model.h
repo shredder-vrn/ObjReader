@@ -6,6 +6,7 @@
 #include <QVector2D>
 
 struct Model {
+
     QVector<QVector3D> vertices;
     QVector<QVector2D> textureVertices;
     QVector<QVector3D> normals;

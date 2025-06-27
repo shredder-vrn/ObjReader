@@ -14,10 +14,10 @@ class Viewport : public QOpenGLWidget
     Q_OBJECT
 
 public:
-    explicit Viewport(QWidget* parent = nullptr);
-    ~Viewport();
+    explicit Viewport(QWidget *parent = nullptr);
+    ~Viewport() = default;
 
-    void loadModel(const QString& filePath);
+    void loadModel(const QString &filePath);
 
 protected:
     void initializeGL() override;
@@ -28,7 +28,7 @@ protected:
 
 private:
     Scene scene;
-    QPoint lastMousePos;
+    QPoint viewportLastMousePos;
 };
 
 

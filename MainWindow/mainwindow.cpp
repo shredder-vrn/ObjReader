@@ -1,0 +1,45 @@
+#include "mainwindow.h"
+
+#include <QMenuBar>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QVBoxLayout>
+#include <QSizePolicy>
+
+MainWindow :: MainWindow(QWidget *parent) : QMainWindow(parent)
+{
+    qDebug() << "MainWindow :: MainWindow : запустили конструктор";
+
+    setWindowTitle("OBJ Wiewer");
+
+    resize(800, 600);
+
+    QWidget *centralWidget = new QWidget(this);
+
+    QVBoxLayout *layout = new QVBoxLayout();
+
+    centralWidget -> setLayout(layout);
+
+    viewport = new Viewport(centralWidget);
+
+    layout -> addWidget(viewport, 0, Qt::Alignment());
+
+    setCentralWidget(centralWidget);
+
+    QMenu *fileMenu = menuBar() -> addMenu("File");
+
+    const QAction *openAction = fileMenu -> addAction("Open");
+
+    connect(openAction, &QAction::triggered, this, &MainWindow::openModel);
+
+    qDebug() << "MainWindow :: MainWindow : конструктор отработал";
+}
+
+void MainWindow::openModel()
+{
+    //QString filePath = QFileDialog ::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
+    qDebug() << "MainWindow :: openModel : запустился метод openModel";
+    viewport -> loadModel("/home/r3ds/Internship/resources/cube.obj");
+    qDebug() << "MainWindow :: openModel : метод openModel отработал";
+
+}
