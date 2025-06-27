@@ -1,10 +1,12 @@
-#include "mainwindow.h"
+#include "mainwinndow.h"
 
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QVBoxLayout>
 #include <QSizePolicy>
+
+#include "Viewport/viewport.h"
 
 MainWindow :: MainWindow(QWidget *parent) : QMainWindow(parent)
 {

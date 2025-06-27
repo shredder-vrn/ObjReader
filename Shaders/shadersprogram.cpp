@@ -43,9 +43,9 @@ bool ShaderProgram::compileFromString(const QString& vertexSrc, const QString& f
 bool ShaderProgram::compileFromFile(const QString& vertexPath, const QString& fragmentPath) {
     qDebug() << "ShaderProgram :: compileFromFile : запустили метод compileFromFile";
 
-
     QFile vFile(vertexPath);
     if (!vFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open vertex shader file:" << vertexPath;
         return false;
     }
     QString vSrc = QTextStream(&vFile).readAll();
@@ -53,14 +53,14 @@ bool ShaderProgram::compileFromFile(const QString& vertexPath, const QString& fr
 
     QFile fFile(fragmentPath);
     if (!fFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open fragment shader file:" << fragmentPath;
         return false;
     }
     QString fSrc = QTextStream(&fFile).readAll();
     fFile.close();
 
-    return compileFromString(vSrc, fSrc);
     qDebug() << "ShaderProgram :: compileFromFile : метод compileFromFile отработал";
-
+    return compileFromString(vSrc, fSrc);
 }
 
 QOpenGLShaderProgram *ShaderProgram::get() const {

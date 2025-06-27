@@ -16,22 +16,20 @@ class ShaderProgram;
 
 class OpenGLRenderer : protected QOpenGLFunctions_3_3_Core {
 public:
-    OpenGLRenderer() = default;
-    ~OpenGLRenderer() = default;
-
     bool initialize();
-    bool initializeModel(const Model &model);
-    void render();
+    bool initializeModel(const Model& model);
+    void render();  // Без параметров
     void resize(int w, int h);
+    void setModel(const Model& model);
+    void setViewProjectionMatrix(const QMatrix4x4& mvp);
 
 private:
-    void setupShaders();
-    void setupBuffers(const Model& model);
-
+    ShaderProgram* shaderProgram = nullptr;
     GLuint vao = 0;
     GLuint vbo = 0;
-    ShaderProgram *shaderProgram = nullptr;
     bool isInitialized = false;
+    Model currentModel;          // Внутреннее хранение модели
+    QMatrix4x4 currentMvp;      // Внутреннее хранение матрицы
 };
 
 #endif // RENDER_H

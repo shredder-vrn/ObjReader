@@ -1,12 +1,7 @@
 #include "renderer.h"
+
 #include <QDebug>
 
-
-OpenGLRenderer::OpenGLRenderer() = default;
-
-OpenGLRenderer::~OpenGLRenderer() {
-    cleanup();
-}
 
 bool OpenGLRenderer::initialize() {
     if (!initializeOpenGLFunctions()) {
@@ -20,27 +15,27 @@ bool OpenGLRenderer::initialize() {
     shaderProgram = new ShaderProgram();
     if (!shaderProgram->compileFromString(
         R"(
-#version 330 core
-layout(location=0) in vec3 position;
-uniform mat4 projection;
-void main() {
-    gl_Position = projection * vec4(position, 1.0);
-}
-)",
+        #version 330 core
+        layout(location=0) in vec3 position;
+        uniform mat4 projection;
+        void main() {
+        gl_Position = projection * vec4(position, 1.0);
+        }
+        )",
         R"(
-#version 330 core
-out vec4 outColor;
-uniform vec4 faceColor;
-void main() {
-    outColor = faceColor;
-}
-)"
-    )) {
+        #version 330 core
+        out vec4 outColor;
+        uniform vec4 faceColor;
+        void main() {
+            outColor = faceColor;
+        }
+        )"
+        )) {
         qCritical("Failed to compile shaders");
         delete shaderProgram;
         shaderProgram = nullptr;
         return false;
-    }
+        }
 
     isInitialized = true;
     return true;
@@ -71,15 +66,24 @@ bool OpenGLRenderer::initializeModel(const Model& model) {
 }
 
 
-void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp) {
-    if (!isInitialized || !shaderProgram || model.faceVertexIndices.isEmpty()) {
+void OpenGLRenderer::setModel(const Model& model) {
+    currentModel = model;
+    initializeModel(currentModel);
+}
+
+void OpenGLRenderer::setViewProjectionMatrix(const QMatrix4x4& mvp) {
+    currentMvp = mvp;
+}
+
+void OpenGLRenderer::render() {
+    if (!isInitialized || !shaderProgram || currentModel.faceVertexIndices.isEmpty()) {
         return;
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shaderProgram->get()->bind();
-    shaderProgram->get()->setUniformValue("projection", mvp);
+    shaderProgram->get()->setUniformValue("projection", currentMvp);
 
     static const QVector<QVector4D> colors = {
         {1.0f, 0.0f, 0.0f, 1.0f},
@@ -89,11 +93,11 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp) {
 
     glBindVertexArray(vao);
 
-    for (int i = 0; i < model.polygonStarts.size(); ++i) {
-        int start = model.polygonStarts[i];
-        int count = (i < model.polygonStarts.size() - 1)
-                  ? model.polygonStarts[i+1] - start
-                  : model.faceVertexIndices.size() - start;
+    for (int i = 0; i < currentModel.polygonStarts.size(); ++i) {
+        int start = currentModel.polygonStarts[i];
+        int count = (i < currentModel.polygonStarts.size() - 1)
+                  ? currentModel.polygonStarts[i+1] - start
+                  : currentModel.faceVertexIndices.size() - start;
 
         shaderProgram->get()->setUniformValue("faceColor", colors[i % colors.size()]);
         glDrawArrays(GL_LINE_LOOP, start, count);
@@ -108,17 +112,4 @@ void OpenGLRenderer::resize(int w, int h) {
     glViewport(0, 0, w, h);
 }
 
-void OpenGLRenderer::cleanup() {
-    if (vao) {
-        glDeleteVertexArrays(1, &vao);
-        vao = 0;
-    }
-    if (vbo) {
-        glDeleteBuffers(1, &vbo);
-        vbo = 0;
-    }
 
-    delete shaderProgram;
-    shaderProgram = nullptr;
-    isInitialized = false;
-}

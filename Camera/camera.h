@@ -17,15 +17,6 @@ public:
 
 private:
     void updateViewMatrix();
-
-<<<<<<< Updated upstream
-    QVector3D position = QVector3D(0.0f, 0.0f, -7.0f);
-    float yaw = -90.0f;
-    float pitch = 0.0f;
-
-    QVector3D front = QVector3D(0.0f, 0.0f, -1.0f);
-    QVector3D up = QVector3D(0.0f, 1.0f, 0.0f);
-=======
     float cameraYaw = -90.0f;
     float cameraPitch = 0.0f;
 
@@ -33,7 +24,6 @@ private:
     QVector3D cameraFront = QVector3D(0.0f, 0.0f, 0.0f);
     QVector3D cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
     QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
->>>>>>> Stashed changes
 
     QMatrix4x4 cameraViewMatrix;
     QMatrix4x4 cameraProjectionMatrix;

@@ -6,37 +6,7 @@
 #include "ObjReader/objreader.h"
 #include "Triangulate/triangulate.h"
 
-<<<<<<< Updated upstream
-ModelController::ModelController() = default;
 
-ModelController::~ModelController() = default;
-
-bool ModelController::loadModel(const QString &filePath) {
-    model.reset(new Model());
-    if (!parseObj(filePath, *model)) {
-        model.reset();
-        return false;
-    }
-    simpleTriangulateModel(model->vertices,
-                               model->faceVertexIndices,
-                               model->faceTextureVertexIndices,
-                               model->faceNormalIndices,
-                               model->polygonStarts);
-    return true;
-}
-
-void ModelController::clear() {
-    model.reset();
-    rotationX = 0.0f;
-    rotationY = 0.0f;
-}
-
-void ModelController::rotate(float dx, float dy) {
-    rotationX += dx;
-    rotationY += dy;
-}
-
-=======
 ModelController :: ModelController(){
     qDebug() << "ModelController :: ModelController : запустили конструктор";
 
@@ -106,9 +76,7 @@ void ModelController :: rotate(float dx, float dy)
 QMatrix4x4 ModelController :: getModelMatrix() const
 {
     qDebug() << "ModelController :: getModelMatrix : запустили метод getModelMatrix";
->>>>>>> Stashed changes
 
-QMatrix4x4 ModelController::getModelMatrix() const {
     QMatrix4x4 matrix;
     matrix.rotate(rotationX_, 1.0f, 0.0f, 0.0f);
     matrix.rotate(rotationY_, 0.0f, 1.0f, 0.0f);
@@ -118,13 +86,6 @@ QMatrix4x4 ModelController::getModelMatrix() const {
     qDebug() << "ModelController :: getModelMatrix : метод getModelMatrix отработал";
 }
 
-<<<<<<< Updated upstream
-
-const Model &ModelController::getModel() const {
-    static Model emptyModel;
-    if (!model) return emptyModel;
-    return *model;
-=======
 const Model &ModelController :: getModel() const
 {
     qDebug() << "ModelController :: getModel : запустили метод getModel";
@@ -137,5 +98,4 @@ const Model &ModelController :: getModel() const
     return model_;
 
     qDebug() << "ModelController :: getModel : запустили метод getModel";
->>>>>>> Stashed changes
 }
