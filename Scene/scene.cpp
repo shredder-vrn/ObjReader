@@ -5,6 +5,8 @@ Scene :: Scene() : modelController(), renderer()
 {
     qDebug() << "Scene :: Scene : запустили конструктор";
 
+    qDebug() << "modelPath" << modelPath;
+
     qDebug() << "Scene :: Scene : конструктор отработал";
 
 }

@@ -2,12 +2,22 @@
 
 #include <QDebug>
 
+OpenGLRenderer::OpenGLRenderer()
+{
+    qDebug() << "OpenGLRenderer :: OpenGLRenderer : запустили конструктор";
 
-bool OpenGLRenderer::initialize() {
-    if (!initializeOpenGLFunctions()) {
-        qCritical("Failed to initialize OpenGL functions");
-        return false;
-    }
+    qDebug() << "openGLvao" << openGLvao;
+    qDebug() << "openGLvbo" << openGLvbo;
+    qDebug() << "openGLisInitialized" << openGLisInitialized;
+
+    qDebug() << "OpenGLRenderer :: OpenGLRenderer : конструктор отработал";
+}
+
+bool OpenGLRenderer::initialize()
+{
+    qDebug() << "OpenGLRenderer :: initialize : запустили метод initialize";
+
+    initializeOpenGLFunctions();
 
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -37,24 +47,26 @@ bool OpenGLRenderer::initialize() {
         return false;
         }
 
-    isInitialized = true;
+    openGLisInitialized = true;
+
+    qDebug() << "OpenGLRenderer :: initialize : метод initialize отработал";
     return true;
 }
 
-bool OpenGLRenderer::initializeModel(const Model& model) {
-    if (!isInitialized || model.vertices.isEmpty()) {
+bool OpenGLRenderer::initializeModel(const Model& model)
+{
+    qDebug() << "OpenGLRenderer :: initializeModel : запустили метод initializeModel";
+
+    if (!openGLisInitialized || model.vertices.isEmpty()) {
         return false;
     }
 
-    if (vao == 0) glGenVertexArrays(1, &vao);
-    if (vbo == 0) glGenBuffers(1, &vbo);
+    if (openGLvao == 0) glGenVertexArrays(1, &openGLvao);
+    if (openGLvbo == 0) glGenBuffers(1, &openGLvbo);
 
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER,
-                 model.vertices.size() * sizeof(QVector3D),
-                 model.vertices.constData(),
-                 GL_STATIC_DRAW);
+    glBindVertexArray(openGLvao);
+    glBindBuffer(GL_ARRAY_BUFFER, openGLvbo);
+    glBufferData(GL_ARRAY_BUFFER, model.vertices.size() * sizeof(QVector3D), model.vertices.constData(), GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), nullptr);
@@ -62,28 +74,43 @@ bool OpenGLRenderer::initializeModel(const Model& model) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    qDebug() << "OpenGLRenderer :: initializeModel : метод initializeModel отработал";
+
     return true;
 }
 
 
-void OpenGLRenderer::setModel(const Model& model) {
-    currentModel = model;
-    initializeModel(currentModel);
+void OpenGLRenderer::setModel(const Model& model)
+{
+    qDebug() << "OpenGLRenderer :: setModel : запустили метод setModel";
+
+    openGLcurrentModel = model;
+    initializeModel(openGLcurrentModel);
+
+    qDebug() << "OpenGLRenderer :: setModel : метод setModel отработал";
 }
 
-void OpenGLRenderer::setViewProjectionMatrix(const QMatrix4x4& mvp) {
-    currentMvp = mvp;
+void OpenGLRenderer::setViewProjectionMatrix(const QMatrix4x4& mvp)
+{
+    qDebug() << "OpenGLRenderer :: setViewProjectionMatrix : запустили метод setViewProjectionMatrix";
+
+    openGLcurrentMvp = mvp;
+
+    qDebug() << "OpenGLRenderer :: setViewProjectionMatrix : метод setViewProjectionMatrix отработал";
 }
 
-void OpenGLRenderer::render() {
-    if (!isInitialized || !shaderProgram || currentModel.faceVertexIndices.isEmpty()) {
+void OpenGLRenderer::render()
+{
+    qDebug() << "OpenGLRenderer :: render : запустили метод render";
+
+    if (!openGLisInitialized || !shaderProgram || openGLcurrentModel.faceVertexIndices.isEmpty()) {
         return;
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shaderProgram->get()->bind();
-    shaderProgram->get()->setUniformValue("projection", currentMvp);
+    shaderProgram->get()->setUniformValue("projection", openGLcurrentMvp);
 
     static const QVector<QVector4D> colors = {
         {1.0f, 0.0f, 0.0f, 1.0f},
@@ -91,13 +118,13 @@ void OpenGLRenderer::render() {
         {0.0f, 0.0f, 1.0f, 1.0f}
     };
 
-    glBindVertexArray(vao);
+    glBindVertexArray(openGLvao);
 
-    for (int i = 0; i < currentModel.polygonStarts.size(); ++i) {
-        int start = currentModel.polygonStarts[i];
-        int count = (i < currentModel.polygonStarts.size() - 1)
-                  ? currentModel.polygonStarts[i+1] - start
-                  : currentModel.faceVertexIndices.size() - start;
+    for (int i = 0; i < openGLcurrentModel.polygonStarts.size(); ++i) {
+        int start = openGLcurrentModel.polygonStarts[i];
+        int count = (i < openGLcurrentModel.polygonStarts.size() - 1)
+                  ? openGLcurrentModel.polygonStarts[i+1] - start
+                  : openGLcurrentModel.faceVertexIndices.size() - start;
 
         shaderProgram->get()->setUniformValue("faceColor", colors[i % colors.size()]);
         glDrawArrays(GL_LINE_LOOP, start, count);
@@ -105,11 +132,17 @@ void OpenGLRenderer::render() {
 
     glBindVertexArray(0);
     shaderProgram->get()->release();
+
+    qDebug() << "OpenGLRenderer :: render : метод render отработал";
 }
 
 
 void OpenGLRenderer::resize(int w, int h) {
+    qDebug() << "OpenGLRenderer :: resize : запустили метод resize";
+
     glViewport(0, 0, w, h);
+
+    qDebug() << "OpenGLRenderer :: resize : метод resize отработал";
 }
 
 

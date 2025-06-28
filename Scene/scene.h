@@ -32,7 +32,7 @@ private:
     OpenGLRenderer renderer;
     Camera camera;
 
-    QString modelPath;
+    QString modelPath = "";
 };
 
 #endif // SCENE_H

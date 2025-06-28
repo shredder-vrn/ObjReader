@@ -178,13 +178,11 @@ void triangulateModel(
         int vertexCount = end - start;
         if (vertexCount < 3) continue;
 
-        // Извлекаем индексы полигона
         QList<int> indices;
         for (int j = start; j < end; ++j) {
             indices.append(faceVertexIndices[j]);
         }
 
-        // Точки для проверки геометрии
         QVector<QVector3D> polygonPoints;
         for (int idx : indices) {
             polygonPoints.append(vertices[idx]);
@@ -192,7 +190,6 @@ void triangulateModel(
 
         newPolygonStarts.append(newFaceVertexIndices.size());
 
-        // Ear Clipping
         while (indices.size() > 3) {
             bool foundEar = false;
             for (int iLoop = 0; iLoop < indices.size(); ++iLoop) {
@@ -231,12 +228,10 @@ void triangulateModel(
             }
 
             if (!foundEar) {
-                qWarning() << "Не удалось найти ухо в полигоне" << i << ". Возможно, полигон самопересекается.";
                 break;
             }
         }
 
-        // Добавляем последний треугольник
         if (indices.size() == 3) {
             newFaceVertexIndices.append(indices[0]);
             newFaceVertexIndices.append(indices[1]);
@@ -256,7 +251,6 @@ void triangulateModel(
         }
     }
 
-    // Перезаписываем данные
     faceVertexIndices = newFaceVertexIndices;
     faceTextureVertexIndices = newFaceTextureVertexIndices;
     faceNormalIndices = newFaceNormalIndices;
