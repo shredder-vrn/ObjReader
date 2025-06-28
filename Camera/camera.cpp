@@ -24,7 +24,7 @@ Camera :: Camera()
 
     updateViewMatrix();
 
-    qDebug() << "Camera :: Camera : конструктор отработал";
+    qDebug() << "Camera :: Camera : конструктор отработал, все преобразования обработаны.";
 }
 
 
@@ -94,13 +94,13 @@ void Camera :: updateViewMatrix()
 
     cameraViewMatrix.setToIdentity();
 
-    qDebug() << "viewMatrix" <<cameraViewMatrix;
+    qDebug() << "cameraViewMatrix" <<cameraViewMatrix;
 
-    qDebug() << "начало работы метода lookAt: " <<cameraPosition << cameraTarget << cameraUp;
+    qDebug() << "начало работы метода lookAt: " << "cameraPosition: " <<cameraPosition << ", cameraTarget: " <<cameraTarget << ", cameraUp: " <<cameraUp;
 
     cameraViewMatrix.lookAt(cameraPosition, cameraTarget, cameraUp);
 
     qDebug() << "метод lookAt отработал: " <<cameraViewMatrix;
 
-    qDebug() << "Camera :: updateViewMatrix : метод updateViewMatrix отработал";
+    qDebug() << "Camera :: updateViewMatrix : метод updateViewMatrix отработал, все преобразования обработаны.";
 }

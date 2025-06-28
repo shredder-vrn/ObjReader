@@ -4,10 +4,9 @@ QT += core gui
 QT += testlib
 QT += core gui widgets opengl
 QT += opengl
-QMAKE_CXXFLAGS += -Wall -Wextra -Werror
 QMAKE_CXXFLAGS += -std=c++17
 
-CONFIG += c++11 console
+CONFIG += c++17 console
 CONFIG -= app_bundle
 
 include($$PWD/../MainWindow/MainWindow.pri)

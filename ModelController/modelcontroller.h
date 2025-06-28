@@ -19,7 +19,7 @@ public:
 
 private:
     Model model_;
-    bool hasModel_;
+    bool hasModel_ = false;
     float rotationX_ = 0.0f;
     float rotationY_ = 0.0f;
 };

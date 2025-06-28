@@ -26,6 +26,8 @@ MainWindow :: MainWindow(QWidget *parent) : QMainWindow(parent)
 
     layout -> addWidget(viewport, 0, Qt::Alignment());
 
+    qDebug() << "MainWindow :: addWidget : почему я меняю параметры addWidget, но ничего не меняется?.";
+
     setCentralWidget(centralWidget);
 
     QMenu *fileMenu = menuBar() -> addMenu("File");
@@ -34,7 +36,7 @@ MainWindow :: MainWindow(QWidget *parent) : QMainWindow(parent)
 
     connect(openAction, &QAction::triggered, this, &MainWindow::openModel);
 
-    qDebug() << "MainWindow :: MainWindow : конструктор отработал";
+    qDebug() << "MainWindow :: MainWindow : конструктор отработал, все преобразования обработаны.";
 }
 
 void MainWindow::openModel()
@@ -45,6 +47,6 @@ void MainWindow::openModel()
 
     viewport -> loadModel("/home/r3ds/Internship/resources/cube.obj");
 
-    qDebug() << "MainWindow :: openModel : метод openModel отработал";
+    qDebug() << "MainWindow :: openModel : метод openModel отработал, все преобразования обработаны.";
 
 }

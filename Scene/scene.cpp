@@ -7,7 +7,7 @@ Scene :: Scene() : modelController(), renderer()
 
     qDebug() << "modelPath" << modelPath;
 
-    qDebug() << "Scene :: Scene : конструктор отработал";
+    qDebug() << "Scene :: Scene : конструктор отработал, все преобразования обработаны.";
 
 }
 
@@ -15,9 +15,13 @@ void Scene :: setModelPath(const QString &path)
 {
     qDebug() << "Scene :: setModelPath : запустили метод setModelPath";
 
+    qDebug() << "modelPath 'до'" << modelPath;
+
     modelPath = path;
 
-    qDebug() << "Scene :: setModelPath : метод setModelPath отработал";
+    qDebug() << "modelPath 'после'" << modelPath;
+
+    qDebug() << "Scene :: setModelPath : метод setModelPath отработал, все преобразования обработаны.";
 }
 
 void Scene :: initialize()
@@ -26,18 +30,26 @@ void Scene :: initialize()
 
     renderer.initialize();
 
-    qDebug() << "Scene :: initialize : метод initialize отработал";
+    qDebug() << "Scene :: initialize : метод initialize отработал, все преобразования обработаны.";
 
 }
 
 
-void Scene :: loadModel()
+void Scene :: loadModel(Model &model)
 {
     qDebug() << "Scene :: loadModel : запустили метод loadModel";
 
-    renderer.initializeModel(Model());
+    qDebug() << "model.vertices" << model.vertices;
+    qDebug() << "model.vertices" << model.textureVertices;
+    qDebug() << "model.vertices" << model.normals;
+    qDebug() << "model.faceVertexIndices" << model.faceVertexIndices;
+    qDebug() << "model.faceTextureVertexIndices" << model.faceTextureVertexIndices;
+    qDebug() << "model.faceNormalIndices" << model.faceNormalIndices;
+    qDebug() << "model.polygonStarts" << model.polygonStarts;
 
-    qDebug() << "Scene :: loadModel : метод loadModel отработал";
+    renderer.setModel(model);
+
+    qDebug() << "Scene :: loadModel : метод loadModel отработал, все преобразования обработаны.";
 }
 
 void Scene :: render()
@@ -46,7 +58,7 @@ void Scene :: render()
 
     renderer.render();
 
-    qDebug() << "Scene :: render : метод render отработал";
+    qDebug() << "Scene :: render : метод render отработал, все преобразования обработаны";
 }
 
 void Scene :: resize(int w, int h)

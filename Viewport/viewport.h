@@ -28,6 +28,7 @@ protected:
 
 private:
     Scene scene;
+
     QPoint viewportLastMousePos;
 };
 

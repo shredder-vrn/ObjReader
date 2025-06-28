@@ -16,7 +16,7 @@ public:
     ~Scene() = default;
 
     void initialize();
-    void loadModel();
+    void loadModel(Model &model);
     void render();
 
     void resize(int w, int h);

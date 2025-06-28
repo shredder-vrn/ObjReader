@@ -15,15 +15,7 @@ ModelController :: ModelController(){
     qDebug() << "rotationX_" << rotationX_;
     qDebug() << "rotationY_" << rotationY_;
 
-    hasModel_ = false;
-    rotationX_ = 0.0f;
-    rotationY_ = 0.0f;
-
-    qDebug() << "hasModel_" << hasModel_;
-    qDebug() << "rotationX_" << rotationX_;
-    qDebug() << "rotationY_" << rotationY_;
-
-    qDebug() << "ModelController :: ModelController : конструктор отработал";
+    qDebug() << "ModelController :: ModelController : конструктор отработал, все преобразования обработаны.";
 };
 
 

@@ -31,11 +31,11 @@ public:
     void setViewProjectionMatrix(const QMatrix4x4& mvp);
 
 private:
-    ShaderProgram* shaderProgram = nullptr;
-    Model openGLcurrentModel;
+    ShaderProgram *shaderProgram = nullptr;
 
     GLuint openGLvao = 0;
     GLuint openGLvbo = 0;
+    Model openGLcurrentModel;
 
     bool openGLisInitialized = false;
 
