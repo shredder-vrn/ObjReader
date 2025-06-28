@@ -9,11 +9,11 @@ public:
     Camera();
 
     void setViewportSize(int width, int height);
+    void rotate(float dx, float dy);
+    void setPosition(const QVector3D &position);
+
     QMatrix4x4 getViewMatrix() const;
     QMatrix4x4 getProjectionMatrix() const;
-
-    void rotate(float dx, float dy);
-    void setPosition(const QVector3D& position);
 
 private:
     void updateViewMatrix();
@@ -22,7 +22,6 @@ private:
     float cameraPitch = 0.0f;
 
     QVector3D cameraPosition = QVector3D(0.0f, 0.0f, -20.0f);
-    QVector3D cameraFront = QVector3D(0.0f, 0.0f, 0.0f);
     QVector3D cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
     QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
 

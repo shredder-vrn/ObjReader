@@ -12,12 +12,8 @@ Viewport::Viewport(QWidget* parent) : QOpenGLWidget(parent)
     qDebug() << "viewportLastMousePos" << viewportLastMousePos;
 
     QSurfaceFormat format;
-
     format.setVersion(3, 3);
-
-
     format.setProfile(QSurfaceFormat :: CoreProfile);
-
     setFormat(format);
 
     qDebug() << "Viewport :: Viewport : конструктор отработал, все преобразования обработаны.";
@@ -27,9 +23,7 @@ Viewport::Viewport(QWidget* parent) : QOpenGLWidget(parent)
 void Viewport :: loadModel(const QString &filePath)
 {
     qDebug() << "Viewport :: loadModel : запустили метод loadModel";
-
     qDebug() << "filePath" <<  filePath;
-
     qDebug() << "Запускаем makeCurrent() - активирует контекст OpenGL для текущего потока";
 
     makeCurrent();
@@ -61,8 +55,6 @@ void Viewport :: loadModel(const QString &filePath)
     qDebug() << "model.faceNormalIndices" << model.faceNormalIndices;
     qDebug() << "model.polygonStarts" << model.polygonStarts;
 
-
-
     scene.loadModel(model);
 
     update();
@@ -70,8 +62,18 @@ void Viewport :: loadModel(const QString &filePath)
 
     doneCurrent();
     qDebug() << "doneCurrent() - Отвязываем текущий контекст makeCurrent(), от текущего потока";
-
     qDebug() << "Viewport :: loadModel : метод loadModel отработал, все преобразования обработаны.";
+}
+
+void Viewport::resizeEvent(QResizeEvent *event)
+{
+    qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";
+
+    scene.resize(event->size().width(), event->size().height());
+
+    QOpenGLWidget::resizeEvent(event);
+
+    qDebug() << "Viewport :: resizeEvent : метод resizeEvent отработал, все преобразования обработаны.";
 }
 
 void Viewport :: initializeGL()
@@ -87,7 +89,6 @@ void Viewport :: initializeGL()
 void Viewport::paintGL()
 {
     qDebug() << "";
-
     qDebug() << "Viewport :: paintGL : запустили метод paintGL";
 
     scene.render();

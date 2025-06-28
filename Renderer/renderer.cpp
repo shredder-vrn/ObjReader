@@ -224,6 +224,8 @@ void OpenGLRenderer::render()
     glBindVertexArray(openGLvao);
     qDebug() << "glBindVertexArray() - Активируем текущий VAO" << openGLvao;
 
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
     for (int i = 0; i < openGLcurrentModel.polygonStarts.size(); ++i) {
         int start = openGLcurrentModel.polygonStarts[i];
@@ -252,5 +254,3 @@ void OpenGLRenderer::resize(int w, int h) {
 
     qDebug() << "OpenGLRenderer :: resize : метод resize отработал";
 }
-
-

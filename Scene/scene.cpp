@@ -6,6 +6,8 @@ Scene :: Scene() : modelController(), renderer()
     qDebug() << "Scene :: Scene : запустили конструктор";
 
     qDebug() << "modelPath" << modelPath;
+    qDebug() << "sceneWidth" << sceneWidth;
+    qDebug() << "sceneHeight" << sceneHeight;
 
     qDebug() << "Scene :: Scene : конструктор отработал, все преобразования обработаны.";
 
@@ -14,13 +16,8 @@ Scene :: Scene() : modelController(), renderer()
 void Scene :: setModelPath(const QString &path)
 {
     qDebug() << "Scene :: setModelPath : запустили метод setModelPath";
-
-    qDebug() << "modelPath 'до'" << modelPath;
-
     modelPath = path;
-
     qDebug() << "modelPath 'после'" << modelPath;
-
     qDebug() << "Scene :: setModelPath : метод setModelPath отработал, все преобразования обработаны.";
 }
 
@@ -29,6 +26,7 @@ void Scene :: initialize()
     qDebug() << "Scene :: initialize : запустили метод initialize";
 
     renderer.initialize();
+    camera.setViewportSize(sceneWidth, sceneHeight);
 
     qDebug() << "Scene :: initialize : метод initialize отработал, все преобразования обработаны.";
 
@@ -56,6 +54,7 @@ void Scene :: render()
 {
     qDebug() << "Scene :: render : запустили метод render";
 
+    renderer.setViewProjectionMatrix(camera.getViewMatrix() * camera.getProjectionMatrix());
     renderer.render();
 
     qDebug() << "Scene :: render : метод render отработал, все преобразования обработаны";
@@ -65,8 +64,17 @@ void Scene :: resize(int w, int h)
 {
     qDebug() << "Scene :: resize : запустили метод resize";
 
+    qDebug() << "w" << w;
+    qDebug() << "h" << h;
+
+    sceneWidth = w;
+    sceneHeight = h;
+
+    qDebug() << "sceneWidth" << sceneWidth;
+    qDebug() << "sceneHeight" << sceneHeight;
+
     camera.setViewportSize(w, h);
-    renderer.resize(w, h);
+
 
     qDebug() << "Scene :: resize : метод resize отработал";
 }

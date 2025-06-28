@@ -11,7 +11,6 @@ Camera :: Camera()
     qDebug() << "cameraYaw" << cameraYaw;
     qDebug() << "cameraPitch" << cameraPitch;
     qDebug() << "cameraPosition" << cameraPosition;
-    qDebug() << "cameraFront" << cameraFront;
     qDebug() << "cameraUp" << cameraUp;
     qDebug() << "cameraTarget" << cameraTarget;
     qDebug() << "cameraViewMatrix" << cameraViewMatrix;
@@ -32,10 +31,19 @@ void Camera :: setViewportSize(int width, int height)
 {
     qDebug() << "Camera :: setViewportSize : запустили метод setViewportSize";
 
+    qDebug() << "width" << width;
+    qDebug() << "height" << height;
+
     this->cameraWidth = width;
     this->cameraHeight = height;
 
+    qDebug() << "cameraWidth" << cameraWidth;
+    qDebug() << "cameraHeight" << cameraHeight;
+
     cameraProjectionMatrix.setToIdentity();
+    qDebug() << "cameraProjectionMatrix - setToIdentity():" << cameraProjectionMatrix;
+
+    qDebug() << "cameraProjectionMatrix - setToIdentity():" << cameraProjectionMatrix;
     cameraProjectionMatrix.perspective(cameraFov, width / (float)height, cameraNearPlane, cameraFarPlane);
 
     qDebug() << "Camera :: setViewportSize : метод setViewportSize отработал";
@@ -55,9 +63,10 @@ QMatrix4x4 Camera :: getViewMatrix() const
 QMatrix4x4 Camera :: getProjectionMatrix() const
 {
     qDebug() << "Camera :: getProjectionMatrix : запустили метод getProjectionMatrix";
-    return cameraProjectionMatrix;
-    qDebug() << "Camera :: getProjectionMatrix : метод getProjectionMatrix отработал";
 
+    return cameraProjectionMatrix;
+
+    qDebug() << "Camera :: getProjectionMatrix : метод getProjectionMatrix отработал";
 }
 
 void Camera :: rotate(float dx, float dy)
@@ -67,11 +76,6 @@ void Camera :: rotate(float dx, float dy)
     cameraYaw += dx * 0.1f;
     cameraPitch -= dy * 0.1f;
     cameraPitch = qBound(-89.0f, cameraPitch, 89.0f);
-
-    cameraFront.setX(cos(qDegreesToRadians(cameraYaw)) * cos(qDegreesToRadians(cameraPitch)));
-    cameraFront.setY(sin(qDegreesToRadians(cameraPitch)));
-    cameraFront.setZ(sin(qDegreesToRadians(cameraYaw)) * cos(qDegreesToRadians(cameraPitch)));
-    cameraFront.normalize();
 
     updateViewMatrix();
 
@@ -85,6 +89,7 @@ void Camera :: setPosition(const QVector3D& newPosition)
 
     cameraPosition = newPosition;
     updateViewMatrix();
+
     qDebug() << "Camera :: setPosition : метод setPosition отработал";
 }
 
@@ -96,11 +101,17 @@ void Camera :: updateViewMatrix()
 
     qDebug() << "cameraViewMatrix" <<cameraViewMatrix;
 
-    qDebug() << "начало работы метода lookAt: " << "cameraPosition: " <<cameraPosition << ", cameraTarget: " <<cameraTarget << ", cameraUp: " <<cameraUp;
+    qDebug() << "начало работы метода lookAt: " << "cameraPosition: " <<cameraPosition << ", cameraTarget: " <<cameraTarget << " cameraUp: " <<cameraUp;
+
+    QVector3D front;
+    front.setX(cos(qDegreesToRadians(cameraYaw)) * cos(qDegreesToRadians(cameraPitch)));
+    front.setY(sin(qDegreesToRadians(cameraPitch)));
+    front.setZ(sin(qDegreesToRadians(cameraYaw)) * cos(qDegreesToRadians(cameraPitch)));
+    front.normalize();
 
     cameraViewMatrix.lookAt(cameraPosition, cameraTarget, cameraUp);
 
     qDebug() << "метод lookAt отработал: " <<cameraViewMatrix;
 
-    qDebug() << "Camera :: updateViewMatrix : метод updateViewMatrix отработал, все преобразования обработаны.";
+    qDebug() << "Camera :: updateViewMatrix : метод updateViewMatrix отработал";
 }

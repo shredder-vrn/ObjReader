@@ -23,6 +23,7 @@ protected:
     void initializeGL() override;
     void paintGL() override;
 
+    void resizeEvent(QResizeEvent *event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
 

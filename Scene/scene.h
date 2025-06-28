@@ -15,19 +15,18 @@ public:
     Scene();
     ~Scene() = default;
 
+    void setModelPath(const QString& path);
     void initialize();
     void loadModel(Model &model);
     void render();
-
     void resize(int w, int h);
-
     void rotate(float dx, float dy);
-
-    void setModelPath(const QString& path);
-
     bool hasModel() const;
 
 private:
+    int sceneWidth = 600;
+    int sceneHeight = 800;
+
     ModelController modelController;
     OpenGLRenderer renderer;
     Camera camera;
