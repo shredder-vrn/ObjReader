@@ -15,9 +15,8 @@ public:
     Scene() = default;
     ~Scene() = default;
 
-    void setModelPath(const QString& path);
     void initialize();
-    void loadModel(Model &model);
+    void loadModel(const QString& path);
     void render();
     void resize(int w, int h);
 

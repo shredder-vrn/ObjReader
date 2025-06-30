@@ -1,13 +1,5 @@
 #include "scene.h"
 
-
-
-void Scene :: setModelPath(const QString &path)
-{
-    qDebug() << "Scene :: setModelPath : запустили метод setModelPath";
-    modelPath = path;
-}
-
 void Scene :: initialize()
 {
     qDebug() << "Scene :: initialize : запустили метод initialize";
@@ -15,10 +7,14 @@ void Scene :: initialize()
     camera.setViewportSize(sceneWidth, sceneHeight);
 }
 
-void Scene :: loadModel(Model &model)
+void Scene::loadModel(const QString &filePath)
 {
     qDebug() << "Scene : : loadModel : запустили метод loadModel";
-    renderer.setModel(model);
+    if (modelController.loadModel(filePath)) {
+        renderer.setModel(modelController.getModel());
+    } else {
+        qWarning() << "Не удалось загрузить модель";
+    }
 }
 
 void Scene :: render()

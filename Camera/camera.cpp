@@ -7,6 +7,14 @@
 Camera :: Camera()
 {
     qDebug() << "Camera :: Camera : запустили конструктор";
+    qDebug() << "cameraPosition" << cameraPosition;
+    qDebug() << "cameraUp" << cameraUp;
+    qDebug() << "cameraTarget" << cameraTarget;
+    qDebug() << "cameraWidth" << cameraWidth;
+    qDebug() << "cameraHeight" << cameraHeight;
+    qDebug() << "cameraFov" << cameraFov;
+    qDebug() << "cameraNearPlane" << cameraNearPlane;
+    qDebug() << "cameraFarPlane" << cameraFarPlane;
 
     updateViewMatrix();
 }

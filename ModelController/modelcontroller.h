@@ -13,6 +13,8 @@ public:
 
     bool loadModel(const QString& filePath);
 
+    const Model &getModel() const;
+
     QMatrix4x4 getModelMatrix() const;
 
 private:

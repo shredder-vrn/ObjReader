@@ -18,22 +18,11 @@ void Viewport :: loadModel(const QString &filePath)
 {
     qDebug() << "Viewport :: loadModel : запустили метод loadModel";
     makeCurrent();
-    scene.setModelPath(filePath);
 
     Model model;
     QFile file(filePath);
 
-    if (!file.exists()) {
-        qCritical() << "Файл не найден:" << filePath;
-        return;}
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
-        qCritical() << "Не удалось открыть файл для чтения:" << filePath;
-        return;}
-    if (!parseObj(filePath, model)){
-        qCritical() << "Ошибка при разборе файла OBJ.";
-        return;}
-
-    scene.loadModel(model);
+    scene.loadModel(filePath);
 
     update();
     doneCurrent();

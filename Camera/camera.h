@@ -16,7 +16,7 @@ public:
 private:
     void updateViewMatrix();
 
-    QVector3D cameraPosition = QVector3D(0.0f, 0.0f, 10.0f);
+    QVector3D cameraPosition = QVector3D(0.0f, 0.0f, 20.0f);
     QVector3D cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
     QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
     QMatrix4x4 cameraViewMatrix;
