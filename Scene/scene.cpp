@@ -53,8 +53,15 @@ void Scene :: loadModel(Model &model)
 void Scene :: render()
 {
     qDebug() << "Scene :: render : запустили метод render";
+    qDebug() << "camera.getViewMatrix()" << camera.getViewMatrix();
+    qDebug() << "camera.getProjectionMatrix()" << camera.getProjectionMatrix();
+   // qDebug() << "setViewProjectionMatrix(camera.getViewMatrix() * camera.getProjectionMatrix())" << camera.getViewMatrix() * camera.getProjectionMatrix();
+    qDebug() << "camera.getProjectionMatrix() * camera.getViewMatrix()" << camera.getProjectionMatrix() * camera.getViewMatrix();
+    qDebug() << "camera.getViewMatrix() * camera.getProjectionMatrix()" << camera.getViewMatrix() * camera.getProjectionMatrix();
 
-    renderer.setViewProjectionMatrix(camera.getViewMatrix() * camera.getProjectionMatrix());
+
+
+    renderer.setViewProjectionMatrix(camera.getProjectionMatrix() * camera.getViewMatrix());
     renderer.render();
 
     qDebug() << "Scene :: render : метод render отработал, все преобразования обработаны";

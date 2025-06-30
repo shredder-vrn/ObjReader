@@ -27,24 +27,18 @@ bool ShaderProgram::compileFromString(const QString& vertexSrc, const QString& f
 
     qDebug() << "ShaderProgram :: compileFromString : запустили метод compileFromString";
 
-    if (!myShaderProgram->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexSrc.toUtf8())) {
+    if (!myShaderProgram->addShaderFromSourceCode(QOpenGLShader::Vertex, vertexSrc.toUtf8()))
         return false;
-    }
     qDebug() << "Добавили вершинный шейдер к шейдерной программе addShaderFromSourceCode():" << vertexSrc.data();
 
 
-    if (!myShaderProgram->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentSrc.toUtf8())) {
+    if (!myShaderProgram->addShaderFromSourceCode(QOpenGLShader::Fragment, fragmentSrc.toUtf8()))
         return false;
-    }
     qDebug() << "Добавили фрагментный шейдер к шейдерной программе addShaderFromSourceCode():" << fragmentSrc.data();
 
-
-    if (!myShaderProgram->link()) {
+    if (!myShaderProgram->link())
         return false;
-    }
-
     qDebug() << "Линкуем myShaderProgram link():" << myShaderProgram->log();
-
 
     qDebug() << "Кол-во шейдеров в программе:" << myShaderProgram->shaders().count();
 

@@ -28,15 +28,12 @@ bool OpenGLRenderer::initialize()
     initializeOpenGLFunctions();
 
     glEnable(GL_DEPTH_TEST);
-
     qDebug() << "Инициализируем глубину отрисовки glEnable(GL_DEPTH_TEST)";
 
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-
     qDebug() << "Инициализируем цвет фона     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);";
 
     shaderProgram = new ShaderProgram();
-
     qDebug() << "Инициализируем shaderProgram" << shaderProgram;
 
     if (!shaderProgram->compileFromString(
@@ -45,25 +42,22 @@ bool OpenGLRenderer::initialize()
                 layout(location=0) in vec3 position;
                 uniform mat4 projection;
                 void main() {
-                gl_Position = projection * vec4(position, 1.0);
+                    gl_Position = projection * vec4(position, 1.0);
                 })",
                 R"(
                 #version 330 core
                 out vec4 outColor;
                 uniform vec4 faceColor;
                 void main() {
-                outColor = faceColor;
+                    outColor = faceColor;
                 })")) {
 
         qCritical("Failed to compile shaders");
 
         delete shaderProgram;
-
         shaderProgram = nullptr;
-
         return false;
     }
-
     qDebug() << "Компилируем shaderProgram" << shaderProgram;
 
     openGLisInitialized = true;
@@ -144,7 +138,6 @@ bool OpenGLRenderer::initializeModel(const Model &model)
     return true;
 }
 
-
 void OpenGLRenderer::setModel(const Model& model)
 {
     qDebug() << "OpenGLRenderer :: setModel : запустили метод setModel";
@@ -224,9 +217,6 @@ void OpenGLRenderer::render()
     glBindVertexArray(openGLvao);
     qDebug() << "glBindVertexArray() - Активируем текущий VAO" << openGLvao;
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
     for (int i = 0; i < openGLcurrentModel.polygonStarts.size(); ++i) {
         int start = openGLcurrentModel.polygonStarts[i];
         int count = (i < openGLcurrentModel.polygonStarts.size() - 1) ? openGLcurrentModel.polygonStarts[i+1] - start : openGLcurrentModel.faceVertexIndices.size() - start;
@@ -239,8 +229,6 @@ void OpenGLRenderer::render()
     qDebug() << "glBindVertexArray() - Деактивируем текущий VAO";
 
     shaderProgram->get()->release();
-
-
 
     qDebug() << "OpenGLRenderer :: render : метод render отработал";
     qDebug() << "------------------------------------------------";

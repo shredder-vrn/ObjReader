@@ -43,9 +43,9 @@ void Camera :: setViewportSize(int width, int height)
     cameraProjectionMatrix.setToIdentity();
     qDebug() << "cameraProjectionMatrix - setToIdentity():" << cameraProjectionMatrix;
 
-    qDebug() << "cameraProjectionMatrix - setToIdentity():" << cameraProjectionMatrix;
+    qDebug() << "cameraProjectionMatrix - 'до' 'cameraProjectionMatrix()':" << cameraProjectionMatrix;
     cameraProjectionMatrix.perspective(cameraFov, width / (float)height, cameraNearPlane, cameraFarPlane);
-
+    qDebug() << "cameraProjectionMatrix - 'после' 'cameraProjectionMatrix()':" << cameraProjectionMatrix;
     qDebug() << "Camera :: setViewportSize : метод setViewportSize отработал";
 
 }
@@ -57,12 +57,12 @@ QMatrix4x4 Camera :: getViewMatrix() const
     return cameraViewMatrix;
 
     qDebug() << "Camera :: getViewMatrix : метод getViewMatrix отработал";
-
 }
 
 QMatrix4x4 Camera :: getProjectionMatrix() const
 {
     qDebug() << "Camera :: getProjectionMatrix : запустили метод getProjectionMatrix";
+    qDebug() << "cameraProjectionMatrix" << cameraProjectionMatrix;
 
     return cameraProjectionMatrix;
 
@@ -101,13 +101,15 @@ void Camera :: updateViewMatrix()
 
     qDebug() << "cameraViewMatrix" <<cameraViewMatrix;
 
-    qDebug() << "начало работы метода lookAt: " << "cameraPosition: " <<cameraPosition << ", cameraTarget: " <<cameraTarget << " cameraUp: " <<cameraUp;
 
     QVector3D front;
+
     front.setX(cos(qDegreesToRadians(cameraYaw)) * cos(qDegreesToRadians(cameraPitch)));
     front.setY(sin(qDegreesToRadians(cameraPitch)));
     front.setZ(sin(qDegreesToRadians(cameraYaw)) * cos(qDegreesToRadians(cameraPitch)));
     front.normalize();
+
+    qDebug() << "начало работы метода lookAt: " << "cameraPosition: " <<cameraPosition << ", cameraTarget: " <<cameraTarget << " cameraUp: " <<cameraUp;
 
     cameraViewMatrix.lookAt(cameraPosition, cameraTarget, cameraUp);
 

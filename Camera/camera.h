@@ -21,7 +21,7 @@ private:
     float cameraYaw = -90.0f;
     float cameraPitch = 0.0f;
 
-    QVector3D cameraPosition = QVector3D(0.0f, 0.0f, -20.0f);
+    QVector3D cameraPosition = QVector3D(0.0f, 0.0f, -5.0f);
     QVector3D cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
     QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
 
