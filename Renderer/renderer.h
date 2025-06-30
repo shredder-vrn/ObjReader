@@ -26,7 +26,7 @@ public:
 
     void setModel(const Model& model);
 
-    void setViewProjectionMatrix(const QMatrix4x4& mvp);
+    void setMVPmatrix(const QMatrix4x4& mvp);
 
 private:
     ShaderProgram *shaderProgram = nullptr;

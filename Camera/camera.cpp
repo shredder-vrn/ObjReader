@@ -32,8 +32,8 @@ QMatrix4x4 Camera :: getViewMatrix() const
     result.setToIdentity();
     result.setRow(3, {0, 0,0,1});
 
-    return result;
-    //return cameraViewMatrix;
+    //return result;
+    return cameraViewMatrix;
 }
 
 QMatrix4x4 Camera :: getProjectionMatrix() const
@@ -44,8 +44,8 @@ QMatrix4x4 Camera :: getProjectionMatrix() const
 
     result.setToIdentity();
 
-    return result;
-    // return cameraProjectionMatrix;
+    // return result;
+    return cameraProjectionMatrix;
 }
 
 void Camera :: updateViewMatrix()

@@ -89,7 +89,7 @@ void OpenGLRenderer::setModel(const Model& model)
     initializeModel(openGLcurrentModel);
 }
 
-void OpenGLRenderer::setViewProjectionMatrix(const QMatrix4x4& mvp)
+void OpenGLRenderer::setMVPmatrix(const QMatrix4x4& mvp)
 {
     qDebug() << "OpenGLRenderer :: setViewProjectionMatrix : запустили метод setViewProjectionMatrix";
 

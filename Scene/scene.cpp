@@ -24,7 +24,7 @@ void Scene :: loadModel(Model &model)
 void Scene :: render()
 {
     qDebug() << "Scene :: render : запустили метод render";
-    renderer.setViewProjectionMatrix(camera.getViewMatrix() * camera.getProjectionMatrix() * modelController.getModelMatrix());
+    renderer.setMVPmatrix(camera.getProjectionMatrix() * camera.getViewMatrix() * modelController.getModelMatrix());
     renderer.render();
 }
 
