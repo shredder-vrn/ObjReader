@@ -24,7 +24,6 @@ bool ModelController :: loadModel(const QString &filePath)
                 newModel.polygonStarts);
 
     modelControllerModel = newModel;
-    modelControllerHasModel = true;
 
     return true;
 }
@@ -34,18 +33,7 @@ QMatrix4x4 ModelController :: getModelMatrix() const
     qDebug() << "ModelController :: getModelMatrix : запустили метод getModelMatrix";
 
     QMatrix4x4 matrix;
-
     return matrix;
 }
 
-const Model &ModelController :: getModel() const
-{
-    qDebug() << "ModelController :: getModel : запустили метод getModel";
 
-    if (!modelControllerHasModel) {
-        static Model emptyModel;
-        return emptyModel;
-    }
-
-    return modelControllerModel;
-}

@@ -108,6 +108,9 @@ void OpenGLRenderer::setMVPmatrix(const QMatrix4x4& mvp)
     qDebug() << "OpenGLRenderer :: setViewProjectionMatrix : запустили метод setViewProjectionMatrix";
 
     openGLcurrentMvp = mvp;
+
+    qDebug() << "openGLcurrentMvp: " << openGLcurrentMvp;
+
 }
 
 void OpenGLRenderer::render()
@@ -125,8 +128,6 @@ void OpenGLRenderer::render()
         return;}
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    qDebug() << "MVP Matrix:" << openGLcurrentMvp;
 
     shaderProgram->get()->bind();
     shaderProgram->get()->setUniformValue("projection", openGLcurrentMvp);

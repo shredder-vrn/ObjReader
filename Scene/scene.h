@@ -20,7 +20,6 @@ public:
     void loadModel(Model &model);
     void render();
     void resize(int w, int h);
-    bool hasModel() const;
 
 private:
     int sceneWidth = 600;

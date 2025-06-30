@@ -15,12 +15,9 @@ public:
 
     QMatrix4x4 getModelMatrix() const;
 
-    const Model &getModel() const;
-
 private:
     Model modelControllerModel;
 
-    bool modelControllerHasModel = false;
     float modelControllerRotationX = 0.0f;
     float modelControllerRotationY = 0.0f;
     float modelControllerRotationZ = 0.0f;

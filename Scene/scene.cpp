@@ -24,7 +24,13 @@ void Scene :: loadModel(Model &model)
 void Scene :: render()
 {
     qDebug() << "Scene :: render : запустили метод render";
+
+    qDebug() << "modelController.getModelMatrix(): " << modelController.getModelMatrix();
+    qDebug() << "camera.getViewMatrix(): " << camera.getViewMatrix();
+    qDebug() << "camera.getProjectionMatrix(): " << camera.getProjectionMatrix();
+
     renderer.setMVPmatrix(camera.getProjectionMatrix() * camera.getViewMatrix() * modelController.getModelMatrix());
+
     renderer.render();
 }
 
@@ -36,9 +42,3 @@ void Scene :: resize(int w, int h)
     camera.setViewportSize(w, h);
 }
 
-bool Scene :: hasModel() const
-{
-    qDebug() << "Scene :: hasModel : запустили метод hasModel";
-    bool result = modelController.getModel().vertices.size() > 0;
-    return result;
-}
