@@ -66,8 +66,11 @@ bool OpenGLRenderer::initializeModel(const Model &model)
 
     QVector<QVector3D> newArray = {};
 
-    for (int vertexIndex = 0; vertexIndex < model.faceVertexIndices.size(); ++vertexIndex) {
-        newArray.append(model.vertices.at(model.faceVertexIndices[vertexIndex]));
+    for (int i = 0; i < model.faceVertexIndices.size(); ++i) {
+        int idx = model.faceVertexIndices[i];
+        if (idx >= 0 && idx < model.vertices.size()) {
+            newArray.append(model.vertices.value(idx));
+        }
     }
 
     glBufferData(GL_ARRAY_BUFFER, newArray.size() * sizeof(QVector3D), newArray.constData(), GL_STATIC_DRAW);
@@ -85,8 +88,19 @@ void OpenGLRenderer::setModel(const Model& model)
 {
     qDebug() << "OpenGLRenderer :: setModel : запустили метод setModel";
 
+    if (openGLvao != 0) {
+        glDeleteVertexArrays(1, &openGLvao);
+        openGLvao = 0;
+    }
+
+    if (openGLvbo != 0) {
+        glDeleteBuffers(1, &openGLvbo);
+        openGLvbo = 0;
+    }
+
     openGLcurrentModel = model;
     initializeModel(openGLcurrentModel);
+
 }
 
 void OpenGLRenderer::setMVPmatrix(const QMatrix4x4& mvp)
@@ -115,7 +129,7 @@ void OpenGLRenderer::render()
     qDebug() << "MVP Matrix:" << openGLcurrentMvp;
 
     shaderProgram->get()->bind();
-    shaderProgram->get()->setUniformValue("projection", openGLcurrentMvp.transposed());
+    shaderProgram->get()->setUniformValue("projection", openGLcurrentMvp);
 
     static const QVector<QVector4D> colors = {
         {0.0f, 0.0f, 0.0f, 1.0f},

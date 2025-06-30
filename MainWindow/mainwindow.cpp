@@ -37,5 +37,5 @@ void MainWindow::openModel()
 {
     qDebug() << "MainWindow :: openModel : запустился метод openModel";
     //QString filePath = QFileDialog ::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
-    viewport -> loadModel("/home/r3ds/Internship/resources/test.obj");
+    viewport -> loadModel("/home/r3ds/Internship/resources/cube.obj");
 }
