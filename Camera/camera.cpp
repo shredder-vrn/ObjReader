@@ -26,25 +26,12 @@ void Camera :: setViewportSize(int width, int height)
 QMatrix4x4 Camera :: getViewMatrix() const
 {
     qDebug() << "Camera :: getViewMatrix : запустили метод getViewMatrix";
-
-    QMatrix4x4 result;
-
-    result.setToIdentity();
-    result.setRow(3, {0, 0,0,1});
-
-    //return result;
     return cameraViewMatrix;
 }
 
 QMatrix4x4 Camera :: getProjectionMatrix() const
 {
     qDebug() << "Camera :: getProjectionMatrix : запустили метод getProjectionMatrix";
-
-    QMatrix4x4 result;
-
-    result.setToIdentity();
-
-    // return result;
     return cameraProjectionMatrix;
 }
 
