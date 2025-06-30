@@ -22,8 +22,8 @@ private slots:
     void testValidateModel();
     void testParseTokens_data();
     void testParseTokens();
-    void testParseObj_data();
-    void testParseObj();
+    void testparseObj_data();
+    void testparseObj();
 };
 
 #endif // OBJREADERTEST_H

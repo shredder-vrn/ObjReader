@@ -613,7 +613,7 @@ void ObjReaderTest::testParseTokens()
     QCOMPARE(result, expectedResult);
 }
 
-void ObjReaderTest::testParseObj_data()
+void ObjReaderTest::testparseObj_data()
 {
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<bool>("expectedResult");
@@ -623,7 +623,7 @@ void ObjReaderTest::testParseObj_data()
     QTest::newRow("File not found") << ":/models/nonexistent.obj" << false;
 }
 
-void ObjReaderTest::testParseObj()
+void ObjReaderTest::testparseObj()
 {
     QFETCH(QString, fileName);
     QFETCH(bool, expectedResult);

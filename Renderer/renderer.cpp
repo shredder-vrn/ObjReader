@@ -10,13 +10,9 @@ bool OpenGLRenderer::initialize()
     initializeOpenGLFunctions();
 
     glEnable(GL_DEPTH_TEST);
-    qDebug() << "Инициализируем глубину отрисовки glEnable(GL_DEPTH_TEST)";
-
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    qDebug() << "Инициализируем цвет фона     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);";
 
     shaderProgram = new ShaderProgram();
-    qDebug() << "Инициализируем shaderProgram" << shaderProgram;
 
     if (!shaderProgram->compileFromString(
                 R"(
@@ -43,12 +39,9 @@ bool OpenGLRenderer::initialize()
         shaderProgram = nullptr;
         return false;
     }
-    qDebug() << "Компилируем shaderProgram" << shaderProgram;
 
     openGLisInitialized = true;
-    qDebug() << "openGLisInitialized" << openGLisInitialized;
 
-    qDebug() << "OpenGLRenderer :: initialize : метод initialize отработал, все преобразования обработаны";
     return true;
 }
 
@@ -56,32 +49,20 @@ bool OpenGLRenderer::initializeModel(const Model &model)
 {
     qDebug() << "OpenGLRenderer :: initializeModel : запустили метод initializeModel";
 
-    qDebug() << "Проверяем openGLisInitialized" << openGLisInitialized;
     if (!openGLisInitialized) {
         qDebug() << "Досрочное завершение из-за openGLisInitialized";
-        return false;
-    }
-    qDebug() << "Проверяем !model.vertices.isEmpty()" << !model.vertices.isEmpty();
+        return false;}
     if (model.vertices.isEmpty()) {
         qDebug() << "Досрочное завершение из-за model.vertices.isEmpty()";
-        return false;
-    }
+        return false;}
 
-
-    qDebug() << "openGLvao" << openGLvao;
     if (openGLvao == 0)
         glGenVertexArrays(1, &openGLvao);
-    qDebug() << "glGenVertexArrays() - генерируем уникальный идентификатор для openGLvao" << openGLvao;
-    qDebug() << "openGLvbo" << openGLvbo;
     if (openGLvbo == 0)
         glGenBuffers(1, &openGLvbo);
-    qDebug() << "glGenBuffers() - генерируем уникальный идентификатор для openGLvbo" << openGLvbo;
-
 
     glBindVertexArray(openGLvao);
-    qDebug() << "glBindVertexArray() - активируем openGLvbo с указанным идентификатором" << openGLvao;
     glBindBuffer(GL_ARRAY_BUFFER, openGLvbo);
-    qDebug() << "glBindBuffer() - активируем openGLvbo с указанным идентификатором" << openGLvbo;
 
     QVector<QVector3D> newArray = {};
 
@@ -90,32 +71,12 @@ bool OpenGLRenderer::initializeModel(const Model &model)
     }
 
     glBufferData(GL_ARRAY_BUFFER, newArray.size() * sizeof(QVector3D), newArray.constData(), GL_STATIC_DRAW);
-    qDebug() << "glBufferData() - загружаем данные вершин в привязанный VBO: "
-             << "GL_ARRAY_BUFFER: " << GL_ARRAY_BUFFER
-             << "model.vertices.size() * sizeof(QVector3D): " << model.vertices.size() * sizeof(QVector3D)
-             << "model.vertices.constData(): " << model.vertices.constData() << "GL_STATIC_DRAW: " << GL_STATIC_DRAW;
-
-    qDebug() << "model.vertices.size()" << model.vertices.size();
-    qDebug() << "sizeof(QVector3D)" <<  sizeof(QVector3D);
-
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), nullptr);
-    qDebug() << "glVertexAttribPointer() - Указываем формат атрибута: " << 0 << ", " << 3 << ", GL_FLOAT: " << GL_FLOAT << ", sizeof(QVector3D): " << sizeof(QVector3D) << ", nullptr";
-
-
     glEnableVertexAttribArray(0);
-    qDebug() << "glEnableVertexAttribArray() - Включаем использование вершинного атрибута с индексом 0 в текущем шейдере";
-
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    qDebug() << "glBindBuffer() - Деактивируем текущий VBO от цели GL_ARRAY_BUFFER";
-
-
     glBindVertexArray(0);
-    qDebug() << "glBindVertexArray() - Деактивируем текущий VAO";
-
-
-    qDebug() << "OpenGLRenderer :: initializeModel : метод initializeModel отработал, все преобразования обработаны.";
 
     return true;
 }
@@ -126,15 +87,13 @@ void OpenGLRenderer::setModel(const Model& model)
 
     openGLcurrentModel = model;
     initializeModel(openGLcurrentModel);
-
-    qDebug() << "OpenGLRenderer :: setModel : метод setModel отработал";
 }
 
 void OpenGLRenderer::setViewProjectionMatrix(const QMatrix4x4& mvp)
 {
     qDebug() << "OpenGLRenderer :: setViewProjectionMatrix : запустили метод setViewProjectionMatrix";
+
     openGLcurrentMvp = mvp;
-    qDebug() << "OpenGLRenderer :: setViewProjectionMatrix : метод setViewProjectionMatrix отработал";
 }
 
 void OpenGLRenderer::render()
@@ -143,22 +102,19 @@ void OpenGLRenderer::render()
 
     if (!openGLisInitialized) {
         qDebug() << "Рендеринг не выполнен из-за openGLisInitialized";
-        return;
-    }
+        return;}
     if (!shaderProgram) {
         qDebug() << "Рендеринг не выполнен из-за shaderProgram";
-        return;
-    }
+        return;}
     if (openGLcurrentModel.faceVertexIndices.isEmpty()) {
         qDebug() << "Рендеринг не выполнен из-за openGLcurrentModel.faceVertexIndices.isEmpty()";
-        return;
-    }
+        return;}
 
-    qDebug() << "------------------------------------------------";
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    shaderProgram->get()->bind();
+    qDebug() << "MVP Matrix:" << openGLcurrentMvp;
 
+    shaderProgram->get()->bind();
     shaderProgram->get()->setUniformValue("projection", openGLcurrentMvp.transposed());
 
     static const QVector<QVector4D> colors = {
@@ -184,9 +140,6 @@ void OpenGLRenderer::render()
     }
 
     glBindVertexArray(0);
-    qDebug() << "glBindVertexArray() - Деактивируем текущий VAO";
 
     shaderProgram->get()->release();
-
-    qDebug() << "OpenGLRenderer :: render : метод render отработал";
 }

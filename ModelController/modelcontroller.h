@@ -6,22 +6,25 @@
 #include "Model/model.h"
 
 class ModelController {
+
 public:
-    ModelController();
+    ModelController() = default;
     ~ModelController() = default;
 
     bool loadModel(const QString& filePath);
-    void clear();
-    void rotate(float angleX, float angleY);
 
     QMatrix4x4 getModelMatrix() const;
+
     const Model &getModel() const;
 
 private:
-    Model model_;
-    bool hasModel_ = false;
-    float rotationX_ = 0.0f;
-    float rotationY_ = 0.0f;
+    Model modelControllerModel;
+
+    bool modelControllerHasModel = false;
+    float modelControllerRotationX = 0.0f;
+    float modelControllerRotationY = 0.0f;
+    float modelControllerRotationZ = 0.0f;
+
 };
 
 #endif // MODEL_CONTROLLER
