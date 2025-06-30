@@ -16,15 +16,13 @@ class ShaderProgram;
 
 class OpenGLRenderer : protected QOpenGLFunctions_3_3_Core {
 public:
-    OpenGLRenderer();
+    OpenGLRenderer() = default;
     ~OpenGLRenderer() = default;
 
     bool initialize();
     void render();
 
     bool initializeModel(const Model& model);
-
-    void resize(int w, int h);
 
     void setModel(const Model& model);
 

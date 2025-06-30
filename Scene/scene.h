@@ -12,7 +12,7 @@
 class Scene
 {
 public:
-    Scene();
+    Scene() = default;
     ~Scene() = default;
 
     void setModelPath(const QString& path);
@@ -20,7 +20,6 @@ public:
     void loadModel(Model &model);
     void render();
     void resize(int w, int h);
-    void rotate(float dx, float dy);
     bool hasModel() const;
 
 private:
