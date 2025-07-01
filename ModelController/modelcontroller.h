@@ -2,6 +2,7 @@
 #define MODEL_CONTROLLER
 
 #include <QString>
+#include <QMatrix4x4>
 
 #include "Model/model.h"
 
@@ -17,13 +18,14 @@ public:
 
     QMatrix4x4 getModelMatrix() const;
 
+    void translate(const QVector3D &translation);
+    void rotate(float angle, const QVector3D &axis);
+    void scale(const QVector3D &scalingFactors);
+    void resetTransformations();
+
 private:
     Model modelControllerModel;
-
-    float modelControllerRotationX = 0.0f;
-    float modelControllerRotationY = 0.0f;
-    float modelControllerRotationZ = 0.0f;
-
+    QMatrix4x4 modelControllerModelMatrix;
 };
 
 #endif // MODEL_CONTROLLER

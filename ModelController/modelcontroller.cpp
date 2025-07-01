@@ -21,19 +21,13 @@ bool ModelController :: loadModel(const QString &filePath)
 
     if (!file.exists()) {
         qCritical() << "Файл не найден:" << filePath;
-        return false;
-    }
-
+        return false;}
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical() << "Не удалось открыть файл для чтения:" << filePath;
-        return false;
-    }
-
+        return false;}
     if (!parseObj(filePath, newModel)) {
         qCritical() << "Ошибка при разборе файла OBJ.";
-        return false;
-    }
-
+        return false;}
 
     triangulateModel(
                 newModel.vertices,
@@ -47,19 +41,40 @@ bool ModelController :: loadModel(const QString &filePath)
     return true;
 }
 
+const Model &ModelController::getModel() const
+{
+    qDebug() << "ModelController :: getModel : запустили метод getModel";
+    return modelControllerModel;
+}
+
 QMatrix4x4 ModelController :: getModelMatrix() const
 {
     qDebug() << "ModelController :: getModelMatrix : запустили метод getModelMatrix";
+    return modelControllerModelMatrix;
+}
 
-    QMatrix4x4 matrix;
+void ModelController::translate(const QVector3D &translation)
+{
+    qDebug() << "ModelController :: translate : запустили метод translate";
+    modelControllerModelMatrix.translate(translation);
+}
 
-    return matrix;
+void ModelController::rotate(float angle, const QVector3D &axis)
+{
+    qDebug() << "ModelController :: rotate : запустили метод rotate";
+    modelControllerModelMatrix.rotate(angle, axis);
+}
+
+void ModelController::scale(const QVector3D &scalingFactors)
+{
+    qDebug() << "ModelController :: scale : запустили метод scale";
+    modelControllerModelMatrix.scale(scalingFactors);
+}
+
+void ModelController::resetTransformations()
+{
+    modelControllerModelMatrix.setToIdentity();
 }
 
 
-const Model &ModelController::getModel() const {
-    qDebug() << "ModelController :: getModel : запустили метод getModel";
-
-    return modelControllerModel;
-}
 

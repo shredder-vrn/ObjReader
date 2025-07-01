@@ -10,22 +10,28 @@ void Scene :: initialize()
 void Scene::loadModel(const QString &filePath)
 {
     qDebug() << "Scene : : loadModel : запустили метод loadModel";
-    if (modelController.loadModel(filePath)) {
-        renderer.setModel(modelController.getModel());
-    } else {
+
+    if (!modelController.loadModel(filePath))
         qWarning() << "Не удалось загрузить модель";
-    }
+
+    renderer.setModel(modelController.getModel());
 }
 
 void Scene :: render()
 {
     qDebug() << "Scene :: render : запустили метод render";
-
     qDebug() << "modelController.getModelMatrix(): " << modelController.getModelMatrix();
     qDebug() << "camera.getViewMatrix(): " << camera.getViewMatrix();
     qDebug() << "camera.getProjectionMatrix(): " << camera.getProjectionMatrix();
 
-    renderer.setMVPmatrix(camera.getProjectionMatrix() * camera.getViewMatrix() * modelController.getModelMatrix());
+    QMatrix4x4 matrix;
+
+    matrix = modelController.getModelMatrix();
+
+    matrix.rotate(30, {1, 1, 0});
+
+
+    renderer.setMVPmatrix(camera.getProjectionMatrix() * camera.getViewMatrix() * matrix);
 
     renderer.render();
 }

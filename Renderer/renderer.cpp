@@ -18,10 +18,11 @@ bool OpenGLRenderer::initialize()
                 R"(
                 #version 330 core
                 layout(location=0) in vec3 position;
-                uniform mat4 projection;
+                uniform mat4 openGLcurrentMvp;
                 out vec3 positionOut;
                 void main() {
-                    gl_Position = vec4(position, 1.0) * projection;
+                    gl_Position = openGLcurrentMvp * vec4(position, 1.0);
+                    //gl_Position = vec4(position, 1.0) * openGLcurrentMvp;
                     positionOut = position;
                 })",
                 R"(
@@ -130,7 +131,7 @@ void OpenGLRenderer::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shaderProgram->get()->bind();
-    shaderProgram->get()->setUniformValue("projection", openGLcurrentMvp);
+    shaderProgram->get()->setUniformValue("openGLcurrentMvp", openGLcurrentMvp);
 
     static const QVector<QVector4D> colors = {
         {0.0f, 0.0f, 0.0f, 1.0f},
