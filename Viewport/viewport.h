@@ -6,8 +6,7 @@
 #include <QVector>
 #include <QVector3D>
 
-#include "Scene/scene.h" // <-- новый класс
-
+#include "Scene/scene.h"
 
 class Viewport : public QOpenGLWidget
 {
@@ -24,8 +23,10 @@ protected:
     void paintGL() override;
     void resizeEvent(QResizeEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
+    QPoint lastMousePos;
     Scene scene;
 };
 

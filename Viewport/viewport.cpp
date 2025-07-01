@@ -35,15 +35,6 @@ void Viewport::resizeEvent(QResizeEvent *event)
     QOpenGLWidget::resizeEvent(event);
 }
 
-void Viewport::wheelEvent(QWheelEvent *event)
-{
-    qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
-
-    float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
-    scene.getCamera().zoom(delta);
-    update();
-}
-
 void Viewport :: initializeGL()
 {
     qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
@@ -56,3 +47,17 @@ void Viewport::paintGL()
     scene.render();
 }
 
+void Viewport::wheelEvent(QWheelEvent *event)
+{
+    qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
+    float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
+    scene.getCamera().zoom(delta);
+    update();
+}
+
+void Viewport::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton) {
+        lastMousePos = event->pos();
+        qDebug() << lastMousePos;}
+}

@@ -10,6 +10,7 @@ public:
 
     void setViewportSize(int width, int height);
     void zoom(float delta);
+    void rotateAroundTarget(float deltaX, float deltaY);
 
     QMatrix4x4 getViewMatrix() const;
     QMatrix4x4 getProjectionMatrix() const;
