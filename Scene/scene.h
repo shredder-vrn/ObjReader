@@ -15,6 +15,8 @@
 //! Navigation.pri
 //! namespace Viewer
 
+namespace Viewer  {
+
 class Scene
 {
 public:
@@ -43,5 +45,7 @@ private:
 
     QString modelPath = "";
 };
+
+}
 
 #endif // SCENE_H

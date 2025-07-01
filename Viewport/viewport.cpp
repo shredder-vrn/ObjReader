@@ -6,6 +6,8 @@
 //! REVIEW: <ObjReader/objreader.h> -> "ObjReader/objreader.h"
 #include <ObjReader/objreader.h>
 
+namespace Viewer{
+
 Viewport::Viewport(QWidget* parent) : QOpenGLWidget(parent)
 {
     qDebug() << "Viewport :: Viewport : запустили конструктор";
@@ -39,7 +41,7 @@ void Viewport::resizeEvent(QResizeEvent *event)
 
 void Viewport :: initializeGL()
 {
-    qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";    
+    qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
     //! REVIEW:
     //    if (scenePtr != nullptr) {
     //        delete scenePtr;
@@ -83,4 +85,5 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
     scene.getCamera().rotateAroundTarget(-delta.x(), delta.y());
     lastMousePos = event->pos();
     update();
+}
 }

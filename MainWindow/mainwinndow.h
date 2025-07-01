@@ -5,6 +5,7 @@
 
 #include "Viewport/viewport.h"
 
+namespace Viewer{
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -19,5 +20,6 @@ private slots:
 private:
     Viewport *viewport = nullptr;
 };
+}
 
 #endif // MAINWINNDOW_H

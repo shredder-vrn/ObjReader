@@ -9,6 +9,11 @@
 
 #include "Scene/scene.h"
 
+namespace Viewer{
+
+
+
+
 //! REVIEW: namespace
 //! REVIEW: Viewport -> ViewportWidget
 class Viewport : public QOpenGLWidget
@@ -67,6 +72,7 @@ private:
     //! if (scene == nullptr)
     //!
 };
+}
 
 
 #endif // VIEWPORT_H

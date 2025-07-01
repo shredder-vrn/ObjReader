@@ -5,48 +5,44 @@
 #include <QVector3D>
 #include <QQuaternion>
 
-//! REVIEW: namespace
+namespace Viewer {
 
 class Camera
 {
 public:
     Camera();
 
-    //! REVIEW: const
-    void setViewportSize(int width, int height);
-    void zoom(float delta);
-    void rotateAroundTarget(float deltaX, float deltaY);
+    void setViewportSize(const int width, const int height);
+    void zoom(const float delta);
+    void rotateAroundTarget(const float deltaX, const float deltaY);
 
-    //! REVIEW: viewMatrix() const;
-    QMatrix4x4 getViewMatrix() const;
-    QMatrix4x4 getProjectionMatrix() const;
+    QMatrix4x4 viewMatrix() const;
+    QMatrix4x4 projectionMatrix() const;
 
 private:
     void updateViewMatrix();
 
-    //! REVIEW: m_
-    QVector3D cameraPosition = QVector3D(0.0f, 0.0f, 20.0f);
-    QVector3D cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
-    QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
-    QVector3D cameraFront = QVector3D(0, 0, -1);
+    QVector3D m_cameraPosition = QVector3D(0.0f, 0.0f, 20.0f);
+    QVector3D m_cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
+    QVector3D m_cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
+    QVector3D m_cameraFront = QVector3D(0, 0, -1);
 
-    QMatrix4x4 cameraViewMatrix;
-    QMatrix4x4 cameraProjectionMatrix;
+    QMatrix4x4 m_cameraViewMatrix;
+    QMatrix4x4 m_cameraProjectionMatrix;
 
-    QQuaternion cameraOrientation = QQuaternion::fromAxisAndAngle(QVector3D{0, 1, 0}, 1);
+    QQuaternion m_cameraOrientation = QQuaternion::fromAxisAndAngle(QVector3D{0, 1, 0}, 1);
 
-    int cameraWidth = 800;
-    int cameraHeight = 600;
-    float cameraFov = 45.0f;
-    float cameraNearPlane = 0.1f;
-    float cameraFarPlane = 100.0f;
-    //! REVIEW: почитать gimbal lock
-    //! Quaternion - представление поворота
-    //! REVIEW: QQuaternion
-    //!
-    float distanceToTarget = 20.0f;
-    float cameraYaw = 0.0f;
-    float cameraPitch = 0.0f;
+    int m_cameraWidth = 800;
+    int m_cameraHeight = 600;
+    float m_cameraFov = 45.0f;
+    float m_cameraNearPlane = 0.1f;
+    float m_cameraFarPlane = 100.0f;
+
+    float m_distanceToTarget = 20.0f;
+    float m_cameraYaw = 0.0f;
+    float m_cameraPitch = 0.0f;
 };
+
+}
 
 #endif // CAMERA_H

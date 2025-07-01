@@ -11,8 +11,6 @@
 #include "Model/model.h"
 #include "Shaders/shadersprogram.h"
 
-class ShaderProgram;
-
 
 class OpenGLRenderer : protected QOpenGLFunctions_3_3_Core {
 public:

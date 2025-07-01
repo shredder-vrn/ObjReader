@@ -7,6 +7,7 @@
 
 #include "Viewport/viewport.h"
 
+namespace Viewer{
 MainWindow :: MainWindow(QWidget *parent) : QMainWindow (parent)
 {
     setWindowTitle("OBJ Wiewer");
@@ -33,3 +34,4 @@ void MainWindow::openModel() {
 }
 
 MainWindow::~MainWindow() = default;
+}
