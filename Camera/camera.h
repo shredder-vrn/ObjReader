@@ -9,6 +9,7 @@ public:
     Camera();
 
     void setViewportSize(int width, int height);
+    void zoom(float delta);
 
     QMatrix4x4 getViewMatrix() const;
     QMatrix4x4 getProjectionMatrix() const;

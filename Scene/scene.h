@@ -16,9 +16,11 @@ public:
     ~Scene() = default;
 
     void initialize();
-    void loadModel(const QString& path);
+    void loadModel(const QString &path);
     void render();
     void resize(int w, int h);
+
+    Camera &getCamera() {return camera;}
 
 private:
     int sceneWidth = 600;

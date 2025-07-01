@@ -30,7 +30,6 @@ void Scene :: render()
 
     matrix.rotate(30, {1, 1, 0});
 
-
     renderer.setMVPmatrix(camera.getProjectionMatrix() * camera.getViewMatrix() * matrix);
 
     renderer.render();

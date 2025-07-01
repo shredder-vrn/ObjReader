@@ -50,3 +50,15 @@ void Camera :: updateViewMatrix()
     cameraViewMatrix.setToIdentity();
     cameraViewMatrix.lookAt(cameraPosition, cameraTarget, cameraUp);
 }
+
+void Camera::zoom(float delta) {
+    qDebug() << "Camera :: zoom : запустили метод zoom";
+
+    float zoomSpeed = 1.0f;
+
+    QVector3D direction = (cameraTarget - cameraPosition).normalized();
+
+    cameraPosition += direction * delta * zoomSpeed;
+
+    updateViewMatrix();
+}
