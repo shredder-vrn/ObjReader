@@ -3,32 +3,50 @@
 
 #include <QMatrix4x4>
 #include <QVector3D>
+#include <QQuaternion>
 
-class Camera {
+//! REVIEW: namespace
+
+class Camera
+{
 public:
     Camera();
 
+    //! REVIEW: const
     void setViewportSize(int width, int height);
     void zoom(float delta);
     void rotateAroundTarget(float deltaX, float deltaY);
 
+    //! REVIEW: viewMatrix() const;
     QMatrix4x4 getViewMatrix() const;
     QMatrix4x4 getProjectionMatrix() const;
 
 private:
     void updateViewMatrix();
 
+    //! REVIEW: m_
     QVector3D cameraPosition = QVector3D(0.0f, 0.0f, 20.0f);
     QVector3D cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
     QVector3D cameraTarget = QVector3D(0.0f, 0.0f, 0.0f);
+    QVector3D cameraFront = QVector3D(0, 0, -1);
+
     QMatrix4x4 cameraViewMatrix;
     QMatrix4x4 cameraProjectionMatrix;
+
+    QQuaternion cameraOrientation = QQuaternion::fromAxisAndAngle(QVector3D{0, 1, 0}, 1);
 
     int cameraWidth = 800;
     int cameraHeight = 600;
     float cameraFov = 45.0f;
     float cameraNearPlane = 0.1f;
     float cameraFarPlane = 100.0f;
+    //! REVIEW: почитать gimbal lock
+    //! Quaternion - представление поворота
+    //! REVIEW: QQuaternion
+    //!
+    float distanceToTarget = 20.0f;
+    float cameraYaw = 0.0f;
+    float cameraPitch = 0.0f;
 };
 
 #endif // CAMERA_H

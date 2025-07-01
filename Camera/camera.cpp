@@ -47,19 +47,37 @@ void Camera :: updateViewMatrix()
 {
     qDebug() << "Camera :: updateViewMatrix : запустили метод updateViewMatrix";
 
+    QVector3D rotatedFront = cameraOrientation.rotatedVector(cameraFront);
+    QVector3D rotatedUp = cameraOrientation.rotatedVector(cameraUp);
+
+    QVector3D cameraPosition = cameraTarget - rotatedFront * distanceToTarget;
+
     cameraViewMatrix.setToIdentity();
-    cameraViewMatrix.lookAt(cameraPosition, cameraTarget, cameraUp);
+    cameraViewMatrix.lookAt(cameraPosition, cameraTarget, rotatedUp);
+}
+
+void Camera::rotateAroundTarget(float deltaX, float deltaY)
+{
+    qDebug() << "Camera :: rotateAroundTarget : запустили метод rotateAroundTarget";
+    const float rotationSpeed = 0.5f;
+
+    QQuaternion yawRotation = QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), deltaX * rotationSpeed);
+    QQuaternion pitchRotation = QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), -deltaY * rotationSpeed);
+
+    cameraOrientation = cameraOrientation * pitchRotation * yawRotation;
+    cameraOrientation.normalize();
+
+    updateViewMatrix();
 }
 
 void Camera::zoom(float delta) {
     qDebug() << "Camera :: zoom : запустили метод zoom";
     float zoomSpeed = 1.0f;
+
     QVector3D direction = (cameraTarget - cameraPosition).normalized();
+
+    distanceToTarget = qMax(1.0f, distanceToTarget - delta * zoomSpeed);
     cameraPosition += direction * delta * zoomSpeed;
+
     updateViewMatrix();
-}
-
-void Camera::rotateAroundTarget(float deltaX, float deltaY)
-{
-
 }
