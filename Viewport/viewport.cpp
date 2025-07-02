@@ -24,43 +24,45 @@ void ViewportWidget::loadModel(const QString &filePath)
     Model model;
     QFile file(filePath);
 
-    scene.loadModel(filePath);
+    m_scene.loadModel(filePath);
 
     update();
     doneCurrent();
 }
 
+
+
 void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
     qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";
-    scene.resize(event->size().width(), event->size().height());
+    m_scene.resize(event->size().width(), event->size().height());
     QOpenGLWidget::resizeEvent(event);
 }
 
 void ViewportWidget :: initializeGL()
 {
     qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
-    scene.initialize();
+    m_scene.initialize();
 }
 
 void ViewportWidget::paintGL()
 {
     qDebug() << "\n\nViewport :: paintGL : запустили метод paintGL";
-    scene.render();
+    m_scene.render();
 }
 
 void ViewportWidget::wheelEvent(QWheelEvent *event)
 {
     qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
     const float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
-    scene.getCamera().zoom(delta);
+    m_scene.getCamera().zoom(delta);
     update();
 }
 
 void ViewportWidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::RightButton)
-        lastMousePos = event->pos();
+        m_lastMousePos = event->pos();
 }
 
 void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
@@ -68,9 +70,9 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
     if (!(event->buttons() & Qt::RightButton))
         return;
 
-    const QPoint delta = event->pos() - lastMousePos;
-    scene.getCamera().rotateAroundTarget(-delta.x(), delta.y());
-    lastMousePos = event->pos();
+    const QPoint delta = event->pos() - m_lastMousePos;
+    m_scene.getCamera().rotateAroundTarget(-delta.x(), delta.y());
+    m_lastMousePos = event->pos();
     update();
 }
 }

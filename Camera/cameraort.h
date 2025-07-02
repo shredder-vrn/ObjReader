@@ -6,11 +6,13 @@
 
 #include "Camera/сamerainterface.h"
 
+namespace Viewer{
+
 class CameraOrt : public CameraInterface
 {
 public:
     CameraOrt();
-    ~CameraOrt() override {};
+    virtual ~CameraOrt() override {};
 
     QMatrix4x4 viewMatrix() const override;
     QMatrix4x4 projectionMatrix() const override;
@@ -44,5 +46,5 @@ private:
     QMatrix4x4 m_viewMatrix;
     QMatrix4x4 m_projectionMatrix;
 };
-
+}
 #endif // CAMERAORT_H

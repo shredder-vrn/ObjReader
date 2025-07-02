@@ -21,6 +21,11 @@ public:
 
     void loadModel(const QString &filePath);
 
+    void switchToPerspective();
+    void switchToOrthographic();
+
+
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -31,8 +36,8 @@ protected:
 
 
 private:
-    QPoint lastMousePos;
-    Scene scene;
+    QPoint m_lastMousePos;
+    Scene m_scene;
 };
 }
 

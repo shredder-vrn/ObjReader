@@ -1,5 +1,7 @@
 #include "cameraort.h"
 
+namespace Viewer{
+
 CameraOrt::CameraOrt()
 {
     updateViewMatrix();
@@ -64,4 +66,5 @@ void CameraOrt::updateProjectionMatrix()
 
     m_projectionMatrix.setToIdentity();
     m_projectionMatrix.ortho(left, right, bottom, top, m_nearPlane, m_farPlane);
+}
 }

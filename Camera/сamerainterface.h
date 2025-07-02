@@ -4,6 +4,7 @@
 #include <QMatrix4x4>
 #include <QVector3D>
 
+namespace Viewer {
 enum class CameraType {
     Perspective,
     Orthographic
@@ -22,6 +23,8 @@ public:
     virtual void zoom(const float delta) = 0;
 
     virtual CameraType type() const = 0;
-};
 
+
+};
+}
 #endif // СAMERAINTERFACE_H

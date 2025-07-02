@@ -7,12 +7,14 @@
 #include <QQuaternion>
 #include <QVector>
 #include <QVector3D>
+namespace Viewer{
+
 
 class CameraPer : public CameraInterface
 {
 public:
     CameraPer();
-    ~CameraPer() override {};
+    virtual ~CameraPer() override {};
 
     QMatrix4x4 viewMatrix() const override;
     QMatrix4x4 projectionMatrix() const override;
@@ -44,5 +46,5 @@ private:
     QMatrix4x4 m_viewMatrix;
     QMatrix4x4 m_projectionMatrix;
 };
-
+}
 #endif // CAMERAPER_H

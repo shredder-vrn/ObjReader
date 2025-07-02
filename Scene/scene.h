@@ -7,6 +7,8 @@
 
 #include "Camera/camera.h"
 #include "Camera/сamerainterface.h"
+#include "Camera/cameraper.h"
+#include "Camera/cameraort.h"
 #include "ModelController/modelcontroller.h"
 #include "Renderer/renderer.h"
 
@@ -15,7 +17,7 @@ namespace Viewer  {
 class Scene
 {
 public:
-    Scene(){};
+    Scene();
     ~Scene(){};
 
     void initialize();
@@ -23,7 +25,15 @@ public:
     void render();
     void resize(const int width, const int height);
 
-    Camera &getCamera() { return m_camera; }
+
+    CameraInterface& getCamera() { return *m_camera; }
+
+    void switchToPerspective();
+    void switchToOrthographic();
+
+    void zoom(float delta);
+    void rotateAroundTarget(float deltaX, float deltaY);
+
 
 private:
     int m_sceneWidth = 600;
@@ -31,10 +41,10 @@ private:
 
     ModelController m_modelController;
     OpenGLRenderer m_renderer;
-    Camera m_camera;
+    std::unique_ptr<CameraInterface> m_camera;
 
-    QString m_modelPath = "";
 };
+
 
 }
 

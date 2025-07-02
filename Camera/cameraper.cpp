@@ -1,4 +1,5 @@
 #include "cameraper.h"
+namespace Viewer{
 
 CameraPer::CameraPer()
 {
@@ -57,4 +58,5 @@ void CameraPer::updateViewMatrix()
 
     m_viewMatrix.setToIdentity();
     m_viewMatrix.lookAt(cameraPos, m_target, rotatedUp);
+}
 }
