@@ -9,28 +9,18 @@
 #include "ModelController/modelcontroller.h"
 #include "Renderer/renderer.h"
 
-//! REVIEW: namespace
-//! Viewport.pri
-//! Scene.pri
-//! Navigation.pri
-//! namespace Viewer
-
 namespace Viewer  {
 
 class Scene
 {
 public:
     Scene() = default;
-    //! REVIEW: virtual
     ~Scene() = default;
 
     void initialize();
     void loadModel(const QString &path);
     void render();
-    //! REVIEW: const int width
-    //! w -> width
-    //! h -> height
-    void resize(int w, int h);
+    void resize(const int width, const int height);
 
     Camera &getCamera() { return m_camera; }
 

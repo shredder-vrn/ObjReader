@@ -8,7 +8,7 @@
 
 namespace Viewer{
 
-Viewport::Viewport(QWidget* parent) : QOpenGLWidget(parent)
+ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
 {
     qDebug() << "Viewport :: Viewport : запустили конструктор";
     QSurfaceFormat format;
@@ -18,7 +18,7 @@ Viewport::Viewport(QWidget* parent) : QOpenGLWidget(parent)
 }
 
 //! REVIEW: TODO: decomposition
-void Viewport::loadModel(const QString &filePath)
+void ViewportWidget::loadModel(const QString &filePath)
 {
     qDebug() << "Viewport :: loadModel : запустили метод loadModel";
     makeCurrent();
@@ -32,14 +32,14 @@ void Viewport::loadModel(const QString &filePath)
     doneCurrent();
 }
 
-void Viewport::resizeEvent(QResizeEvent *event)
+void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
     qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";
     scene.resize(event->size().width(), event->size().height());
     QOpenGLWidget::resizeEvent(event);
 }
 
-void Viewport :: initializeGL()
+void ViewportWidget :: initializeGL()
 {
     qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
     //! REVIEW:
@@ -50,14 +50,14 @@ void Viewport :: initializeGL()
     scene.initialize();
 }
 
-void Viewport::paintGL()
+void ViewportWidget::paintGL()
 {
     qDebug() << "\n\nViewport :: paintGL : запустили метод paintGL";
     // Q_ASSERT(scenePtr != nullptr);
     scene.render();
 }
 
-void Viewport::wheelEvent(QWheelEvent *event)
+void ViewportWidget::wheelEvent(QWheelEvent *event)
 {
     qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
     //! REVIEW: const
@@ -67,13 +67,13 @@ void Viewport::wheelEvent(QWheelEvent *event)
     update();
 }
 
-void Viewport::mousePressEvent(QMouseEvent *event)
+void ViewportWidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::RightButton)
         lastMousePos = event->pos();
 }
 
-void Viewport::mouseMoveEvent(QMouseEvent *event)
+void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
 {
     //! REVIEW:
     if (!(event->buttons() & Qt::RightButton))

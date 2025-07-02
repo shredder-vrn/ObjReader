@@ -21,6 +21,7 @@ public:
     void rotateAroundTarget(const float deltaX, const float deltaY) override;
     void zoom(const float delta) override;
 
+    CameraType type() const override { return CameraType::Perspective; }
 private:
     void updateViewMatrix();
 

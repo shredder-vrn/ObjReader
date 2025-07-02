@@ -16,13 +16,13 @@ namespace Viewer{
 
 //! REVIEW: namespace
 //! REVIEW: Viewport -> ViewportWidget
-class Viewport : public QOpenGLWidget
+class ViewportWidget : public QOpenGLWidget
 {
     Q_OBJECT
 
 public:
-    explicit Viewport(QWidget *parent = nullptr);
-    ~Viewport() override = default;
+    explicit ViewportWidget(QWidget *parent = nullptr);
+    ~ViewportWidget() override = default;
     //! REVIEW: override
     //!
     //! class Widget

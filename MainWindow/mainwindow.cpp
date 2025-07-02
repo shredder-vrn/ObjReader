@@ -23,7 +23,7 @@ MainWindow :: MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QWidget *centralWidget = new QWidget(this);
 
-    m_viewport = new Viewport(centralWidget);
+    m_viewport = new ViewportWidget(centralWidget);
 
     QVBoxLayout *layout = new QVBoxLayout();
 

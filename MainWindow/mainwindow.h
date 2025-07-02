@@ -37,7 +37,7 @@ private:
     QGroupBox *createTransformSection();
 
 
-    Viewport *m_viewport = nullptr;
+    ViewportWidget *m_viewport = nullptr;
     QDockWidget *m_explorerDock = nullptr;
     QTreeView *m_explorerView = nullptr;
     QDockWidget *m_propertiesDock = nullptr;

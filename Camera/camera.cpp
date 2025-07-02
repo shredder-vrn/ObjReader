@@ -80,6 +80,7 @@ void Camera::zoom(const float delta) {
     m_cameraPosition += direction * delta * zoomSpeed;
 
     updateViewMatrix();
+
 }
 }
 
