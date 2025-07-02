@@ -9,7 +9,6 @@ void Scene::initialize()
     m_camera.setViewportSize(m_sceneWidth, m_sceneHeight);
 }
 
-//! REVIEW: decompose
 void Scene::loadModel(const QString &filePath)
 {
     qDebug() << "Scene : : loadModel : запустили метод loadModel";
@@ -19,23 +18,6 @@ void Scene::loadModel(const QString &filePath)
 
     m_renderer.setModel(m_modelController.getModel());
 }
-
-
-//! REVIEW:
-/**
-    Viewport
-        - keeps navigation
-        - keeps camera
-        - keeps gl objects
-        - draws gl objects
-    GLObject
-        - incapsulates any drawable object
-    Camera
-        - incapsulates any computations of model view matrix
-    Navigation
-        - incapsulates how mouse movements + keys converts to cameras rotation and translation
-
-**/
 
 void Scene::render()
 {
@@ -48,16 +30,13 @@ void Scene::render()
     m_renderer.render();
 }
 
-void Scene :: resize(int w, int h)
+void Scene :: resize(const int width, const int height)
 {
     qDebug() << "Scene :: resize : запустили метод resize";
-    //! REVIEW:
-    //! int sceneWidth; -> int width() const { return camera.width(); }
-    //! scene.width();
 
-    m_sceneWidth = w;
-    m_sceneHeight = h;
-    m_camera.setViewportSize(w, h);
+    m_sceneWidth = width;
+    m_sceneHeight = height;
+    m_camera.setViewportSize(width, height);
 }
 
 }

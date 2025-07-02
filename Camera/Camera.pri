@@ -8,8 +8,8 @@ HEADERS += \
     $$PWD/camera.h\
     $$PWD/cameraort.h \
     $$PWD/cameraper.h\
-    $$PWD/camerarefactoring.h\
-    $$PWD/сameraInterface.h
+    $$PWD/camerarefactoring.h \
+    $$PWD/сamerainterface.h
 
 
 SOURCES += \

@@ -4,7 +4,7 @@
 #include <QMatrix4x4>
 #include <QVector3D>
 
-#include "Camera/сameraInterface.h"
+#include "Camera/сamerainterface.h"
 
 class CameraOrt : public CameraInterface
 {

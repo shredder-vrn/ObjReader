@@ -1,7 +1,7 @@
 #ifndef CAMERAPER_H
 #define CAMERAPER_H
 
-#include "Camera/сameraInterface.h"
+#include "Camera/сamerainterface.h"
 
 #include <QMatrix4x4>
 #include <QQuaternion>

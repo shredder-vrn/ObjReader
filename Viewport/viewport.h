@@ -11,11 +11,6 @@
 
 namespace Viewer{
 
-
-
-
-//! REVIEW: namespace
-//! REVIEW: Viewport -> ViewportWidget
 class ViewportWidget : public QOpenGLWidget
 {
     Q_OBJECT
@@ -23,35 +18,6 @@ class ViewportWidget : public QOpenGLWidget
 public:
     explicit ViewportWidget(QWidget *parent = nullptr);
     ~ViewportWidget() override = default;
-    //! REVIEW: override
-    //!
-    //! class Widget
-    //! {
-    //! public:
-    //!     virtual ~Widget() = default;
-    //!     virtual void f()
-    //!     {
-    //!         print("I'm Parent");
-    //!     }
-    //! };
-    //! class Viewport : public Widget
-    //! {
-    //! public:
-    //!     ~Viewport() override
-    //!     {
-    //!         delete glObjects;
-    //!     }
-    //!
-    //!     void f() override
-    //!     {
-    //!         print("I'm Child");
-    //!     }
-    //! };
-    //!
-    //! Widget *p = new Viewport();
-    //! p->f();
-    //! delete p;
-    //!
 
     void loadModel(const QString &filePath);
 
@@ -67,10 +33,6 @@ protected:
 private:
     QPoint lastMousePos;
     Scene scene;
-    //! REVIEW:
-    //! Scene *scene = nullptr;
-    //! if (scene == nullptr)
-    //!
 };
 }
 

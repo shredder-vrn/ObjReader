@@ -3,8 +3,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 
-//! REVIEW: <ObjReader/objreader.h> -> "ObjReader/objreader.h"
-#include <ObjReader/objreader.h>
+#include "ObjReader/objreader.h"
 
 namespace Viewer{
 
@@ -17,7 +16,6 @@ ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
     setFormat(format);
 }
 
-//! REVIEW: TODO: decomposition
 void ViewportWidget::loadModel(const QString &filePath)
 {
     qDebug() << "Viewport :: loadModel : запустили метод loadModel";
@@ -42,27 +40,19 @@ void ViewportWidget::resizeEvent(QResizeEvent *event)
 void ViewportWidget :: initializeGL()
 {
     qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
-    //! REVIEW:
-    //    if (scenePtr != nullptr) {
-    //        delete scenePtr;
-    //        scenePtr = new Scene();
-    //    }
     scene.initialize();
 }
 
 void ViewportWidget::paintGL()
 {
     qDebug() << "\n\nViewport :: paintGL : запустили метод paintGL";
-    // Q_ASSERT(scenePtr != nullptr);
     scene.render();
 }
 
 void ViewportWidget::wheelEvent(QWheelEvent *event)
 {
     qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
-    //! REVIEW: const
-    float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
-    //! REVIEW: TODO: demetra rule
+    const float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
     scene.getCamera().zoom(delta);
     update();
 }
@@ -75,13 +65,10 @@ void ViewportWidget::mousePressEvent(QMouseEvent *event)
 
 void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    //! REVIEW:
     if (!(event->buttons() & Qt::RightButton))
         return;
 
-    //! REVIEW: const
-    QPoint delta = event->pos() - lastMousePos;
-    //! REVIEW: demetra rule
+    const QPoint delta = event->pos() - lastMousePos;
     scene.getCamera().rotateAroundTarget(-delta.x(), delta.y());
     lastMousePos = event->pos();
     update();

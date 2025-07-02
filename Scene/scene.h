@@ -6,6 +6,7 @@
 #include <QMatrix4x4>
 
 #include "Camera/camera.h"
+#include "Camera/сamerainterface.h"
 #include "ModelController/modelcontroller.h"
 #include "Renderer/renderer.h"
 
@@ -14,8 +15,8 @@ namespace Viewer  {
 class Scene
 {
 public:
-    Scene() = default;
-    ~Scene() = default;
+    Scene(){};
+    ~Scene(){};
 
     void initialize();
     void loadModel(const QString &path);
