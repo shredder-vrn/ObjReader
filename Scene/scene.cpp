@@ -52,24 +52,30 @@ void Scene::switchToPerspective()
 {
     if (m_camera->type() == CameraType::Perspective)
         return;
+    auto newCam = std::make_unique<CameraPer>();
+    newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
+    m_camera = std::move(newCam);
 }
 
 void Scene::switchToOrthographic()
 {
+    if (m_camera->type() == CameraType::Orthographic)
+        return;
 
+    auto newCam = std::make_unique<CameraOrt>();
+    newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
+    m_camera = std::move(newCam);
 }
 
 void Scene::zoom(float delta)
 {
-
+    m_camera->zoom(delta);
 }
 
 void Scene::rotateAroundTarget(float deltaX, float deltaY)
 {
-
+    m_camera->rotateAroundTarget(deltaX, deltaY);
 }
-
-
 
 }
 

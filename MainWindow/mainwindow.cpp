@@ -65,6 +65,14 @@ void MainWindow::setupDockWidgets()
     m_propertiesDock->setMinimumWidth(350);
 
     addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
+
+    QMenu *cameraMenu = menuBar()->addMenu("Camera");
+
+    QAction *perspAct = cameraMenu->addAction("Perspective");
+    QAction *orthoAct = cameraMenu->addAction("Orthographic");
+
+    connect(perspAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToPerspective);
+    connect(orthoAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToOrthographic);
 }
 
 QGroupBox *MainWindow::createModelPropertiesSection()

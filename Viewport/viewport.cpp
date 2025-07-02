@@ -55,7 +55,7 @@ void ViewportWidget::wheelEvent(QWheelEvent *event)
 {
     qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
     const float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
-    m_scene.getCamera().zoom(delta);
+    m_scene.zoom(delta);
     update();
 }
 
@@ -71,8 +71,20 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
         return;
 
     const QPoint delta = event->pos() - m_lastMousePos;
-    m_scene.getCamera().rotateAroundTarget(-delta.x(), delta.y());
+    m_scene.rotateAroundTarget(-delta.x(), delta.y());
     m_lastMousePos = event->pos();
+    update();
+}
+
+void ViewportWidget::switchToPerspective()
+{
+    m_scene.switchToPerspective();
+    update();
+}
+
+void ViewportWidget::switchToOrthographic()
+{
+    m_scene.switchToOrthographic();
     update();
 }
 }
