@@ -37,7 +37,6 @@ private:
     float m_cameraFov = 45.0f;
     float m_cameraNearPlane = 0.1f;
     float m_cameraFarPlane = 100.0f;
-
     float m_distanceToTarget = 20.0f;
     float m_cameraYaw = 0.0f;
     float m_cameraPitch = 0.0f;

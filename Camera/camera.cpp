@@ -72,7 +72,7 @@ void Camera::rotateAroundTarget(const float deltaX, const float deltaY)
 
 void Camera::zoom(const float delta) {
     qDebug() << "Camera :: zoom : запустили метод zoom";
-    float zoomSpeed = 1.0f;
+    float zoomSpeed = 3.0f;
 
     QVector3D direction = (m_cameraTarget - m_cameraPosition).normalized();
 

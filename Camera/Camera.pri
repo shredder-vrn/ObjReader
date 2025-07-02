@@ -1,19 +1,24 @@
-!CAMERA {
-CONFIG += CAMERA
+!CAMERA_PRI {
+
+CONFIG += CAMERA_PRI
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
-
 HEADERS += \
     $$PWD/camera.h\
-    $$PWD/camerarefactoring.h
+    $$PWD/cameraort.h \
+    $$PWD/cameraper.h\
+    $$PWD/camerarefactoring.h\
+    $$PWD/сameraInterface.h
+
 
 SOURCES += \
     $$PWD/camera.cpp\
-    $$PWD/camerarefactoring.cpp
+    $$PWD/cameraort.cpp \
+    $$PWD/cameraper.cpp \
+    $$PWD/camerarefactoring.cpp\
+   # $$PWD/сameraInterface.cpp
+
 
 }
-
-
-
 
