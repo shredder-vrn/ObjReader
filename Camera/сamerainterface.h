@@ -23,7 +23,13 @@ public:
     virtual void zoom(const float delta) = 0;
 
     virtual CameraType type() const = 0;
+    virtual QVector3D position() const = 0;
+    virtual QVector3D target() const = 0;
+    virtual QVector3D up() const = 0;
 
+    virtual void setPosition(const QVector3D& pos) = 0;
+    virtual void setTarget(const QVector3D& target) = 0;
+    virtual void setUp(const QVector3D& up) = 0;
 
 };
 }

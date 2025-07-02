@@ -6,14 +6,14 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include "Scene/scenerefactoring.h"
+#include "Model/model.h"
+#include "Viewport/viewportrefactoring.h"
+
 
 class MainWindowRefactoring : public QMainWindow
 {
 public:
     MainWindowRefactoring();
-private slots:
-    void addScene();
 
 private:
     QTabWidget *m_tabWidget;

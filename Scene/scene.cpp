@@ -52,9 +52,14 @@ void Scene::switchToPerspective()
 {
     if (m_camera->type() == CameraType::Perspective)
         return;
+
     auto newCam = std::make_unique<CameraPer>();
+
     newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
+
     m_camera = std::move(newCam);
+    qDebug() << "New camera created.";
+
 }
 
 void Scene::switchToOrthographic()
@@ -65,6 +70,7 @@ void Scene::switchToOrthographic()
     auto newCam = std::make_unique<CameraOrt>();
     newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
     m_camera = std::move(newCam);
+
 }
 
 void Scene::zoom(float delta)
