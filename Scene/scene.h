@@ -32,18 +32,17 @@ public:
     //! h -> height
     void resize(int w, int h);
 
-    Camera &getCamera() { return camera; }
+    Camera &getCamera() { return m_camera; }
 
 private:
-    //! REVIEW: m_
-    int sceneWidth = 600;
-    int sceneHeight = 800;
+    int m_sceneWidth = 600;
+    int m_sceneHeight = 800;
 
-    ModelController modelController;
-    OpenGLRenderer renderer;
-    Camera camera;
+    ModelController m_modelController;
+    OpenGLRenderer m_renderer;
+    Camera m_camera;
 
-    QString modelPath = "";
+    QString m_modelPath = "";
 };
 
 }

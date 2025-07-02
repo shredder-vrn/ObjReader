@@ -7,10 +7,15 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 #REVIEW: include scene
 
 HEADERS += \
-    $$PWD/viewport.h
+    $$PWD/viewport.h\
+    viewportrefactoring.h
+
+
 
 SOURCES += \
-    $$PWD/viewport.cpp
+    $$PWD/viewport.cpp\
+    viewportrefactoring.cpp
+
 
 }
 

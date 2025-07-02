@@ -23,3 +23,5 @@ include($$PWD/../Camera/Camera.pri)
 
 SOURCES += \
         $$PWD/main.cpp \
+
+HEADERS += \

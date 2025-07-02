@@ -5,8 +5,8 @@ namespace Viewer{
 void Scene::initialize()
 {
     qDebug() << "Scene :: initialize : запустили метод initialize";
-    renderer.initialize();
-    camera.setViewportSize(sceneWidth, sceneHeight);
+    m_renderer.initialize();
+    m_camera.setViewportSize(m_sceneWidth, m_sceneHeight);
 }
 
 //! REVIEW: decompose
@@ -14,10 +14,10 @@ void Scene::loadModel(const QString &filePath)
 {
     qDebug() << "Scene : : loadModel : запустили метод loadModel";
 
-    if (!modelController.loadModel(filePath))
+    if (!m_modelController.loadModel(filePath))
         qWarning() << "Не удалось загрузить модель";
 
-    renderer.setModel(modelController.getModel());
+    m_renderer.setModel(m_modelController.getModel());
 }
 
 
@@ -40,12 +40,12 @@ void Scene::loadModel(const QString &filePath)
 void Scene::render()
 {
     qDebug() << "Scene :: render : запустили метод render";
-    qDebug() << "modelController.getModelMatrix(): " << modelController.getModelMatrix();
-    qDebug() << "camera.getViewMatrix(): " << camera.viewMatrix();
-    qDebug() << "camera.getProjectionMatrix(): " << camera.projectionMatrix();
+    qDebug() << "modelController.getModelMatrix(): " << m_modelController.getModelMatrix();
+    qDebug() << "camera.getViewMatrix(): " << m_camera.viewMatrix();
+    qDebug() << "camera.getProjectionMatrix(): " << m_camera.projectionMatrix();
 
-    renderer.setMVPmatrix(camera.projectionMatrix() * camera.viewMatrix() * modelController.getModelMatrix());
-    renderer.render();
+    m_renderer.setMVPmatrix(m_camera.projectionMatrix() * m_camera.viewMatrix() * m_modelController.getModelMatrix());
+    m_renderer.render();
 }
 
 void Scene :: resize(int w, int h)
@@ -55,9 +55,9 @@ void Scene :: resize(int w, int h)
     //! int sceneWidth; -> int width() const { return camera.width(); }
     //! scene.width();
 
-    sceneWidth = w;
-    sceneHeight = h;
-    camera.setViewportSize(w, h);
+    m_sceneWidth = w;
+    m_sceneHeight = h;
+    m_camera.setViewportSize(w, h);
 }
 
 }

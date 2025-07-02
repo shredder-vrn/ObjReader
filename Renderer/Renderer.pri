@@ -1,16 +1,18 @@
-!RENDER {
-CONFIG += RENDER
+!RENDER_PRI {
+CONFIG += RENDER_PRI
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
 #include($$PWD/../Model/Model.pri)
 #include($$PWD/../ObjReader/ObjReader.pri)
 
-SOURCES += \
-    $$PWD/renderer.cpp
-
 HEADERS += \
-    $$PWD/renderer.h
+    $$PWD/renderer.h\
+    $$PWD/rendererrefactoring.h
+
+SOURCES += \
+    $$PWD/renderer.cpp\
+    $$PWD/rendererrefactoring.cpp
 }
 
 
