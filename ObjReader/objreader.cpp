@@ -11,6 +11,8 @@
 #include <QString>
 #include "Model/model.h"
 
+namespace Viewer {
+
 bool parseVertex(
         const QStringList &tokens,
         QVector<QVector3D> &outVertices)
@@ -353,4 +355,6 @@ bool parseObj(const QString &filePath, Model &model)
 
     QTextStream in(&file);
     return parseTokens(in, model);
+}
+
 }

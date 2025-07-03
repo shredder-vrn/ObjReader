@@ -9,13 +9,13 @@
 #include <QLabel>
 #include <QFileSystemModel>
 #include <QGroupBox>
+#include <QPushButton>
 
 #include "Viewport/viewport.h"
 
 namespace Viewer
 {
-MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 {
     qDebug() << "MainWindow :: MainWindow : запустили конструктор";
 
@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget* parent)
     layout->addWidget(m_viewport);
 
     setCentralWidget(centralWidget);
-
     setupDockWidgets();
 
     QMenu* fileMenu = menuBar()->addMenu("File");
@@ -47,7 +46,8 @@ void MainWindow::setupDockWidgets()
     m_explorerDock->setWidget(m_explorerView);
     addDockWidget(Qt::LeftDockWidgetArea, m_explorerDock);
 
-    connect(m_explorerView->selectionModel(), &QItemSelectionModel::currentChanged,
+    connect(m_explorerView->selectionModel(),
+            &QItemSelectionModel::currentChanged,
             this, &MainWindow::onModelSelected);
 
     m_propertiesDock = new QDockWidget("Properties", this);
@@ -88,20 +88,25 @@ QGroupBox* MainWindow::createModelPropertiesSection()
     return group;
 }
 
-QGroupBox* MainWindow::createRenderOptionsSection()
+QGroupBox *MainWindow::createRenderOptionsSection()
 {
-    QGroupBox* group = new QGroupBox("Render Options");
-    QVBoxLayout* layout = new QVBoxLayout();
+    QGroupBox *group = new QGroupBox("Render Options");
+    QVBoxLayout *layout = new QVBoxLayout();
 
     m_wireframeCheck = new QCheckBox("Wireframe");
     m_textureCheck = new QCheckBox("Textures");
     m_lightingCheck = new QCheckBox("Lighting");
     m_normalsCheck = new QCheckBox("Show Normals");
 
+    QPushButton *textureButton = new QPushButton("Select Texture");
+
     layout->addWidget(m_wireframeCheck);
     layout->addWidget(m_textureCheck);
     layout->addWidget(m_lightingCheck);
     layout->addWidget(m_normalsCheck);
+    layout->addWidget(textureButton);
+
+
 
     group->setLayout(layout);
     return group;

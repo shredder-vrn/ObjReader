@@ -23,6 +23,9 @@ struct Model {
     GLuint vao = 0;
     GLuint vertexCount = 0;
 
+    GLuint textureId = 0;
+    bool hasTexture = false;
+
     void clear();
     bool isValid() const;
     bool operator!=(const Model& other) const;

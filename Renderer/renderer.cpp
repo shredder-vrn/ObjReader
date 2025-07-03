@@ -1,6 +1,7 @@
 #include "renderer.h"
 
 #include <QDebug>
+#include <QImage>
 
 namespace Viewer
 {
@@ -73,6 +74,10 @@ bool OpenGLRenderer::initializeModel(Model &model)
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
+
+    QVector<QVector3D> positionData = model.vertices;
+    QVector<QVector2D> texCoordData = model.textureVertices;
+
     QVector<QVector3D> newArray;
 
     for (int i = 0; i < model.faceVertexIndices.size(); ++i) {
@@ -91,6 +96,37 @@ bool OpenGLRenderer::initializeModel(Model &model)
 
     glBindVertexArray(0);
 
+    return true;
+}
+
+bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
+{
+    if (!openGLisInitialized) return false;
+
+    QImage textureImage(texturePath);
+    if (textureImage.isNull()) {
+        qWarning() << "Не удалось загрузить текстуру:" << texturePath;
+        return false;
+    }
+
+    textureImage = textureImage.convertToFormat(QImage::Format_RGBA8888);
+    if (textureImage.width() <= 0 || textureImage.height() <= 0) return false;
+
+    glGenTextures(1, &model.textureId);
+    glBindTexture(GL_TEXTURE_2D, model.textureId);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureImage.width(), textureImage.height(),
+                  0, GL_RGBA, GL_UNSIGNED_BYTE, textureImage.bits());
+
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    model.hasTexture = true;
     return true;
 }
 

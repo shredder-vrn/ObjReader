@@ -5,8 +5,7 @@
 
 #include <QTextStream>
 
-//! REVIEW namespaces
-
+namespace Viewer {
 bool parseVertex(
         const QStringList &tokens,
         QVector<QVector3D> &outVertices);
@@ -32,5 +31,5 @@ bool parseObj(
         const QString &filePath,
         Model &model);
 
-
+}
 #endif // OBJREADER_H
