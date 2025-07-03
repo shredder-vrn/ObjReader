@@ -32,9 +32,7 @@ private:
     GLuint openGLvao = 0;
     GLuint openGLvbo = 0;
     Model openGLcurrentModel;
-
     bool openGLisInitialized = false;
-
     QMatrix4x4 openGLcurrentMvp;
 };
 }

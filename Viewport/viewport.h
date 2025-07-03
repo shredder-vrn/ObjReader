@@ -30,7 +30,7 @@ public:
     void switchToOrthographic();
 
     void setModels(const QVector<Model>& models, const QVector<QMatrix4x4>& transforms);
-
+    bool loadTextureForModel(const QString& texturePath, int modelIndex);
 
 protected:
     void initializeGL() override;

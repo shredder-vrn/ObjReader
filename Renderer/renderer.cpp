@@ -12,7 +12,6 @@ bool OpenGLRenderer::initialize()
     initializeOpenGLFunctions();
 
     glEnable(GL_DEPTH_TEST);
-//    glDisable(GL_CULL_FACE);
 
 
 
@@ -24,28 +23,42 @@ bool OpenGLRenderer::initialize()
                 layout(location=0) in vec3 position;
                 uniform mat4 openGLcurrentMvp;
                 out vec3 positionOut;
+
+                out vec2 texCoord;
+                out vec3 normal;
+                out vec3 fragPos;
+
+                layout(location=1) in vec2 inTexCoord;
+                out vec2 outTexCoord;
+
                 void main() {
                     gl_Position = openGLcurrentMvp * vec4(position, 1.0);
+                    outTexCoord = inTexCoord;
                     positionOut = position;
                 })",
                 R"(
                 #version 330 core
+                in vec2 outTexCoord;
                 out vec4 outColor;
                 in vec3 positionOut;
                 uniform vec4 faceColor;
+                uniform sampler2D modelTexture;
+                uniform bool useTexture;
+
                 void main() {
-                    outColor = vec4(positionOut * 0.5 + 0.5, 1);
+                    if (useTexture) {
+                        outColor = texture(modelTexture, outTexCoord);
+                    } else {
+                        outColor = vec4(positionOut * 0.5 + 0.5, 1);
+                    }
                 })")) {
 
         qCritical("Failed to compile shaders");
-
         delete shaderProgram;
         shaderProgram = nullptr;
         return false;
     }
-
     openGLisInitialized = true;
-
     return true;
 }
 
@@ -74,29 +87,92 @@ bool OpenGLRenderer::initializeModel(Model &model)
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
+    QVector<float> vertexData;
+    for (int idx : model.faceVertexIndices) {
+        QVector3D pos = model.vertices[idx];
+        vertexData << pos.x() << pos.y() << pos.z();
+    }
 
-    QVector<QVector3D> positionData = model.vertices;
-    QVector<QVector2D> texCoordData = model.textureVertices;
-
-    QVector<QVector3D> newArray;
-
-    for (int i = 0; i < model.faceVertexIndices.size(); ++i) {
-        int idx = model.faceVertexIndices[i];
-        if (idx >= 0 && idx < model.vertices.size()) {
-            newArray.append(model.vertices.value(idx));
+    QVector<float> texCoordData;
+    for (int idx : model.faceTextureVertexIndices) {
+        if (idx >= 0 && idx < model.textureVertices.size()) {
+            QVector2D tex = model.textureVertices[idx];
+            texCoordData << tex.x() << tex.y();
         }
     }
 
-    glBufferData(GL_ARRAY_BUFFER, newArray.size() * sizeof(QVector3D), newArray.constData(), GL_STATIC_DRAW);
+    QVector<float> fullData;
+    for (int i = 0; i < vertexData.size(); i += 3) {
+        fullData << vertexData[i] << vertexData[i+1] << vertexData[i+2];
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), nullptr);
+        if (i / 3 < texCoordData.size() / 2) {
+            fullData << texCoordData[(i / 3) * 2];
+            fullData << texCoordData[(i / 3) * 2 + 1];
+        } else {
+            fullData << 0.0f << 0.0f;
+        }
+    }
+
+    glBufferData(GL_ARRAY_BUFFER, fullData.size() * sizeof(float), fullData.constData(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    model.vertexCount = newArray.size();
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
+    model.vertexCount = vertexData.size() / 3;
     glBindVertexArray(0);
 
+    qDebug() << "[DEBUG] VAO создан для модели";
+    qDebug() << "Количество вершин:" << model.vertexCount;
+    qDebug() << "Количество текстурных координат:" << texCoordData.size();
+
     return true;
+}
+
+void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
+{
+    if (!openGLisInitialized || !shaderProgram || !model.isValid()) {
+        return;
+    }
+
+    shaderProgram->get()->bind();
+    shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
+    shaderProgram->get()->setUniformValue("useTexture", model.hasTexture);
+
+    if (model.vao == 0) {
+        qDebug() << "VAO не создан — создаём сейчас";
+        if (!initializeModel(const_cast<Model&>(model))) {
+            shaderProgram->get()->release();
+            return;
+        }
+    }
+
+    glBindVertexArray(model.vao);
+
+    if (model.hasTexture) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, model.textureId);
+        shaderProgram->get()->setUniformValue("modelTexture", 0);
+    }
+
+    for (int i = 0; i < model.polygonStarts.size(); ++i) {
+        int start = model.polygonStarts[i];
+        int count = (i < model.polygonStarts.size() - 1)
+                        ? model.polygonStarts[i + 1] - start
+                        : model.faceVertexIndices.size() - start;
+
+        glDrawArrays(GL_TRIANGLES, start, count);
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArray(0);
+    shaderProgram->get()->release();
+
+    qDebug() << "[DEBUG] Модель отрисована";
+    qDebug() << "hasTexture:" << model.hasTexture;
+    qDebug() << "textureId:" << model.textureId;
 }
 
 bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
@@ -127,58 +203,25 @@ bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
     glBindTexture(GL_TEXTURE_2D, 0);
 
     model.hasTexture = true;
+
+    qDebug() << "[SUCCESS] Текстура загружена:" << texturePath;
+    qDebug() << "Размер текстуры:" << textureImage.width() << "x" << textureImage.height();
+    qDebug() << "textureId:" << model.textureId;
+
     return true;
 }
 
 void OpenGLRenderer::setModel(const Model& model)
 {
     qDebug() << "OpenGLRenderer :: setModel : запустили метод setModel";
-
     openGLcurrentModel = model;
     initializeModel(openGLcurrentModel);
-
 }
 
 void OpenGLRenderer::setMVPmatrix(const QMatrix4x4& mvp)
 {
     qDebug() << "OpenGLRenderer :: setViewProjectionMatrix : запустили метод setViewProjectionMatrix";
-
     openGLcurrentMvp = mvp;
-
     qDebug() << "openGLcurrentMvp: " << openGLcurrentMvp;
-
-}
-
-void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
-{
-    if (!openGLisInitialized || !shaderProgram || !model.isValid()) {
-        return;
-    }
-
-
-    shaderProgram->get()->bind();
-    shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
-
-    if (model.vao == 0) {
-        qDebug() << "VAO не создан — создаём сейчас";
-        if (!initializeModel(const_cast<Model&>(model))) {
-            qDebug() << "Не удалось создать VAO";
-            shaderProgram->get()->release();
-            return;
-        }
-    }
-
-    glBindVertexArray(model.vao);
-
-    for (int i = 0; i < model.polygonStarts.size(); ++i) {
-        int start = model.polygonStarts[i];
-        int count = (i < model.polygonStarts.size() - 1)
-                        ? model.polygonStarts[i + 1] - start
-                        : model.faceVertexIndices.size() - start;
-        glDrawArrays(GL_TRIANGLES, start, count);
-    }
-
-    glBindVertexArray(0);
-    shaderProgram->get()->release();
 }
 }

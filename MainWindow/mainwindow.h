@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QGroupBox>
 #include <QStandardItemModel>
+#include <QPushButton>
 
 
 #include "Viewport/viewport.h"
@@ -28,12 +29,19 @@ public:
 
 private slots:
     void openModel();
+    void loadTextureForSelectedModel();
+
     void updateModelList();
     void onModelSelected(const QModelIndex &index);
     void updateModelTransform();
 
+
 private:
     void setupDockWidgets();
+    void onTextureCheckToggled(bool checked);
+    void updateSelectedModelTextureState(bool checked);
+
+
     QGroupBox* createModelPropertiesSection();
     QGroupBox* createRenderOptionsSection();
     QGroupBox* createTransformSection();
@@ -44,10 +52,14 @@ private:
     QVector<QMatrix4x4> m_modelTransforms;
     int m_selectedModelIndex = -1;
 
-    QDockWidget* m_explorerDock = nullptr;
-    QTreeView* m_explorerView = nullptr;
-    QStandardItemModel* m_explorerModel = nullptr;
     QDockWidget* m_propertiesDock = nullptr;
+    QDockWidget* m_explorerDock = nullptr;
+
+    QTreeView* m_explorerView = nullptr;
+
+    QStandardItemModel* m_explorerModel = nullptr;
+
+    QPushButton* m_loadTextureButton = nullptr;
 
     QLabel* m_modelNameLabel = nullptr;
     QLabel* m_verticesLabel = nullptr;

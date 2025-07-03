@@ -88,28 +88,42 @@ QGroupBox* MainWindow::createModelPropertiesSection()
     return group;
 }
 
-QGroupBox *MainWindow::createRenderOptionsSection()
+QGroupBox* MainWindow::createRenderOptionsSection()
 {
-    QGroupBox *group = new QGroupBox("Render Options");
-    QVBoxLayout *layout = new QVBoxLayout();
+    QGroupBox* group = new QGroupBox("Render Options");
+    QVBoxLayout* layout = new QVBoxLayout();
 
     m_wireframeCheck = new QCheckBox("Wireframe");
-    m_textureCheck = new QCheckBox("Textures");
+    m_textureCheck = new QCheckBox("Use Texture");
     m_lightingCheck = new QCheckBox("Lighting");
     m_normalsCheck = new QCheckBox("Show Normals");
-
-    QPushButton *textureButton = new QPushButton("Select Texture");
 
     layout->addWidget(m_wireframeCheck);
     layout->addWidget(m_textureCheck);
     layout->addWidget(m_lightingCheck);
     layout->addWidget(m_normalsCheck);
-    layout->addWidget(textureButton);
 
-
+    connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
 
     group->setLayout(layout);
     return group;
+}
+
+void MainWindow::updateSelectedModelTextureState(bool checked)
+{
+    if (m_selectedModelIndex >= 0 && m_selectedModelIndex < m_models.size()) {
+        m_models[m_selectedModelIndex].hasTexture = checked;
+        m_viewport->setModels(m_models, m_modelTransforms);
+    }
+}
+
+void MainWindow::onTextureCheckToggled(bool checked)
+{
+    for (auto& model : m_models) {
+        model.hasTexture = checked;
+    }
+
+    m_viewport->setModels(m_models, m_modelTransforms);
 }
 
 QGroupBox* MainWindow::createTransformSection()
@@ -151,6 +165,11 @@ QGroupBox* MainWindow::createTransformSection()
     layout->addRow("Scale X:", m_scaleXSpin);
     layout->addRow("Scale Y:", m_scaleYSpin);
     layout->addRow("Scale Z:", m_scaleZSpin);
+
+    m_loadTextureButton = new QPushButton("Load Texture", this);
+    layout->addRow(m_loadTextureButton);
+
+    connect(m_loadTextureButton, &QPushButton::clicked, this, &MainWindow::loadTextureForSelectedModel);
 
     group->setLayout(layout);
     return group;
@@ -194,19 +213,13 @@ void MainWindow::onModelSelected(const QModelIndex& index)
         m_verticesLabel->setText(QString::number(model.vertices.size()));
         m_facesLabel->setText(QString::number(model.faceVertexIndices.size() / 3));
 
-        QMatrix4x4 t = m_modelTransforms[m_selectedModelIndex];
+        m_textureCheck->setChecked(model.hasTexture);
 
-        m_posXSpin->setValue(t.column(3).x());
-        m_posYSpin->setValue(t.column(3).y());
-        m_posZSpin->setValue(t.column(3).z());
-
-        m_rotXSpin->setValue(0);
-        m_rotYSpin->setValue(0);
-        m_rotZSpin->setValue(0);
-        m_scaleXSpin->setValue(1);
-        m_scaleYSpin->setValue(1);
-        m_scaleZSpin->setValue(1);
+        qDebug() << "[DEBUG] Выбрана модель #" << m_selectedModelIndex;
+        qDebug() << "hasTexture:" << model.hasTexture;
+        qDebug() << "textureId:" << model.textureId;
     }
+
 }
 
 void MainWindow::updateModelTransform()
@@ -237,4 +250,22 @@ void MainWindow::updateModelTransform()
     m_viewport->setModels(m_models, m_modelTransforms);
 }
 
+void MainWindow::loadTextureForSelectedModel()
+{
+    if (m_selectedModelIndex < 0 || m_selectedModelIndex >= m_models.size())
+        return;
+
+    QString texturePath = QFileDialog::getOpenFileName(this, tr("Open Texture"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
+    if (texturePath.isEmpty())
+        return;
+
+    if (!m_viewport->loadTextureForModel(texturePath, m_selectedModelIndex)) {
+        qWarning() << "Не удалось загрузить текстуру";
+        return;
+    }
+
+    m_models[m_selectedModelIndex].hasTexture = true;
+    m_textureCheck->setChecked(true);
+    m_viewport->setModels(m_models, m_modelTransforms);
+}
 }

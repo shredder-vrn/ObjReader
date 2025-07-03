@@ -25,6 +25,23 @@ void ViewportWidget::setModels(const QVector<Model> &models, const QVector<QMatr
     update();
 }
 
+bool ViewportWidget::loadTextureForModel(const QString &texturePath, int modelIndex)
+{
+    if (modelIndex < 0 || modelIndex >= m_models.size()) {
+        qDebug() << "[ERROR] Индекс модели выходит за границы";
+        return false;
+    }
+
+    bool success = m_renderer.loadTexture(m_models[modelIndex], texturePath);
+    if (!success) {
+        qDebug() << "[ERROR] Ошибка загрузки текстуры для модели #" << modelIndex;
+        return false;
+    }
+
+    qDebug() << "[SUCCESS] Текстура загружена для модели #" << modelIndex;
+    return true;
+}
+
 void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
     qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";
@@ -54,6 +71,7 @@ void ViewportWidget::paintGL()
     for (int i = 0; i < m_models.size(); ++i) {
         QMatrix4x4 mvp = proj * view * m_modelTransforms[i];
         m_renderer.render(m_models[i], mvp);
+
     }
 
 
