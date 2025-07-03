@@ -59,17 +59,22 @@ void ViewportWidget :: initializeGL()
 
 void ViewportWidget::paintGL()
 {
-    qDebug() << "\n\nViewport :: paintGL : запустили метод paintGL";
-    QMatrix4x4 model = m_modelController.getModelMatrix();
+    makeCurrent();
+
     QMatrix4x4 view = m_camera->viewMatrix();
     QMatrix4x4 proj = m_camera->projectionMatrix();
-    qDebug() << "Scene :: render : запустили метод render";
-    qDebug() << "view: " << view;
-    qDebug() << "proj: " << proj;
-    qDebug() << "model: " << model;
 
-    m_renderer.setMVPmatrix(proj * view * model);
-    m_renderer.render();
+//**************************************************************
+    for (int i = 0; i < m_models.size(); ++i) {
+        QMatrix4x4 model = m_modelTransforms[i];
+        QMatrix4x4 mvp = proj * view * model;
+
+        m_renderer.render(m_models[i], mvp);
+    }
+    qDebug() << m_models.size();
+//**************************************************************
+    doneCurrent();
+
 }
 
 void ViewportWidget::wheelEvent(QWheelEvent *event)
@@ -117,6 +122,13 @@ void ViewportWidget::switchToOrthographic()
     newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
     m_camera = std::move(newCam);
 
+    update();
+}
+
+void ViewportWidget::setModels(const QVector<Model> &models, const QVector<QMatrix4x4> &transforms)
+{
+    m_models = models;
+    m_modelTransforms = transforms;
     update();
 }
 }

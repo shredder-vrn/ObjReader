@@ -13,7 +13,7 @@
 
 
 #include "Viewport/viewport.h"
-#include "Model/model.h"
+#include "ModelController/modelcontroller.h"
 
 namespace Viewer
 {
@@ -38,18 +38,22 @@ private:
     QGroupBox *createTransformSection();
 
     ViewportWidget *m_viewport = nullptr;
-    QList<Model> m_loadedModels;
+
+    ModelController m_modelController;
 
     QDockWidget *m_explorerDock = nullptr;
     QTreeView *m_explorerView = nullptr;
     QDockWidget *m_propertiesDock = nullptr;
+
     QLabel *m_modelNameLabel = nullptr;
     QLabel *m_verticesLabel = nullptr;
     QLabel *m_facesLabel = nullptr;
+
     QCheckBox *m_wireframeCheck = nullptr;
     QCheckBox *m_textureCheck = nullptr;
     QCheckBox *m_lightingCheck = nullptr;
     QCheckBox *m_normalsCheck = nullptr;
+
     QDoubleSpinBox *m_posXSpin = nullptr;
     QDoubleSpinBox *m_posYSpin = nullptr;
     QDoubleSpinBox *m_posZSpin = nullptr;

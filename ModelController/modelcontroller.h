@@ -15,8 +15,11 @@ public:
     bool loadModel(const QString& filePath);
 
     const Model &getModel() const;
-
     QMatrix4x4 getModelMatrix() const;
+
+    const QVector<Model> &getModels() const {return m_models;}
+    QVector<QMatrix4x4> const getModelMatrices(){return m_modelMatrices;}
+
     void setTransform(int index, const QMatrix4x4 &transform);
 
 

@@ -18,7 +18,7 @@ public:
     ~OpenGLRenderer() = default;
 
     bool initialize();
-    void render();
+    void render(const Model& model, const QMatrix4x4& mvp);
 
     bool initializeModel(const Model& model);
 

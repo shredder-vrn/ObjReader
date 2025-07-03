@@ -114,48 +114,58 @@ void OpenGLRenderer::setMVPmatrix(const QMatrix4x4& mvp)
 
 }
 
-void OpenGLRenderer::render()
+void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
 {
     qDebug() << "OpenGLRenderer :: render : запустили метод render";
 
     if (!openGLisInitialized) {
         qDebug() << "Рендеринг не выполнен из-за openGLisInitialized";
-        return;}
+        return;
+    }
     if (!shaderProgram) {
         qDebug() << "Рендеринг не выполнен из-за shaderProgram";
-        return;}
-    if (openGLcurrentModel.faceVertexIndices.isEmpty()) {
-        qDebug() << "Рендеринг не выполнен из-за openGLcurrentModel.faceVertexIndices.isEmpty()";
-        return;}
+        return;
+    }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shaderProgram->get()->bind();
-    shaderProgram->get()->setUniformValue("openGLcurrentMvp", openGLcurrentMvp);
+    shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
 
-    static const QVector<QVector4D> colors = {
-        {0.0f, 0.0f, 0.0f, 1.0f},
-        {0.0f, 0.0f, 1.0f, 1.0f},
-        {0.0f, 1.0f, 0.0f, 1.0f},
-        {0.0f, 1.0f, 1.0f, 1.0f},
-        {1.0f, 0.0f, 0.0f, 1.0f},
-        {1.0f, 0.0f, 1.0f, 1.0f},
-        {1.0f, 1.0f, 0.0f, 1.0f},
-        {1.0f, 1.0f, 1.0f, 1.0f}
-    };
+    GLuint vao, vbo;
+
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    QVector<QVector3D> newArray;
 
 
-    glBindVertexArray(openGLvao);
+    //glBindVertexArray(openGLvao);
 
-    for (int i = 0; i < openGLcurrentModel.polygonStarts.size(); ++i) {
-        int start = openGLcurrentModel.polygonStarts[i];
-        int count = (i < openGLcurrentModel.polygonStarts.size() - 1) ? openGLcurrentModel.polygonStarts[i+1] - start : openGLcurrentModel.faceVertexIndices.size() - start;
-
-        glDrawArrays(GL_TRIANGLES, start, count);
-        shaderProgram->get()->setUniformValue("faceColor", colors[i % colors.size()]);
+    for (int i = 0; i < model.faceVertexIndices.size(); ++i) {
+        int idx = model.faceVertexIndices[i];
+        if (idx >= 0 && idx < model.vertices.size()) {
+            newArray.append(model.vertices.value(idx));
+        }
     }
 
-    glBindVertexArray(0);
+    glBufferData(GL_ARRAY_BUFFER, newArray.size() * sizeof(QVector3D), newArray.constData(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), nullptr);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    for (int i = 0; i < model.polygonStarts.size(); ++i) {
+        int start = model.polygonStarts[i];
+        int count = (i < model.polygonStarts.size() - 1) ? model.polygonStarts[i+1] - start : model.faceVertexIndices.size() - start;
+        glDrawArrays(GL_TRIANGLES, start, count);
+    }
+
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
 
     shaderProgram->get()->release();
 }

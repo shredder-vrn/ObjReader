@@ -30,6 +30,9 @@ public:
     void switchToPerspective();
     void switchToOrthographic();
 
+    void setModels(const QVector<Model>& models, const QVector<QMatrix4x4>& transforms);
+
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -49,7 +52,8 @@ private:
     OpenGLRenderer m_renderer;
     std::unique_ptr<CameraInterface> m_camera;
 
-    QList<Model*> m_models;
+    QVector<Model> m_models;
+    QVector<QMatrix4x4> m_modelTransforms;
 
 };
 }

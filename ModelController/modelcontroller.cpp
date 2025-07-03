@@ -40,6 +40,10 @@ bool ModelController :: loadModel(const QString &filePath)
                 newModel.polygonStarts);
 
     modelControllerModel = newModel;
+    m_models.append(newModel);
+    m_modelMatrices.append(QMatrix4x4());
+
+
 
     return true;
 }

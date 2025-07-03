@@ -8,10 +8,14 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 
 HEADERS += \
     $$PWD/renderer.h\
+    $$PWD/glmodel.h
+
 #    $$PWD/rendererrefactoring.h
 
 SOURCES += \
     $$PWD/renderer.cpp\
+    $$PWD/glmodel.cpp
+
 #    $$PWD/rendererrefactoring.cpp
 }
 

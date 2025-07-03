@@ -175,8 +175,16 @@ void MainWindow::updateModelTransform()
 void MainWindow::openModel()
 {
     qDebug() << "MainWindow :: openModel : запустился метод openModel";
-    //QString filePath = QFileDialog ::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
-    m_viewport -> loadModel("/home/r3ds/Internship/resources/cube.obj");
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
+        if (filePath.isEmpty())
+            return;
+
+        if (!m_modelController.loadModel(filePath)) {
+            qWarning() << "Не удалось загрузить модель";
+            return;
+        }
+
+        m_viewport->setModels(m_modelController.getModels(), m_modelController.getModelMatrices());
 }
 
 }
