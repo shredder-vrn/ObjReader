@@ -26,3 +26,9 @@ bool Model::isValid() const {
 
     qDebug() << "Model :: isValid : метод isValid отработал";
 }
+
+bool Model::operator!=(const Model& other) const {
+    return faceVertexIndices != other.faceVertexIndices ||
+           vertices != other.vertices ||
+           polygonStarts != other.polygonStarts;
+}

@@ -5,6 +5,9 @@
 #include <QVector3D>
 #include <QVector2D>
 
+#include <QOpenGLFunctions_3_3_Core>
+
+
 struct Model {
 
     QVector<QVector3D> vertices;
@@ -17,8 +20,13 @@ struct Model {
 
     QVector<int> polygonStarts;
 
+    GLuint vao = 0;
+    GLuint vertexCount = 0;
+
     void clear();
     bool isValid() const;
+    bool operator!=(const Model& other) const;
+
 };
 
 #endif // MODEL_H

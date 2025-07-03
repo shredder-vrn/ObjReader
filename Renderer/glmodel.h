@@ -11,11 +11,7 @@ public:
     Model model;
     GLuint vao = 0;
     GLuint vbo = 0;
-    int vertexCount = 0;
-
-    bool initialize(QOpenGLFunctions_3_3_Core * funcs);
-    void render(QOpenGLFunctions_3_3_Core * funcs);
-    void cleanup(QOpenGLFunctions_3_3_Core * funcs);
+    int indexCount = 0;
 };
 
 #endif // GLMODEL_H

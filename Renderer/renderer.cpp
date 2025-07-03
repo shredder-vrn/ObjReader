@@ -2,7 +2,8 @@
 
 #include <QDebug>
 
-
+namespace Viewer
+{
 bool OpenGLRenderer::initialize()
 {
     qDebug() << "OpenGLRenderer :: initialize : запустили метод initialize";
@@ -10,7 +11,9 @@ bool OpenGLRenderer::initialize()
     initializeOpenGLFunctions();
 
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+//    glDisable(GL_CULL_FACE);
+
+
 
     shaderProgram = new ShaderProgram();
 
@@ -22,7 +25,6 @@ bool OpenGLRenderer::initialize()
                 out vec3 positionOut;
                 void main() {
                     gl_Position = openGLcurrentMvp * vec4(position, 1.0);
-                    //gl_Position = vec4(position, 1.0) * openGLcurrentMvp;
                     positionOut = position;
                 })",
                 R"(
@@ -46,26 +48,32 @@ bool OpenGLRenderer::initialize()
     return true;
 }
 
-bool OpenGLRenderer::initializeModel(const Model &model)
+bool OpenGLRenderer::initializeModel(Model &model)
 {
     qDebug() << "OpenGLRenderer :: initializeModel : запустили метод initializeModel";
 
     if (!openGLisInitialized) {
         qDebug() << "Досрочное завершение из-за openGLisInitialized";
-        return false;}
+        return false;
+    }
     if (model.vertices.isEmpty()) {
         qDebug() << "Досрочное завершение из-за model.vertices.isEmpty()";
-        return false;}
+        return false;
+    }
 
-    if (openGLvao == 0)
-        glGenVertexArrays(1, &openGLvao);
-    if (openGLvbo == 0)
-        glGenBuffers(1, &openGLvbo);
+    if (model.vao != 0){
+        glDeleteVertexArrays(1, &model.vao);
+        model.vao = 0;
+    }
 
-    glBindVertexArray(openGLvao);
-    glBindBuffer(GL_ARRAY_BUFFER, openGLvbo);
+    glGenVertexArrays(1, &model.vao);
+    glBindVertexArray(model.vao);
 
-    QVector<QVector3D> newArray = {};
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    QVector<QVector3D> newArray;
 
     for (int i = 0; i < model.faceVertexIndices.size(); ++i) {
         int idx = model.faceVertexIndices[i];
@@ -79,7 +87,8 @@ bool OpenGLRenderer::initializeModel(const Model &model)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), nullptr);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    model.vertexCount = newArray.size();
+
     glBindVertexArray(0);
 
     return true;
@@ -88,16 +97,6 @@ bool OpenGLRenderer::initializeModel(const Model &model)
 void OpenGLRenderer::setModel(const Model& model)
 {
     qDebug() << "OpenGLRenderer :: setModel : запустили метод setModel";
-
-    if (openGLvao != 0) {
-        glDeleteVertexArrays(1, &openGLvao);
-        openGLvao = 0;
-    }
-
-    if (openGLvbo != 0) {
-        glDeleteBuffers(1, &openGLvbo);
-        openGLvbo = 0;
-    }
 
     openGLcurrentModel = model;
     initializeModel(openGLcurrentModel);
@@ -116,56 +115,34 @@ void OpenGLRenderer::setMVPmatrix(const QMatrix4x4& mvp)
 
 void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
 {
-    qDebug() << "OpenGLRenderer :: render : запустили метод render";
-
-    if (!openGLisInitialized) {
-        qDebug() << "Рендеринг не выполнен из-за openGLisInitialized";
-        return;
-    }
-    if (!shaderProgram) {
-        qDebug() << "Рендеринг не выполнен из-за shaderProgram";
+    if (!openGLisInitialized || !shaderProgram || !model.isValid()) {
         return;
     }
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shaderProgram->get()->bind();
     shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
 
-    GLuint vao, vbo;
-
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-    QVector<QVector3D> newArray;
-
-
-    //glBindVertexArray(openGLvao);
-
-    for (int i = 0; i < model.faceVertexIndices.size(); ++i) {
-        int idx = model.faceVertexIndices[i];
-        if (idx >= 0 && idx < model.vertices.size()) {
-            newArray.append(model.vertices.value(idx));
+    if (model.vao == 0) {
+        qDebug() << "VAO не создан — создаём сейчас";
+        if (!initializeModel(const_cast<Model&>(model))) {
+            qDebug() << "Не удалось создать VAO";
+            shaderProgram->get()->release();
+            return;
         }
     }
 
-    glBufferData(GL_ARRAY_BUFFER, newArray.size() * sizeof(QVector3D), newArray.constData(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), nullptr);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(model.vao);
 
     for (int i = 0; i < model.polygonStarts.size(); ++i) {
         int start = model.polygonStarts[i];
-        int count = (i < model.polygonStarts.size() - 1) ? model.polygonStarts[i+1] - start : model.faceVertexIndices.size() - start;
+        int count = (i < model.polygonStarts.size() - 1)
+                        ? model.polygonStarts[i + 1] - start
+                        : model.faceVertexIndices.size() - start;
         glDrawArrays(GL_TRIANGLES, start, count);
     }
 
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-
+    glBindVertexArray(0);
     shaderProgram->get()->release();
+}
 }

@@ -11,20 +11,19 @@
 #include "Model/model.h"
 #include "Shaders/shadersprogram.h"
 
-
+namespace Viewer{
 class OpenGLRenderer : protected QOpenGLFunctions_3_3_Core {
 public:
     OpenGLRenderer() = default;
     ~OpenGLRenderer() = default;
 
     bool initialize();
-    void render(const Model& model, const QMatrix4x4& mvp);
+    void render(const Model &model, const QMatrix4x4 &mvp);
 
-    bool initializeModel(const Model& model);
+    bool initializeModel(Model &model);
 
-    void setModel(const Model& model);
-
-    void setMVPmatrix(const QMatrix4x4& mvp);
+    void setModel(const Model &model);
+    void setMVPmatrix(const QMatrix4x4 &mvp);
 
 private:
     ShaderProgram *shaderProgram = nullptr;
@@ -37,5 +36,5 @@ private:
 
     QMatrix4x4 openGLcurrentMvp;
 };
-
+}
 #endif // RENDER_H

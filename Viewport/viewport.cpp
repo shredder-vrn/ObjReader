@@ -37,9 +37,6 @@ void ViewportWidget::loadModel(const QString &filePath)
     doneCurrent();
 }
 
-
-
-
 void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
     qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";
@@ -59,20 +56,28 @@ void ViewportWidget :: initializeGL()
 
 void ViewportWidget::paintGL()
 {
+    qDebug() << "Viewport :: paintGL : запустили метод paintGL";
     makeCurrent();
+
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
     QMatrix4x4 view = m_camera->viewMatrix();
     QMatrix4x4 proj = m_camera->projectionMatrix();
 
-//**************************************************************
     for (int i = 0; i < m_models.size(); ++i) {
         QMatrix4x4 model = m_modelTransforms[i];
         QMatrix4x4 mvp = proj * view * model;
 
         m_renderer.render(m_models[i], mvp);
     }
+    for (int i = 0; i < m_models.size(); ++i) {
+        qDebug() << "Model[" << i << "] VAO:" << m_models[i].vao;
+    }
     qDebug() << m_models.size();
-//**************************************************************
+    qDebug() << "View matrix:\n" << view;
+    qDebug() << "Projection matrix:\n" << proj;
     doneCurrent();
 
 }
@@ -129,6 +134,7 @@ void ViewportWidget::setModels(const QVector<Model> &models, const QVector<QMatr
 {
     m_models = models;
     m_modelTransforms = transforms;
+
     update();
 }
 }

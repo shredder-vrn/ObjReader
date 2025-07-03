@@ -41,9 +41,6 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
 
-
-
-
 private:
     QPoint m_lastMousePos;
     int m_viewportWidth = 600;
