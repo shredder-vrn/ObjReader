@@ -2,6 +2,7 @@
 
 #include <QMouseEvent>
 #include <QDebug>
+#include <cmath>
 
 #include "ObjReader/objreader.h"
 
@@ -43,34 +44,46 @@ void ViewportWidget::resizeEvent(QResizeEvent *event)
 void ViewportWidget :: initializeGL()
 {
     qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
+
     m_renderer.initialize();
 
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+
     m_camera->setViewportSize(m_viewportWidth, m_viewportHeight);
-
-
 }
 
 void ViewportWidget::paintGL()
 {
     qDebug() << "Viewport :: paintGL : запустили метод paintGL";
-    makeCurrent();
 
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
     QMatrix4x4 view = m_camera->viewMatrix();
     QMatrix4x4 proj = m_camera->projectionMatrix();
 
     for (int i = 0; i < m_models.size(); ++i) {
-        QMatrix4x4 model = m_modelTransforms[i];
-        QMatrix4x4 mvp = proj * view * model;
-
+        QMatrix4x4 mvp = proj * view * m_modelTransforms[i];
         m_renderer.render(m_models[i], mvp);
     }
 
-    doneCurrent();
 
+    QMatrix4x4 gridMVP = proj * view;
+    m_renderer.render(m_grid, gridMVP);
+
+    QMatrix4x4 worldAxesMat;
+    worldAxesMat.translate(5.0f, -3.0f, -5.0f);
+    worldAxesMat.scale(0.5f);
+    m_renderer.render(m_worldAxes, proj * view * worldAxesMat);
+
+    if (!m_models.isEmpty() && m_modelTransforms.size() > 0) {
+        QMatrix4x4 localAxesMat = m_modelTransforms[0];
+        localAxesMat.scale(1.2f);
+        m_renderer.render(m_localAxes, proj * view * localAxesMat);
+    }
+
+    //createGrid(10, 1);
+    //createWorldAxes();
+    //createLocalAxes();
 }
 
 void ViewportWidget::wheelEvent(QWheelEvent *event)
@@ -101,6 +114,76 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
     m_lastMousePos = event->pos();
 
     update();
+}
+
+void ViewportWidget::createGrid(float size, float step)
+{
+    float halfSize = size * 0.5f;
+
+    int linesX = static_cast<int>(size / step) + 1;
+    int linesZ = static_cast<int>(size / step) + 1;
+
+    m_grid.vertices.reserve((linesX + linesZ) * 2);
+
+    for (int i = 0; i < linesX; ++i) {
+        float x = -halfSize + i * step;
+        m_grid.vertices.append(QVector3D(x, 0.0f, -halfSize));
+        m_grid.vertices.append(QVector3D(x, 0.0f,  halfSize));
+    }
+
+    for (int i = 0; i < linesZ; ++i) {
+        float z = -halfSize + i * step;
+        m_grid.vertices.append(QVector3D(-halfSize, 0.0f, z));
+        m_grid.vertices.append(QVector3D( halfSize, 0.0f, z));
+    }
+
+    for (int i = 0; i < m_grid.vertices.size(); i += 2) {
+        m_grid.faceVertexIndices.append(i);
+        m_grid.faceVertexIndices.append(i + 1);
+        m_grid.polygonStarts.append(i);
+    }
+
+    m_renderer.initializeModel(m_grid);
+}
+
+void ViewportWidget::createWorldAxes(float size)
+{
+    m_worldAxes.vertices.append(QVector3D(0, 0, 0));
+    m_worldAxes.vertices.append(QVector3D(size, 0, 0));
+
+    m_worldAxes.vertices.append(QVector3D(0, 0, 0));
+    m_worldAxes.vertices.append(QVector3D(0, size, 0));
+
+    m_worldAxes.vertices.append(QVector3D(0, 0, 0));
+    m_worldAxes.vertices.append(QVector3D(0, 0, size));
+
+    for (int i = 0; i < 6; i += 2) {
+        m_worldAxes.faceVertexIndices.append(i);
+        m_worldAxes.faceVertexIndices.append(i + 1);
+        m_worldAxes.polygonStarts.append(i);
+    }
+
+    m_renderer.initializeModel(m_worldAxes);
+}
+
+void ViewportWidget::createLocalAxes(float size)
+{
+    m_localAxes.vertices.append(QVector3D(0, 0, 0));
+    m_localAxes.vertices.append(QVector3D(size, 0, 0));
+
+    m_localAxes.vertices.append(QVector3D(0, 0, 0));
+    m_localAxes.vertices.append(QVector3D(0, size, 0));
+
+    m_localAxes.vertices.append(QVector3D(0, 0, 0));
+    m_localAxes.vertices.append(QVector3D(0, 0, size));
+
+    for (int i = 0; i < 6; i += 2) {
+        m_localAxes.faceVertexIndices.append(i);
+        m_localAxes.faceVertexIndices.append(i + 1);
+        m_localAxes.polygonStarts.append(i);
+    }
+
+    m_renderer.initializeModel(m_localAxes);
 }
 
 void ViewportWidget::switchToPerspective()

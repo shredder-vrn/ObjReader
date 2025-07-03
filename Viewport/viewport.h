@@ -43,7 +43,6 @@ protected:
 private:
     void createGrid(float size = 10.0f, float step = 1.0f);
     void createWorldAxes(float size = 1.0f);
-    void createCameraTarget(float size = 0.2f);
     void createLocalAxes(float size = 1.0f);
 
     QPoint m_lastMousePos;
