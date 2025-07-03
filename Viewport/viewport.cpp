@@ -43,9 +43,9 @@ void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
     qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";
 
-    m_sceneWidth = event->size().width();
-    m_sceneHeight = event->size().height();
-    m_camera->setViewportSize(m_sceneWidth, m_sceneHeight);
+    m_viewportWidth = event->size().width();
+    m_viewportHeight = event->size().height();
+    m_camera->setViewportSize(m_viewportWidth, m_viewportHeight);
     QOpenGLWidget::resizeEvent(event);
 }
 
@@ -53,7 +53,7 @@ void ViewportWidget :: initializeGL()
 {
     qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
     m_renderer.initialize();
-    m_camera->setViewportSize(m_sceneWidth, m_sceneHeight);
+    m_camera->setViewportSize(m_viewportWidth, m_viewportHeight);
 }
 
 void ViewportWidget::paintGL()
@@ -102,7 +102,7 @@ void ViewportWidget::switchToPerspective()
     if (m_camera->type() == CameraType::Perspective)
         return;
     auto newCam = std::make_unique<CameraPer>();
-    newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
+    newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
     m_camera = std::move(newCam);
 
     update();
@@ -113,7 +113,7 @@ void ViewportWidget::switchToOrthographic()
     if (m_camera->type() == CameraType::Orthographic)
         return;
     auto newCam = std::make_unique<CameraOrt>();
-    newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
+    newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
     m_camera = std::move(newCam);
 
     update();

@@ -29,21 +29,6 @@ public:
     void switchToPerspective();
     void switchToOrthographic();
 
-
-//**********************************************
-
-    void initialize();
-    void render();
-    void resize(const int width, const int height);
-
-    void zoom(float delta);
-    void rotateAroundTarget(float deltaX, float deltaY);
-
-
-//**********************************************
-
-
-
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -59,13 +44,11 @@ private:
     QPoint m_lastMousePos;
 
 
-//**********************************************
-    int m_sceneWidth = 600;
-    int m_sceneHeight = 800;
+    int m_viewportWidth = 600;
+    int m_viewportHeight = 800;
     ModelController m_modelController;
     OpenGLRenderer m_renderer;
     std::unique_ptr<CameraInterface> m_camera;
-//**********************************************
 
 };
 }
