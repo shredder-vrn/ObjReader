@@ -8,13 +8,13 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 
 HEADERS += \
     $$PWD/viewport.h\
-    viewportrefactoring.h
+#    viewportrefactoring.h
 
 
 
 SOURCES += \
     $$PWD/viewport.cpp\
-    viewportrefactoring.cpp
+#    viewportrefactoring.cpp
 
 
 }

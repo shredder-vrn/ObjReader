@@ -6,8 +6,13 @@
 #include <QWidget>
 #include <QVector>
 #include <QVector3D>
+#include "Camera/сamerainterface.h"
+#include "Camera/cameraper.h"
+#include "Camera/cameraort.h"
 
-#include "Scene/scene.h"
+#include "ModelController/modelcontroller.h"
+#include "Renderer/renderer.h"
+
 
 namespace Viewer{
 
@@ -25,6 +30,17 @@ public:
     void switchToOrthographic();
 
 
+//**********************************************
+
+    void initialize();
+    void render();
+    void resize(const int width, const int height);
+
+    void zoom(float delta);
+    void rotateAroundTarget(float deltaX, float deltaY);
+
+
+//**********************************************
 
 
 
@@ -41,7 +57,6 @@ protected:
 
 private:
     QPoint m_lastMousePos;
-    Scene m_scene;
 
 
 //**********************************************

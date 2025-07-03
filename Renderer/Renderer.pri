@@ -8,11 +8,11 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 
 HEADERS += \
     $$PWD/renderer.h\
-    $$PWD/rendererrefactoring.h
+#    $$PWD/rendererrefactoring.h
 
 SOURCES += \
     $$PWD/renderer.cpp\
-    $$PWD/rendererrefactoring.cpp
+#    $$PWD/rendererrefactoring.cpp
 }
 
 

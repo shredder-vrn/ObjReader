@@ -14,6 +14,10 @@ ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat :: CoreProfile);
     setFormat(format);
+
+
+    m_camera = std::make_unique<CameraPer>();
+
 }
 
 void ViewportWidget::loadModel(const QString &filePath)
@@ -24,15 +28,10 @@ void ViewportWidget::loadModel(const QString &filePath)
     Model model;
     QFile file(filePath);
 
+    if (!m_modelController.loadModel(filePath))
+        qWarning() << "Не удалось загрузить модель";
 
-
-
-
-    m_scene.loadModel(filePath);
-
-
-
-
+    m_renderer.setModel(m_modelController.getModel());
 
     update();
     doneCurrent();
@@ -43,27 +42,40 @@ void ViewportWidget::loadModel(const QString &filePath)
 void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
     qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";
-    m_scene.resize(event->size().width(), event->size().height());
+
+    m_sceneWidth = event->size().width();
+    m_sceneHeight = event->size().height();
+    m_camera->setViewportSize(m_sceneWidth, m_sceneHeight);
     QOpenGLWidget::resizeEvent(event);
 }
 
 void ViewportWidget :: initializeGL()
 {
     qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
-    m_scene.initialize();
+    m_renderer.initialize();
+    m_camera->setViewportSize(m_sceneWidth, m_sceneHeight);
 }
 
 void ViewportWidget::paintGL()
 {
     qDebug() << "\n\nViewport :: paintGL : запустили метод paintGL";
-    m_scene.render();
+    QMatrix4x4 model = m_modelController.getModelMatrix();
+    QMatrix4x4 view = m_camera->viewMatrix();
+    QMatrix4x4 proj = m_camera->projectionMatrix();
+    qDebug() << "Scene :: render : запустили метод render";
+    qDebug() << "view: " << view;
+    qDebug() << "proj: " << proj;
+    qDebug() << "model: " << model;
+
+    m_renderer.setMVPmatrix(proj * view * model);
+    m_renderer.render();
 }
 
 void ViewportWidget::wheelEvent(QWheelEvent *event)
 {
     qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
     const float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
-    m_scene.zoom(delta);
+    m_camera->zoom(delta);
     update();
 }
 
@@ -79,20 +91,31 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
         return;
 
     const QPoint delta = event->pos() - m_lastMousePos;
-    m_scene.rotateAroundTarget(-delta.x(), delta.y());
+    m_camera->rotateAroundTarget(-delta.x(), delta.y());
+
     m_lastMousePos = event->pos();
     update();
 }
 
 void ViewportWidget::switchToPerspective()
 {
-    m_scene.switchToPerspective();
+    if (m_camera->type() == CameraType::Perspective)
+        return;
+    auto newCam = std::make_unique<CameraPer>();
+    newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
+    m_camera = std::move(newCam);
+
     update();
 }
 
 void ViewportWidget::switchToOrthographic()
 {
-    m_scene.switchToOrthographic();
+    if (m_camera->type() == CameraType::Orthographic)
+        return;
+    auto newCam = std::make_unique<CameraOrt>();
+    newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
+    m_camera = std::move(newCam);
+
     update();
 }
 }

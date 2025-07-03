@@ -12,12 +12,6 @@ SOURCES += \
 
 }
 
-HEADERS += \
-    $$PWD/modelcontrollerrefactoring.h
-
-SOURCES += \
-    $$PWD/modelcontrollerrefactoring.cpp
-
 
 
 
