@@ -41,8 +41,6 @@ void Scene::render()
 
 void Scene :: resize(const int width, const int height)
 {
-    qDebug() << "Scene :: resize : запустили метод resize";
-
     m_sceneWidth = width;
     m_sceneHeight = height;
     m_camera->setViewportSize(width, height);
@@ -52,13 +50,9 @@ void Scene::switchToPerspective()
 {
     if (m_camera->type() == CameraType::Perspective)
         return;
-
     auto newCam = std::make_unique<CameraPer>();
-
     newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
-
     m_camera = std::move(newCam);
-    qDebug() << "New camera created.";
 
 }
 
@@ -66,11 +60,9 @@ void Scene::switchToOrthographic()
 {
     if (m_camera->type() == CameraType::Orthographic)
         return;
-
     auto newCam = std::make_unique<CameraOrt>();
     newCam->setViewportSize(m_sceneWidth, m_sceneHeight);
     m_camera = std::move(newCam);
-
 }
 
 void Scene::zoom(float delta)

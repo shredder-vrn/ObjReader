@@ -26,6 +26,8 @@ public:
 
 
 
+
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -35,9 +37,21 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 
+
+
 private:
     QPoint m_lastMousePos;
     Scene m_scene;
+
+
+//**********************************************
+    int m_sceneWidth = 600;
+    int m_sceneHeight = 800;
+    ModelController m_modelController;
+    OpenGLRenderer m_renderer;
+    std::unique_ptr<CameraInterface> m_camera;
+//**********************************************
+
 };
 }
 

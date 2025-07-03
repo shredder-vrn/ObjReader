@@ -24,7 +24,15 @@ void ViewportWidget::loadModel(const QString &filePath)
     Model model;
     QFile file(filePath);
 
+
+
+
+
     m_scene.loadModel(filePath);
+
+
+
+
 
     update();
     doneCurrent();
