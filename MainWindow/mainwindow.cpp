@@ -39,7 +39,6 @@ MainWindow::MainWindow(QWidget* parent)
 
 void MainWindow::setupDockWidgets()
 {
-    // Explorer Dock
     m_explorerDock = new QDockWidget("Explorer", this);
     m_explorerView = new QTreeView(m_explorerDock);
     m_explorerModel = new QStandardItemModel(this);
@@ -51,7 +50,6 @@ void MainWindow::setupDockWidgets()
     connect(m_explorerView->selectionModel(), &QItemSelectionModel::currentChanged,
             this, &MainWindow::onModelSelected);
 
-    // Properties Dock
     m_propertiesDock = new QDockWidget("Properties", this);
     QWidget* propertiesPanel = new QWidget(m_propertiesDock);
     QVBoxLayout* mainLayout = new QVBoxLayout(propertiesPanel);
@@ -66,7 +64,6 @@ void MainWindow::setupDockWidgets()
     m_propertiesDock->setMinimumWidth(350);
     addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
 
-    // Camera Menu
     QMenu* cameraMenu = menuBar()->addMenu("Camera");
     QAction* perspAct = cameraMenu->addAction("Perspective");
     QAction* orthoAct = cameraMenu->addAction("Orthographic");
@@ -194,12 +191,10 @@ void MainWindow::onModelSelected(const QModelIndex& index)
 
         QMatrix4x4 t = m_modelTransforms[m_selectedModelIndex];
 
-        // Извлечение позиции, поворота и масштаба из матрицы (упрощённо)
         m_posXSpin->setValue(t.column(3).x());
         m_posYSpin->setValue(t.column(3).y());
         m_posZSpin->setValue(t.column(3).z());
 
-        // TODO: более точное извлечение поворота и масштаба
         m_rotXSpin->setValue(0);
         m_rotYSpin->setValue(0);
         m_rotZSpin->setValue(0);

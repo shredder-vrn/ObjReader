@@ -20,21 +20,12 @@ ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
     m_camera = std::make_unique<CameraPer>();
 }
 
-void ViewportWidget::loadModel(const QString &filePath)
+void ViewportWidget::setModels(const QVector<Model> &models, const QVector<QMatrix4x4> &transforms)
 {
-    qDebug() << "Viewport :: loadModel : запустили метод loadModel";
-    makeCurrent();
-
-    Model model;
-    QFile file(filePath);
-
-    if (!m_modelController.loadModel(filePath))
-        qWarning() << "Не удалось загрузить модель";
-
-    m_renderer.setModel(m_modelController.getModel());
+    m_models = models;
+    m_modelTransforms = transforms;
 
     update();
-    doneCurrent();
 }
 
 void ViewportWidget::resizeEvent(QResizeEvent *event)
@@ -140,11 +131,5 @@ void ViewportWidget::switchToOrthographic()
     update();
 }
 
-void ViewportWidget::setModels(const QVector<Model> &models, const QVector<QMatrix4x4> &transforms)
-{
-    m_models = models;
-    m_modelTransforms = transforms;
 
-    update();
-}
 }

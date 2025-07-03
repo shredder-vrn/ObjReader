@@ -24,7 +24,6 @@ public:
     explicit ViewportWidget(QWidget *parent = nullptr);
     ~ViewportWidget() override = default;
 
-    void loadModel(const QString &filePath);
     void setModels(const QList<Model*>& models);
 
     void switchToPerspective();
