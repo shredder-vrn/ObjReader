@@ -42,6 +42,11 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
+    void createGrid(float size = 10.0f, float step = 1.0f);
+    void createWorldAxes(float size = 1.0f);
+    void createCameraTarget(float size = 0.2f);
+    void createLocalAxes(float size = 1.0f);
+
     QPoint m_lastMousePos;
     int m_viewportWidth = 600;
     int m_viewportHeight = 800;
@@ -52,6 +57,10 @@ private:
     QVector<Model> m_models;
     QVector<QMatrix4x4> m_modelTransforms;
 
+    Model m_grid;
+    Model m_worldAxes;
+    Model m_cameraTarget;
+    Model m_localAxes;
 };
 }
 

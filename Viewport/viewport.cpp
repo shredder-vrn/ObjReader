@@ -11,13 +11,13 @@ ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
 {
     qDebug() << "Viewport :: Viewport : запустили конструктор";
     QSurfaceFormat format;
+
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat :: CoreProfile);
+
     setFormat(format);
 
-
     m_camera = std::make_unique<CameraPer>();
-
 }
 
 void ViewportWidget::loadModel(const QString &filePath)
@@ -43,7 +43,9 @@ void ViewportWidget::resizeEvent(QResizeEvent *event)
 
     m_viewportWidth = event->size().width();
     m_viewportHeight = event->size().height();
+
     m_camera->setViewportSize(m_viewportWidth, m_viewportHeight);
+
     QOpenGLWidget::resizeEvent(event);
 }
 
@@ -51,7 +53,10 @@ void ViewportWidget :: initializeGL()
 {
     qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
     m_renderer.initialize();
+
     m_camera->setViewportSize(m_viewportWidth, m_viewportHeight);
+
+
 }
 
 void ViewportWidget::paintGL()
@@ -72,12 +77,7 @@ void ViewportWidget::paintGL()
 
         m_renderer.render(m_models[i], mvp);
     }
-    for (int i = 0; i < m_models.size(); ++i) {
-        qDebug() << "Model[" << i << "] VAO:" << m_models[i].vao;
-    }
-    qDebug() << m_models.size();
-    qDebug() << "View matrix:\n" << view;
-    qDebug() << "Projection matrix:\n" << proj;
+
     doneCurrent();
 
 }
@@ -86,7 +86,9 @@ void ViewportWidget::wheelEvent(QWheelEvent *event)
 {
     qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
     const float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
+
     m_camera->zoom(delta);
+
     update();
 }
 
@@ -102,9 +104,11 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
         return;
 
     const QPoint delta = event->pos() - m_lastMousePos;
+
     m_camera->rotateAroundTarget(-delta.x(), delta.y());
 
     m_lastMousePos = event->pos();
+
     update();
 }
 
@@ -112,8 +116,11 @@ void ViewportWidget::switchToPerspective()
 {
     if (m_camera->type() == CameraType::Perspective)
         return;
+
     auto newCam = std::make_unique<CameraPer>();
+
     newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
+
     m_camera = std::move(newCam);
 
     update();
@@ -123,8 +130,11 @@ void ViewportWidget::switchToOrthographic()
 {
     if (m_camera->type() == CameraType::Orthographic)
         return;
+
     auto newCam = std::make_unique<CameraOrt>();
+
     newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
+
     m_camera = std::move(newCam);
 
     update();
