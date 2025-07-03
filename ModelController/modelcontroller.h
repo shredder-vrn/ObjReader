@@ -5,7 +5,7 @@
 #include <QMatrix4x4>
 
 #include "Model/model.h"
-
+namespace Viewer{
 class ModelController {
 
 public:
@@ -17,6 +17,8 @@ public:
     const Model &getModel() const;
 
     QMatrix4x4 getModelMatrix() const;
+    void setTransform(int index, const QMatrix4x4 &transform);
+
 
     void translate(const QVector3D &translation);
     void rotate(float angle, const QVector3D &axis);
@@ -24,8 +26,12 @@ public:
     void resetTransformations();
 
 private:
+    QVector<Model> m_models;
+    QVector<QMatrix4x4> m_modelMatrices;
+
+
     Model modelControllerModel;
     QMatrix4x4 modelControllerModelMatrix;
 };
-
+}
 #endif // MODEL_CONTROLLER

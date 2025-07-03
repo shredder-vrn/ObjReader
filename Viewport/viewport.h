@@ -25,6 +25,7 @@ public:
     ~ViewportWidget() override = default;
 
     void loadModel(const QString &filePath);
+    void setModels(const QList<Model*>& models);
 
     void switchToPerspective();
     void switchToOrthographic();
@@ -42,13 +43,13 @@ protected:
 
 private:
     QPoint m_lastMousePos;
-
-
     int m_viewportWidth = 600;
     int m_viewportHeight = 800;
     ModelController m_modelController;
     OpenGLRenderer m_renderer;
     std::unique_ptr<CameraInterface> m_camera;
+
+    QList<Model*> m_models;
 
 };
 }

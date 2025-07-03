@@ -39,6 +39,7 @@ void ViewportWidget::loadModel(const QString &filePath)
 
 
 
+
 void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
     qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";

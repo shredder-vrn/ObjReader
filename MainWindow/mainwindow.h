@@ -13,6 +13,7 @@
 
 
 #include "Viewport/viewport.h"
+#include "Model/model.h"
 
 namespace Viewer
 {
@@ -36,8 +37,9 @@ private:
     QGroupBox *createRenderOptionsSection();
     QGroupBox *createTransformSection();
 
-
     ViewportWidget *m_viewport = nullptr;
+    QList<Model> m_loadedModels;
+
     QDockWidget *m_explorerDock = nullptr;
     QTreeView *m_explorerView = nullptr;
     QDockWidget *m_propertiesDock = nullptr;

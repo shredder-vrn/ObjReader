@@ -10,7 +10,7 @@
 #include "ObjReader/objreader.h"
 #include "Triangulate/triangulate.h"
 
-
+namespace Viewer{
 bool ModelController :: loadModel(const QString &filePath)
 {
     qDebug() << "ModelController :: loadModel : запустили метод loadModel";
@@ -21,13 +21,16 @@ bool ModelController :: loadModel(const QString &filePath)
 
     if (!file.exists()) {
         qCritical() << "Файл не найден:" << filePath;
-        return false;}
+        return false;
+    }
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical() << "Не удалось открыть файл для чтения:" << filePath;
-        return false;}
+        return false;
+    }
     if (!parseObj(filePath, newModel)) {
         qCritical() << "Ошибка при разборе файла OBJ.";
-        return false;}
+        return false;
+    }
 
     triangulateModel(
                 newModel.vertices,
@@ -53,6 +56,11 @@ QMatrix4x4 ModelController :: getModelMatrix() const
     return modelControllerModelMatrix;
 }
 
+void ModelController::setTransform(int index, const QMatrix4x4 &transform)
+{
+
+}
+
 void ModelController::translate(const QVector3D &translation)
 {
     qDebug() << "ModelController :: translate : запустили метод translate";
@@ -76,5 +84,5 @@ void ModelController::resetTransformations()
     modelControllerModelMatrix.setToIdentity();
 }
 
-
+}
 
