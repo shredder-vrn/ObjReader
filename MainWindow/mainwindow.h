@@ -26,6 +26,13 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow()
+    {
+        for (auto* model : m_models) {
+            delete model;
+        }
+        m_models.clear();
+    }
 
 private slots:
     void openModel();
@@ -48,7 +55,7 @@ private:
 
     ViewportWidget* m_viewport = nullptr;
 
-    QVector<Model> m_models;
+    QVector<Model*> m_models;
     QVector<QMatrix4x4> m_modelTransforms;
     int m_selectedModelIndex = -1;
 

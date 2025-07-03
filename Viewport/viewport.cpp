@@ -18,28 +18,20 @@ ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
     m_camera = std::make_unique<CameraPer>();
 }
 
-void ViewportWidget::setModels(const QVector<Model> &models, const QVector<QMatrix4x4> &transforms)
+void Viewer::ViewportWidget::setModels(const QVector<Model*>& models, const QVector<QMatrix4x4>& transforms)
 {
     m_models = models;
     m_modelTransforms = transforms;
+
     update();
 }
 
-bool ViewportWidget::loadTextureForModel(const QString &texturePath, int modelIndex)
+bool Viewer::ViewportWidget::loadTextureForModel(const QString& texturePath, int modelIndex)
 {
-    if (modelIndex < 0 || modelIndex >= m_models.size()) {
-        qDebug() << "[ERROR] Индекс модели выходит за границы";
+    if (modelIndex < 0 || modelIndex >= m_models.size())
         return false;
-    }
 
-    bool success = m_renderer.loadTexture(m_models[modelIndex], texturePath);
-    if (!success) {
-        qDebug() << "[ERROR] Ошибка загрузки текстуры для модели #" << modelIndex;
-        return false;
-    }
-
-    qDebug() << "[SUCCESS] Текстура загружена для модели #" << modelIndex;
-    return true;
+    return m_renderer.loadTexture(*m_models[modelIndex], texturePath);
 }
 
 void ViewportWidget::resizeEvent(QResizeEvent *event)
@@ -52,43 +44,41 @@ void ViewportWidget::resizeEvent(QResizeEvent *event)
     QOpenGLWidget::resizeEvent(event);
 }
 
-void ViewportWidget :: initializeGL()
+void Viewer::ViewportWidget::initializeGL()
 {
-    qDebug() << "Viewport :: initializeGL : запустили метод initializeGL";
     m_renderer.initialize();
-    m_camera->setViewportSize(m_viewportWidth, m_viewportHeight);
+    m_camera->setViewportSize(width(), height());
+
+    //createGrid(10.0f, 1.0f);
+    //createWorldAxes(1.0f);
+    //createLocalAxes(1.0f);
+
+    m_renderer.initializeModel(m_grid);
+    m_renderer.initializeModel(m_worldAxes);
+    m_renderer.initializeModel(m_cameraTarget);
+    m_renderer.initializeModel(m_localAxes);
 }
 
-void ViewportWidget::paintGL()
+void Viewer::ViewportWidget::paintGL()
 {
-    qDebug() << "Viewport :: paintGL : запустили метод paintGL";
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     QMatrix4x4 view = m_camera->viewMatrix();
     QMatrix4x4 proj = m_camera->projectionMatrix();
 
+    QMatrix4x4 gridMVP = proj * view;
+    m_renderer.render(m_grid, gridMVP);
+
     for (int i = 0; i < m_models.size(); ++i) {
+        if (!m_models[i] || !m_models[i]->isValid()) {
+            qDebug() << "[ERROR] Модель #" << i << "невалидна";
+            continue;
+        }
+
         QMatrix4x4 mvp = proj * view * m_modelTransforms[i];
-        m_renderer.render(m_models[i], mvp);
-
+        m_renderer.render(*m_models[i], mvp);
     }
-
-
-//    QMatrix4x4 gridMVP = proj * view;
-//    m_renderer.render(m_grid, gridMVP);
-//    QMatrix4x4 worldAxesMat;
-//    worldAxesMat.translate(5.0f, -3.0f, -5.0f);
-//    worldAxesMat.scale(0.5f);
-//    m_renderer.render(m_worldAxes, proj * view * worldAxesMat);
-//    if (!m_models.isEmpty() && m_modelTransforms.size() > 0) {
-//        QMatrix4x4 localAxesMat = m_modelTransforms[0];
-//        localAxesMat.scale(1.2f);
-//        m_renderer.render(m_localAxes, proj * view * localAxesMat);
-//    }
-//    createGrid(10, 1);
-//    createWorldAxes();
-//    createLocalAxes();
 }
 
 void ViewportWidget::wheelEvent(QWheelEvent *event)

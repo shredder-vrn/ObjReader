@@ -29,7 +29,7 @@ public:
     void switchToPerspective();
     void switchToOrthographic();
 
-    void setModels(const QVector<Model>& models, const QVector<QMatrix4x4>& transforms);
+    void setModels(const QVector<Model*>& models, const QVector<QMatrix4x4>& transforms);
     bool loadTextureForModel(const QString& texturePath, int modelIndex);
 
 protected:
@@ -52,7 +52,7 @@ private:
     OpenGLRenderer m_renderer;
     std::unique_ptr<CameraInterface> m_camera;
 
-    QVector<Model> m_models;
+    QVector<Model*> m_models;
     QVector<QMatrix4x4> m_modelTransforms;
 
     Model m_grid;

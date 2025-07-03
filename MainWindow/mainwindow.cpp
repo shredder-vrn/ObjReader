@@ -112,7 +112,7 @@ QGroupBox* MainWindow::createRenderOptionsSection()
 void MainWindow::updateSelectedModelTextureState(bool checked)
 {
     if (m_selectedModelIndex >= 0 && m_selectedModelIndex < m_models.size()) {
-        m_models[m_selectedModelIndex].hasTexture = checked;
+        m_models[m_selectedModelIndex]->hasTexture = checked;
         m_viewport->setModels(m_models, m_modelTransforms);
     }
 }
@@ -120,7 +120,7 @@ void MainWindow::updateSelectedModelTextureState(bool checked)
 void MainWindow::onTextureCheckToggled(bool checked)
 {
     for (auto& model : m_models) {
-        model.hasTexture = checked;
+        model->hasTexture = checked;
     }
 
     m_viewport->setModels(m_models, m_modelTransforms);
@@ -181,14 +181,16 @@ void MainWindow::openModel()
     if (filePath.isEmpty())
         return;
 
-    Model model;
     ModelController controller;
     if (!controller.loadModel(filePath)) {
         qWarning() << "Не удалось загрузить модель";
         return;
     }
 
-    m_models.append(controller.getModel());
+    Model* model = new Model();
+    *model = controller.getModel();
+
+    m_models.append(model);
     m_modelTransforms.append(QMatrix4x4());
 
     updateModelList();
@@ -207,19 +209,20 @@ void MainWindow::updateModelList()
 void MainWindow::onModelSelected(const QModelIndex& index)
 {
     m_selectedModelIndex = index.row();
-    if (m_selectedModelIndex >= 0 && m_selectedModelIndex < m_models.size()) {
-        const Model& model = m_models[m_selectedModelIndex];
-        m_modelNameLabel->setText(QString("Model %1").arg(m_selectedModelIndex + 1));
-        m_verticesLabel->setText(QString::number(model.vertices.size()));
-        m_facesLabel->setText(QString::number(model.faceVertexIndices.size() / 3));
 
-        m_textureCheck->setChecked(model.hasTexture);
+    if (m_selectedModelIndex >= 0 && m_selectedModelIndex < m_models.size()) {
+        const Model* model = m_models[m_selectedModelIndex];
+
+        m_modelNameLabel->setText(QString("Model %1").arg(m_selectedModelIndex + 1));
+        m_verticesLabel->setText(QString::number(model->vertices.size()));
+        m_facesLabel->setText(QString::number(model->faceVertexIndices.size() / 3));
+
+        m_textureCheck->setChecked(model->hasTexture);
 
         qDebug() << "[DEBUG] Выбрана модель #" << m_selectedModelIndex;
-        qDebug() << "hasTexture:" << model.hasTexture;
-        qDebug() << "textureId:" << model.textureId;
+        qDebug() << "hasTexture:" << model->hasTexture;
+        qDebug() << "textureId:" << model->textureId;
     }
-
 }
 
 void MainWindow::updateModelTransform()
@@ -260,11 +263,11 @@ void MainWindow::loadTextureForSelectedModel()
         return;
 
     if (!m_viewport->loadTextureForModel(texturePath, m_selectedModelIndex)) {
-        qWarning() << "Не удалось загрузить текстуру";
+        qWarning() << "Не удалось загрузить текстуру для модели";
         return;
     }
 
-    m_models[m_selectedModelIndex].hasTexture = true;
+    m_models[m_selectedModelIndex]->hasTexture = true;
     m_textureCheck->setChecked(true);
     m_viewport->setModels(m_models, m_modelTransforms);
 }
