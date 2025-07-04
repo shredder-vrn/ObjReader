@@ -18,7 +18,7 @@ ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
     m_camera = std::make_unique<CameraPer>();
 }
 
-void Viewer::ViewportWidget::setModels(const QVector<Model*>& models, const QVector<QMatrix4x4>& transforms)
+void ViewportWidget::setModels(const QVector<Model*>& models, const QVector<QMatrix4x4>& transforms)
 {
     m_models = models;
     m_modelTransforms = transforms;
@@ -26,7 +26,7 @@ void Viewer::ViewportWidget::setModels(const QVector<Model*>& models, const QVec
     update();
 }
 
-bool Viewer::ViewportWidget::loadTextureForModel(const QString& texturePath, int modelIndex)
+bool ViewportWidget::loadTextureForModel(const QString& texturePath, int modelIndex)
 {
     if (modelIndex < 0 || modelIndex >= m_models.size())
         return false;
@@ -44,7 +44,7 @@ void ViewportWidget::resizeEvent(QResizeEvent *event)
     QOpenGLWidget::resizeEvent(event);
 }
 
-void Viewer::ViewportWidget::initializeGL()
+void ViewportWidget::initializeGL()
 {
     m_renderer.initialize();
     m_camera->setViewportSize(width(), height());
@@ -59,7 +59,7 @@ void Viewer::ViewportWidget::initializeGL()
     m_renderer.initializeModel(m_localAxes);
 }
 
-void Viewer::ViewportWidget::paintGL()
+void ViewportWidget::paintGL()
 {
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
