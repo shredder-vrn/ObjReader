@@ -36,6 +36,14 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     connect(openAction, &QAction::triggered, this, &MainWindow::openModel);
 }
 
+MainWindow::~MainWindow()
+{
+    for (auto* model : m_models) {
+        delete model;
+    }
+    m_models.clear();
+}
+
 void MainWindow::setupDockWidgets()
 {
     m_explorerDock = new QDockWidget("Explorer", this);
@@ -48,7 +56,7 @@ void MainWindow::setupDockWidgets()
 
     connect(m_explorerView->selectionModel(),
             &QItemSelectionModel::currentChanged,
-            this, &MainWindow::onModelSelected);
+            this, &MainWindow::onExplorerModelSelected);
 
     m_propertiesDock = new QDockWidget("Properties", this);
     QWidget* propertiesPanel = new QWidget(m_propertiesDock);
@@ -104,7 +112,7 @@ QGroupBox* MainWindow::createRenderOptionsSection()
     layout->addWidget(m_normalsCheck);
 
     connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
-    connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::onLightingToggled); // ✅ подключение
+    connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::onRenderLightingToggled); // ✅ подключение
 
     group->setLayout(layout);
     return group;
@@ -139,7 +147,7 @@ QGroupBox* MainWindow::createTransformSection()
         spin->setSingleStep(0.1);
         spin->setDecimals(3);
         connect(spin, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-                this, &MainWindow::updateModelTransform);
+                this, &MainWindow::onTransformValueChanged);
         return spin;
     };
 
@@ -172,6 +180,11 @@ QGroupBox* MainWindow::createTransformSection()
 
     connect(m_loadTextureButton, &QPushButton::clicked, this, &MainWindow::loadTextureForSelectedModel);
 
+    QPushButton* m_fitToViewButton = new QPushButton("Fit to View", this);
+    layout->addRow(m_fitToViewButton);
+
+    connect(m_fitToViewButton, &QPushButton::clicked, m_viewport, &ViewportWidget::fitToView);
+
     group->setLayout(layout);
     return group;
 }
@@ -179,12 +192,15 @@ QGroupBox* MainWindow::createTransformSection()
 void MainWindow::openModel()
 {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
-    if (filePath.isEmpty())
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, tr("Ошибка"), tr("Файл не выбран."));
         return;
+    }
 
     ModelController controller;
     if (!controller.loadModel(filePath)) {
-        qWarning() << "Не удалось загрузить модель";
+        QString errorMsg = controller.getErrorString();
+        QMessageBox::critical(this, "Ошибка загрузки", QString("Не удалось загрузить модель:\n%1").arg(errorMsg));
         return;
     }
 
@@ -196,6 +212,8 @@ void MainWindow::openModel()
 
     updateModelList();
     m_viewport->setModels(m_models, m_modelTransforms);
+
+    m_viewport->fitToView();
 }
 
 void MainWindow::updateModelList()
@@ -207,7 +225,7 @@ void MainWindow::updateModelList()
     }
 }
 
-void MainWindow::onModelSelected(const QModelIndex& index)
+void MainWindow::onExplorerModelSelected(const QModelIndex& index)
 {
     m_selectedModelIndex = index.row();
 
@@ -223,10 +241,13 @@ void MainWindow::onModelSelected(const QModelIndex& index)
         qDebug() << "[DEBUG] Выбрана модель #" << m_selectedModelIndex;
         qDebug() << "hasTexture:" << model->hasTexture;
         qDebug() << "textureId:" << model->textureId;
+        if (!model->isValid()) {
+            QMessageBox::warning(this, "Предупреждение", "Модель повреждена или не содержит полигонов");
+        }
     }
 }
 
-void MainWindow::onLightingToggled(bool checked)
+void MainWindow::onRenderLightingToggled(bool checked)
 {
     if (m_selectedModelIndex >= 0 && m_selectedModelIndex < m_models.size()) {
         m_models[m_selectedModelIndex]->useNormals = checked;
@@ -234,7 +255,7 @@ void MainWindow::onLightingToggled(bool checked)
     }
 }
 
-void MainWindow::updateModelTransform()
+void MainWindow::onTransformValueChanged()
 {
     if (m_selectedModelIndex < 0 || m_selectedModelIndex >= m_models.size())
         return;
@@ -264,15 +285,17 @@ void MainWindow::updateModelTransform()
 
 void MainWindow::loadTextureForSelectedModel()
 {
-    if (m_selectedModelIndex < 0 || m_selectedModelIndex >= m_models.size())
+    if (m_selectedModelIndex < 0 || m_selectedModelIndex >= m_models.size()) {
+        QMessageBox::warning(this, "Ошибка", "Не выбрана модель для загрузки текстуры.");
         return;
-
+    }
     QString texturePath = QFileDialog::getOpenFileName(this, tr("Open Texture"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
-    if (texturePath.isEmpty())
+    if (texturePath.isEmpty()) {
+        QMessageBox::information(this, "Отмена", "Загрузка текстуры отменена.");
         return;
-
+    }
     if (!m_viewport->loadTextureForModel(texturePath, m_selectedModelIndex)) {
-        qWarning() << "Не удалось загрузить текстуру для модели";
+        QMessageBox::critical(this, "Ошибка", QString("Не удалось загрузить текстуру:\n%1").arg(texturePath));
         return;
     }
 

@@ -26,65 +26,47 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow()
-    {
-        for (auto* model : m_models) {
-            delete model;
-        }
-        m_models.clear();
-    }
+    ~MainWindow();
 
 private slots:
     void openModel();
-
     void loadTextureForSelectedModel();
-
+    void onExplorerModelSelected(const QModelIndex &index);
+    void onRenderLightingToggled(bool checked);
+    void onTransformValueChanged();
     void updateModelList();
 
-    void onModelSelected(const QModelIndex &index);
 
-    void onLightingToggled(bool checked);
 
-    void updateModelTransform();
 
 
 private:
     void setupDockWidgets();
 
     void onTextureCheckToggled(bool checked);
-
     void updateSelectedModelTextureState(bool checked);
 
     QGroupBox* createModelPropertiesSection();
-
     QGroupBox* createRenderOptionsSection();
-
     QGroupBox* createTransformSection();
 
-    ViewportWidget* m_viewport = nullptr;
-
-    QVector<Model*> m_models;
-    QVector<QMatrix4x4> m_modelTransforms;
     int m_selectedModelIndex = -1;
 
+    ViewportWidget* m_viewport = nullptr;
+    QVector<Model*> m_models;
+    QVector<QMatrix4x4> m_modelTransforms;
     QDockWidget* m_propertiesDock = nullptr;
     QDockWidget* m_explorerDock = nullptr;
-
     QTreeView* m_explorerView = nullptr;
-
     QStandardItemModel* m_explorerModel = nullptr;
-
     QPushButton* m_loadTextureButton = nullptr;
-
     QLabel* m_modelNameLabel = nullptr;
     QLabel* m_verticesLabel = nullptr;
     QLabel* m_facesLabel = nullptr;
-
     QCheckBox* m_wireframeCheck = nullptr;
     QCheckBox* m_textureCheck = nullptr;
     QCheckBox* m_lightingCheck = nullptr;
     QCheckBox* m_normalsCheck = nullptr;
-
     QDoubleSpinBox* m_posXSpin = nullptr;
     QDoubleSpinBox* m_posYSpin = nullptr;
     QDoubleSpinBox* m_posZSpin = nullptr;

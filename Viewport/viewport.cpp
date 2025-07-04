@@ -2,7 +2,8 @@
 
 #include <QMouseEvent>
 #include <QDebug>
-#include <cmath>
+#include <QtMath>
+#include <limits>
 
 #include "ObjReader/objreader.h"
 
@@ -181,4 +182,54 @@ void ViewportWidget::switchToOrthographic()
     update();
 }
 
+void ViewportWidget::fitToView()
+{
+    if (m_models.isEmpty() || m_modelTransforms.isEmpty()) {
+        qDebug() << "[INFO] Нет моделей для Fit to View";
+        return;
+    }
+
+    QVector3D minBound(std::numeric_limits<float>::max(),
+                       std::numeric_limits<float>::max(),
+                       std::numeric_limits<float>::max());
+
+    QVector3D maxBound(-std::numeric_limits<float>::max(),
+                       -std::numeric_limits<float>::max(),
+                       -std::numeric_limits<float>::max());
+
+    for (int i = 0; i < m_models.size(); ++i) {
+        const Model* model = m_models[i];
+        const QMatrix4x4& transform = m_modelTransforms[i];
+
+        for (const QVector3D& v : model->vertices) {
+            QVector4D transformed = transform * QVector4D(v, 1.0f);
+            QVector3D tv = transformed.toVector3DAffine();
+
+            minBound.setX(std::min(minBound.x(), tv.x()));
+            minBound.setY(std::min(minBound.y(), tv.y()));
+            minBound.setZ(std::min(minBound.z(), tv.z()));
+
+            maxBound.setX(std::max(maxBound.x(), tv.x()));
+            maxBound.setY(std::max(maxBound.y(), tv.y()));
+            maxBound.setZ(std::max(maxBound.z(), tv.z()));
+        }
+    }
+
+    QVector3D center = (minBound + maxBound) / 2.0f;
+    QVector3D size = maxBound - minBound;
+    float radius = size.length() / 2.0f;
+
+    float fovY = 45.0f;
+    float zDistance = radius / std::tan(qDegreesToRadians(fovY / 2.0f)) + radius;
+
+    QVector3D cameraPos(center.x(), center.y(), center.z() + zDistance);
+
+    // Обновляем камеру
+    m_camera->setPosition(cameraPos);
+    m_camera->setTarget(center);
+    m_camera->setUp(QVector3D(0.0f, 1.0f, 0.0f));
+
+    // ✅ Принудительно обновляем viewport
+    update();
+}
 }

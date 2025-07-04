@@ -20,15 +20,15 @@ bool ModelController::loadModel(const QString &filePath)
     QFile file(filePath);
 
     if (!file.exists()) {
-        qCritical() << "Файл не найден:" << filePath;
+        qWarning() << "Файл не найден:" << filePath;
         return false;
     }
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical() << "Не удалось открыть файл для чтения:" << filePath;
+        qWarning() << "Не удалось открыть файл для чтения:" << filePath;
         return false;
     }
     if (!parseObj(filePath, newModel)) {
-        qCritical() << "Ошибка при разборе файла OBJ.";
+        qWarning() << "Ошибка при разборе файла OBJ.";
         return false;
     }
 
@@ -44,8 +44,6 @@ bool ModelController::loadModel(const QString &filePath)
     m_modelControllerModel = newModel;
     m_models.append(newModel);
     m_modelMatrices.append(QMatrix4x4());
-
-
 
     return true;
 }
@@ -121,7 +119,6 @@ void ModelController::calculateNormals(Model& model)
             model.normals[idx2] += normal;
         }
 
-        // Нормализуем все нормали
         for (auto& n : model.normals) {
             n = n.normalized();
         }

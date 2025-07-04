@@ -35,8 +35,13 @@ public:
 
     void resetTransformations();
 
+    QString getErrorString() const { return errorString; }
+
+
 private:
     QVector<Model> m_models;
+
+    QString errorString;
 
     QVector<QMatrix4x4> m_modelMatrices;
 
