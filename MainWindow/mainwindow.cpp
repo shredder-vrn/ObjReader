@@ -105,6 +105,13 @@ QGroupBox* MainWindow::createRenderOptionsSection()
 
     connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
 
+    connect(m_lightingCheck, &QCheckBox::toggled, this, [this](bool checked) {
+        for (auto* model : m_models) {
+            model->useNormal = checked;
+        }
+        m_viewport->setModels(m_models, m_modelTransforms);
+    });
+
     group->setLayout(layout);
     return group;
 }

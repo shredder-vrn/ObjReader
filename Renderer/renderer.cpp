@@ -20,37 +20,53 @@ bool OpenGLRenderer::initialize()
     if (!shaderProgram->compileFromString(
                 R"(
                 #version 330 core
+
                 layout(location=0) in vec3 position;
+                layout(location=1) in vec3 normal;
+                layout(location=2) in vec2 inTexCoord;
+
                 uniform mat4 openGLcurrentMvp;
-                out vec3 positionOut;
 
-                out vec2 texCoord;
-                out vec3 normal;
-                out vec3 fragPos;
-
-                layout(location=1) in vec2 inTexCoord;
                 out vec2 outTexCoord;
+                out vec3 fragNormal;
 
                 void main() {
                     gl_Position = openGLcurrentMvp * vec4(position, 1.0);
                     outTexCoord = inTexCoord;
-                    positionOut = position;
+                    fragNormal = normal;
                 })",
                 R"(
                 #version 330 core
+
                 in vec2 outTexCoord;
+                in vec3 fragNormal;
+
                 out vec4 outColor;
-                in vec3 positionOut;
-                uniform vec4 faceColor;
+
                 uniform sampler2D modelTexture;
                 uniform bool useTexture;
+                uniform bool useNormal;
+
+                uniform vec3 lightDirection = vec3(-0.5, 0.5, 1.0);
+                uniform vec3 lightColor = vec3(1.0, 1.0, 1.0);
+                uniform vec3 objectColor = vec3(0.5, 0.5, 0.3);
 
                 void main() {
+                    vec3 color = objectColor;
+
                     if (useTexture) {
-                        outColor = texture(modelTexture, outTexCoord);
-                    } else {
-                        outColor = vec4(positionOut * 0.5 + 0.5, 1);
+                        color = texture(modelTexture, outTexCoord).rgb;
                     }
+
+                    if (useNormal) {
+                        vec3 norm = normalize(fragNormal);
+                        vec3 lightDir = normalize(-lightDirection);
+                        float diff = max(dot(norm, lightDir), 0.0);
+                        vec3 diffuse = diff * lightColor;
+                        color = diffuse * color;
+                    }
+
+                    outColor = vec4(color, 1.0);
                 })")) {
 
         qCritical("Failed to compile shaders");
@@ -66,12 +82,8 @@ bool OpenGLRenderer::initializeModel(Model &model)
 {
     qDebug() << "OpenGLRenderer :: initializeModel : запустили метод initializeModel";
 
-    if (!openGLisInitialized) {
-        qDebug() << "Досрочное завершение из-за openGLisInitialized";
-        return false;
-    }
-    if (model.vertices.isEmpty()) {
-        qDebug() << "Досрочное завершение из-за model.vertices.isEmpty()";
+    if (!openGLisInitialized || model.vertices.isEmpty()) {
+        qDebug() << "Досрочное завершение из-за openGLisInitialized или отсутствия вершин";
         return false;
     }
 
@@ -87,27 +99,25 @@ bool OpenGLRenderer::initializeModel(Model &model)
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    QVector<float> vertexData;
-    for (int idx : model.faceVertexIndices) {
-        QVector3D pos = model.vertices[idx];
-        vertexData << pos.x() << pos.y() << pos.z();
-    }
-
-    QVector<float> texCoordData;
-    for (int idx : model.faceTextureVertexIndices) {
-        if (idx >= 0 && idx < model.textureVertices.size()) {
-            QVector2D tex = model.textureVertices[idx];
-            texCoordData << tex.x() << tex.y();
-        }
-    }
-
     QVector<float> fullData;
-    for (int i = 0; i < vertexData.size(); i += 3) {
-        fullData << vertexData[i] << vertexData[i+1] << vertexData[i+2];
 
-        if (i / 3 < texCoordData.size() / 2) {
-            fullData << texCoordData[(i / 3) * 2];
-            fullData << texCoordData[(i / 3) * 2 + 1];
+    for (int i = 0; i < model.faceVertexIndices.size(); ++i) {
+        int idx = model.faceVertexIndices[i];
+
+        QVector3D pos = model.vertices.value(idx, QVector3D());
+        fullData << pos.x() << pos.y() << pos.z();
+
+        QVector3D normal = model.normals.value(idx, QVector3D());
+        fullData << normal.x() << normal.y() << normal.z();
+
+        if (i < model.faceTextureVertexIndices.size()) {
+            int texIdx = model.faceTextureVertexIndices[i];
+            if (texIdx >= 0 && texIdx < model.textureVertices.size()) {
+                QVector2D tex = model.textureVertices[texIdx];
+                fullData << tex.x() << tex.y();
+            } else {
+                fullData << 0.0f << 0.0f;
+            }
         } else {
             fullData << 0.0f << 0.0f;
         }
@@ -115,18 +125,21 @@ bool OpenGLRenderer::initializeModel(Model &model)
 
     glBufferData(GL_ARRAY_BUFFER, fullData.size() * sizeof(float), fullData.constData(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    model.vertexCount = vertexData.size() / 3;
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
+    model.vertexCount = model.faceVertexIndices.size();
+
     glBindVertexArray(0);
 
     qDebug() << "[DEBUG] VAO создан для модели";
     qDebug() << "Количество вершин:" << model.vertexCount;
-    qDebug() << "Количество текстурных координат:" << texCoordData.size();
 
     return true;
 }
@@ -139,6 +152,11 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
 
     shaderProgram->get()->bind();
     shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
+
+    bool hasNormals = !model.normals.isEmpty();
+    shaderProgram->get()->setUniformValue("useNormal", hasNormals);
+    shaderProgram->get()->setUniformValue("useNormal", hasNormals);
+
     shaderProgram->get()->setUniformValue("useTexture", model.hasTexture);
 
     if (model.vao == 0) {
@@ -173,6 +191,7 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
     qDebug() << "[DEBUG] Модель отрисована";
     qDebug() << "hasTexture:" << model.hasTexture;
     qDebug() << "textureId:" << model.textureId;
+    qDebug() << "hasNormals:" << hasNormals;
 }
 
 bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)

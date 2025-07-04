@@ -20,11 +20,23 @@ void Model::clear() {
 
 bool Model::isValid() const {
 
-    qDebug() << "Model :: isValid : запустили метод isValid";
+    bool valid = !vertices.isEmpty() &&
+                     !faceVertexIndices.isEmpty() &&
+                     faceVertexIndices.size() % 3 == 0;
 
-    return !vertices.isEmpty() && !faceVertexIndices.isEmpty();
+    if (!valid) return false;
 
-    qDebug() << "Model :: isValid : метод isValid отработал";
+    if (hasTexture && textureVertices.isEmpty()) {
+        qDebug() << "[WARNING] hasTexture == true, но textureVertices пустые";
+        return false;
+    }
+
+    if (useNormal && normals.isEmpty()) {
+        qDebug() << "[WARNING] useNormal == true, но normals пустые";
+        return false;
+    }
+
+    return true;
 }
 
 bool Model::operator!=(const Model& other) const {

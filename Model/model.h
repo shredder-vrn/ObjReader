@@ -20,11 +20,14 @@ struct Model {
 
     QVector<int> polygonStarts;
 
+
+
     GLuint vao = 0;
     GLuint vertexCount = 0;
 
     GLuint textureId = 0;
     bool hasTexture = false;
+    bool useNormal = false;
 
     void clear();
     bool isValid() const;
