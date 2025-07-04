@@ -111,53 +111,53 @@ void ViewportWidget::createGrid(float size, float step)
     float halfSize = size * 0.5f;
     int linesX = static_cast<int>(size / step) + 1;
     int linesZ = static_cast<int>(size / step) + 1;
-    m_grid.vertices.reserve((linesX + linesZ) * 2);
+    m_grid.m_vertices.reserve((linesX + linesZ) * 2);
     for (int i = 0; i < linesX; ++i) {
         float x = -halfSize + i * step;
-        m_grid.vertices.append(QVector3D(x, 0.0f, -halfSize));
-        m_grid.vertices.append(QVector3D(x, 0.0f,  halfSize));
+        m_grid.m_vertices.append(QVector3D(x, 0.0f, -halfSize));
+        m_grid.m_vertices.append(QVector3D(x, 0.0f,  halfSize));
     }
     for (int i = 0; i < linesZ; ++i) {
         float z = -halfSize + i * step;
-        m_grid.vertices.append(QVector3D(-halfSize, 0.0f, z));
-        m_grid.vertices.append(QVector3D( halfSize, 0.0f, z));
+        m_grid.m_vertices.append(QVector3D(-halfSize, 0.0f, z));
+        m_grid.m_vertices.append(QVector3D( halfSize, 0.0f, z));
     }
-    for (int i = 0; i < m_grid.vertices.size(); i += 2) {
-        m_grid.faceVertexIndices.append(i);
-        m_grid.faceVertexIndices.append(i + 1);
-        m_grid.polygonStarts.append(i);
+    for (int i = 0; i < m_grid.m_vertices.size(); i += 2) {
+        m_grid.m_faceVertexIndices.append(i);
+        m_grid.m_faceVertexIndices.append(i + 1);
+        m_grid.m_polygonStarts.append(i);
     }
     m_renderer.initializeModel(m_grid);
 }
 
 void ViewportWidget::createWorldAxes(float size)
 {
-    m_worldAxes.vertices.append(QVector3D(0, 0, 0));
-    m_worldAxes.vertices.append(QVector3D(size, 0, 0));
-    m_worldAxes.vertices.append(QVector3D(0, 0, 0));
-    m_worldAxes.vertices.append(QVector3D(0, size, 0));
-    m_worldAxes.vertices.append(QVector3D(0, 0, 0));
-    m_worldAxes.vertices.append(QVector3D(0, 0, size));
+    m_worldAxes.m_vertices.append(QVector3D(0, 0, 0));
+    m_worldAxes.m_vertices.append(QVector3D(size, 0, 0));
+    m_worldAxes.m_vertices.append(QVector3D(0, 0, 0));
+    m_worldAxes.m_vertices.append(QVector3D(0, size, 0));
+    m_worldAxes.m_vertices.append(QVector3D(0, 0, 0));
+    m_worldAxes.m_vertices.append(QVector3D(0, 0, size));
     for (int i = 0; i < 6; i += 2) {
-        m_worldAxes.faceVertexIndices.append(i);
-        m_worldAxes.faceVertexIndices.append(i + 1);
-        m_worldAxes.polygonStarts.append(i);
+        m_worldAxes.m_faceVertexIndices.append(i);
+        m_worldAxes.m_faceVertexIndices.append(i + 1);
+        m_worldAxes.m_polygonStarts.append(i);
     }
     m_renderer.initializeModel(m_worldAxes);
 }
 
 void ViewportWidget::createLocalAxes(float size)
 {
-    m_localAxes.vertices.append(QVector3D(0, 0, 0));
-    m_localAxes.vertices.append(QVector3D(size, 0, 0));
-    m_localAxes.vertices.append(QVector3D(0, 0, 0));
-    m_localAxes.vertices.append(QVector3D(0, size, 0));
-    m_localAxes.vertices.append(QVector3D(0, 0, 0));
-    m_localAxes.vertices.append(QVector3D(0, 0, size));
+    m_localAxes.m_vertices.append(QVector3D(0, 0, 0));
+    m_localAxes.m_vertices.append(QVector3D(size, 0, 0));
+    m_localAxes.m_vertices.append(QVector3D(0, 0, 0));
+    m_localAxes.m_vertices.append(QVector3D(0, size, 0));
+    m_localAxes.m_vertices.append(QVector3D(0, 0, 0));
+    m_localAxes.m_vertices.append(QVector3D(0, 0, size));
     for (int i = 0; i < 6; i += 2) {
-        m_localAxes.faceVertexIndices.append(i);
-        m_localAxes.faceVertexIndices.append(i + 1);
-        m_localAxes.polygonStarts.append(i);
+        m_localAxes.m_faceVertexIndices.append(i);
+        m_localAxes.m_faceVertexIndices.append(i + 1);
+        m_localAxes.m_polygonStarts.append(i);
     }
     m_renderer.initializeModel(m_localAxes);
 }
@@ -201,7 +201,7 @@ void ViewportWidget::fitToView()
         const Model* model = m_models[i];
         const QMatrix4x4& transform = m_modelTransforms[i];
 
-        for (const QVector3D& v : model->vertices) {
+        for (const QVector3D& v : model->m_vertices) {
             QVector4D transformed = transform * QVector4D(v, 1.0f);
             QVector3D tv = transformed.toVector3DAffine();
 

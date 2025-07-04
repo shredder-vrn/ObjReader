@@ -16,41 +16,41 @@
 void printStats(const Model &model)
 {
     qDebug() << "|----------------------------------------------|";
-    qDebug() << "Вершин (v):" << model.vertices.size();
-    qDebug() << "Текстурных координат (vt):" << model.textureVertices.size();
-    qDebug() << "Нормалей (vn):" << model.normals.size();
-    qDebug() << "Полигонов (f):" << model.polygonStarts.size();
+    qDebug() << "Вершин (v):" << model.m_vertices.size();
+    qDebug() << "Текстурных координат (vt):" << model.m_textureVertices.size();
+    qDebug() << "Нормалей (vn):" << model.m_normals.size();
+    qDebug() << "Полигонов (f):" << model.m_polygonStarts.size();
     qDebug() << "|----------------------------------------------|";
 
-    if (!model.vertices.isEmpty()) qDebug() << "Вершины:";
-    for (int i = 0; i < model.vertices.size(); ++i) {
-        qDebug() << "v" << (i + 1) << ":" << model.vertices[i];
+    if (!model.m_vertices.isEmpty()) qDebug() << "Вершины:";
+    for (int i = 0; i < model.m_vertices.size(); ++i) {
+        qDebug() << "v" << (i + 1) << ":" << model.m_vertices[i];
     }
 
-    if (!model.textureVertices.isEmpty()) qDebug() << "Текстурные координаты:";
-    for (int i = 0; i < model.textureVertices.size(); ++i) {
-        qDebug() << "vt" << (i + 1) << ":" << model.textureVertices[i];
+    if (!model.m_textureVertices.isEmpty()) qDebug() << "Текстурные координаты:";
+    for (int i = 0; i < model.m_textureVertices.size(); ++i) {
+        qDebug() << "vt" << (i + 1) << ":" << model.m_textureVertices[i];
     }
 
-    if (!model.normals.isEmpty()) qDebug() << "Нормали:";
-    for (int i = 0; i < model.normals.size(); ++i) {
-        qDebug() << "vn" << (i + 1) << ":" << model.normals[i];
+    if (!model.m_normals.isEmpty()) qDebug() << "Нормали:";
+    for (int i = 0; i < model.m_normals.size(); ++i) {
+        qDebug() << "vn" << (i + 1) << ":" << model.m_normals[i];
     }
 
-    if (!model.polygonStarts.isEmpty()) qDebug() << "Полигоны:";
+    if (!model.m_polygonStarts.isEmpty()) qDebug() << "Полигоны:";
 
-    for (int i = 0; i < model.polygonStarts.size(); ++i) {
-        int start = model.polygonStarts[i];
-        int next = (i < model.polygonStarts.size() - 1) ? model.polygonStarts[i + 1] : model.faceVertexIndices.size();
+    for (int i = 0; i < model.m_polygonStarts.size(); ++i) {
+        int start = model.m_polygonStarts[i];
+        int next = (i < model.m_polygonStarts.size() - 1) ? model.m_polygonStarts[i + 1] : model.m_faceVertexIndices.size();
         int count = next - start;
 
         QStringList faceParts;
 
         for (int j = 0; j < count; ++j) {
-            QString part = QString::number(model.faceVertexIndices[start + j] + 1);
+            QString part = QString::number(model.m_faceVertexIndices[start + j] + 1);
 
-            if (!model.faceTextureVertexIndices.isEmpty() && (start + j < model.faceTextureVertexIndices.size())) {
-                int ti = model.faceTextureVertexIndices[start + j];
+            if (!model.m_faceTextureVertexIndices.isEmpty() && (start + j < model.m_faceTextureVertexIndices.size())) {
+                int ti = model.m_faceTextureVertexIndices[start + j];
                 if (ti != -1) {
                     part += "/" + QString::number(ti + 1);
                 } else {
@@ -58,8 +58,8 @@ void printStats(const Model &model)
                 }
             }
 
-            if (!model.faceNormalIndices.isEmpty() && (start + j < model.faceNormalIndices.size())) {
-                int ni = model.faceNormalIndices[start + j];
+            if (!model.m_faceNormalIndices.isEmpty() && (start + j < model.m_faceNormalIndices.size())) {
+                int ni = model.m_faceNormalIndices[start + j];
                 if (ni != -1) {
                     part += "/" + QString::number(ni + 1);
                 }

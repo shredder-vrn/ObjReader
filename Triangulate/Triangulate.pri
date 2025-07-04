@@ -3,6 +3,7 @@ CONFIG += TRIANGULATE
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
+
 SOURCES += \
     $$PWD/triangulate.cpp
 

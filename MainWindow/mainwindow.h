@@ -22,8 +22,7 @@
 #include "Viewport/viewport.h"
 #include "ModelController/modelcontroller.h"
 
-namespace Viewer
-{
+namespace Viewer{
 
 class MainWindow : public QMainWindow
 {

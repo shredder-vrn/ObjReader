@@ -305,10 +305,10 @@ bool checkFaces(
 
 bool validateModel(const Model &model)
 {
-    bool verticesOk = checkVertices(model.vertices);
-    bool texCoordsOk = checkTexCoords(model.textureVertices, model.faceTextureVertexIndices, model.polygonStarts);
-    bool normalsOk = checkNormals(model.normals, model.faceNormalIndices, model.polygonStarts);
-    bool facesOk = checkFaces(model.vertices, model.faceVertexIndices, model.polygonStarts);
+    bool verticesOk = checkVertices(model.m_vertices);
+    bool texCoordsOk = checkTexCoords(model.m_textureVertices, model.m_faceTextureVertexIndices, model.m_polygonStarts);
+    bool normalsOk = checkNormals(model.m_normals, model.m_faceNormalIndices, model.m_polygonStarts);
+    bool facesOk = checkFaces(model.m_vertices, model.m_faceVertexIndices, model.m_polygonStarts);
     return verticesOk && texCoordsOk && normalsOk && facesOk;
 }
 
@@ -331,13 +331,13 @@ bool parseTokens(QTextStream &in, Model &model)
 
         if (type == "#")
             continue;
-        if (type == "v" && !parseVertex(tokens, model.vertices))
+        if (type == "v" && !parseVertex(tokens, model.m_vertices))
             return false;
-        if (type == "vt" && !parseTexCoord(tokens, model.textureVertices))
+        if (type == "vt" && !parseTexCoord(tokens, model.m_textureVertices))
             return false;
-        if (type == "vn" && !parseNormal(tokens, model.normals))
+        if (type == "vn" && !parseNormal(tokens, model.m_normals))
             return false;
-        if (type == "f" && !parseFace(line, model.faceVertexIndices, model.faceTextureVertexIndices, model.faceNormalIndices, model.polygonStarts))
+        if (type == "f" && !parseFace(line, model.m_faceVertexIndices, model.m_faceTextureVertexIndices, model.m_faceNormalIndices, model.m_polygonStarts))
             return false;
     }
 

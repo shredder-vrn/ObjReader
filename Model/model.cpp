@@ -2,36 +2,33 @@
 
 #include <QDebug>
 
+
 void Model::clear() {
+    m_vertices.clear();
+    m_textureVertices.clear();
+    m_normals.clear();
 
-    qDebug() << "Model :: clear : запустили метод clear";
+    m_faceVertexIndices.clear();
+    m_faceTextureVertexIndices.clear();
+    m_faceNormalIndices.clear();
 
-    vertices.clear();
-    textureVertices.clear();
-    normals.clear();
-
-    faceVertexIndices.clear();
-    faceTextureVertexIndices.clear();
-    faceNormalIndices.clear();
-
-    polygonStarts.clear();
-    qDebug() << "Model :: clear : метод clear отработал";
+    m_polygonStarts.clear();
 }
 
 bool Model::isValid() const {
 
-    bool valid = !vertices.isEmpty() &&
-                     !faceVertexIndices.isEmpty() &&
-                     faceVertexIndices.size() % 3 == 0;
+    bool valid = !m_vertices.isEmpty() &&
+                     !m_faceVertexIndices.isEmpty() &&
+                     m_faceVertexIndices.size() % 3 == 0;
 
     if (!valid) return false;
 
-    if (hasTexture && textureVertices.isEmpty()) {
+    if (m_hasTexture && m_textureVertices.isEmpty()) {
         qDebug() << "[WARNING] hasTexture == true, но textureVertices пустые";
         return false;
     }
 
-    if (useNormals && normals.isEmpty()) {
+    if (m_useNormals && m_normals.isEmpty()) {
         qDebug() << "[WARNING] useNormal == true, но normals пустые";
         return false;
     }
@@ -40,7 +37,7 @@ bool Model::isValid() const {
 }
 
 bool Model::operator!=(const Model& other) const {
-    return faceVertexIndices != other.faceVertexIndices ||
-           vertices != other.vertices ||
-           polygonStarts != other.polygonStarts;
+    return m_faceVertexIndices != other.m_faceVertexIndices ||
+           m_vertices != other.m_vertices ||
+           m_polygonStarts != other.m_polygonStarts;
 }

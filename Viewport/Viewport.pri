@@ -1,20 +1,17 @@
-#REVIEW: VIEWPORT -> VIEWPORT_PRI
-!VIEWPORT {
-CONFIG += VIEWPORT
+!VIEWPORT_PRI {
+CONFIG += VIEWPORT_PRI
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
-#REVIEW: include scene
+include($$PWD/../Camera/Camera.pri)
+include($$PWD/../Renderer/Renderer.pri)
+
 
 HEADERS += \
     $$PWD/viewport.h\
-#    viewportrefactoring.h
-
-
 
 SOURCES += \
     $$PWD/viewport.cpp\
-#    viewportrefactoring.cpp
 
 
 }

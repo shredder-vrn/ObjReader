@@ -2,38 +2,33 @@
 #define MODEL_H
 
 #include <QVector>
-#include <QVector3D>
 #include <QVector2D>
+#include <QVector3D>
 
 #include <QOpenGLFunctions_3_3_Core>
 
-
 struct Model {
 
-    QVector<QVector3D> vertices;
-    QVector<QVector2D> textureVertices;
-    QVector<QVector3D> normals;
+    QVector<QVector3D> m_vertices;
+    QVector<QVector2D> m_textureVertices;
+    QVector<QVector3D> m_normals;
 
-    QVector<int> faceVertexIndices;
-    QVector<int> faceTextureVertexIndices;
-    QVector<int> faceNormalIndices;
+    QVector<int> m_faceVertexIndices;
+    QVector<int> m_faceTextureVertexIndices;
+    QVector<int> m_faceNormalIndices;
+    QVector<int> m_polygonStarts;
 
-    QVector<int> polygonStarts;
+    GLuint m_vao = 0;
+    GLuint m_vertexCount = 0;
+    GLuint m_textureId = 0;
 
-
-
-    GLuint vao = 0;
-    GLuint vertexCount = 0;
-
-    GLuint textureId = 0;
-    bool hasTexture = false;
-    bool useNormals = false;
+    bool m_hasTexture = false;
+    bool m_useNormals = false;
 
     void clear();
     bool isValid() const;
-    bool hasNormals() const { return !normals.isEmpty(); }
+    bool hasNormals() const { return !m_normals.isEmpty(); }
     bool operator!=(const Model& other) const;
-
 };
 
 #endif // MODEL_H

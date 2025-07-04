@@ -27,11 +27,11 @@ void launchReader(const QString &filename){
     }
 
     simpleTriangulateModel(
-        model.vertices,
-        model.faceVertexIndices,
-        model.faceTextureVertexIndices,
-        model.faceNormalIndices,
-        model.polygonStarts
+        model.m_vertices,
+        model.m_faceVertexIndices,
+        model.m_faceTextureVertexIndices,
+        model.m_faceNormalIndices,
+        model.m_polygonStarts
     );
 
 }

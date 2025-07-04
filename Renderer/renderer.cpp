@@ -86,18 +86,18 @@ bool OpenGLRenderer::initializeModel(Model &model)
 {
     qDebug() << "OpenGLRenderer :: initializeModel : запустили метод initializeModel";
 
-    if (!openGLisInitialized || model.vertices.isEmpty()) {
+    if (!openGLisInitialized || model.m_vertices.isEmpty()) {
         qDebug() << "Досрочное завершение из-за openGLisInitialized или отсутствия вершин";
         return false;
     }
 
-    if (model.vao != 0){
-        glDeleteVertexArrays(1, &model.vao);
-        model.vao = 0;
+    if (model.m_vao != 0){
+        glDeleteVertexArrays(1, &model.m_vao);
+        model.m_vao = 0;
     }
 
-    glGenVertexArrays(1, &model.vao);
-    glBindVertexArray(model.vao);
+    glGenVertexArrays(1, &model.m_vao);
+    glBindVertexArray(model.m_vao);
 
     GLuint vbo;
     glGenBuffers(1, &vbo);
@@ -105,19 +105,19 @@ bool OpenGLRenderer::initializeModel(Model &model)
 
     QVector<float> fullData;
 
-    for (int i = 0; i < model.faceVertexIndices.size(); ++i) {
-        int idx = model.faceVertexIndices[i];
+    for (int i = 0; i < model.m_faceVertexIndices.size(); ++i) {
+        int idx = model.m_faceVertexIndices[i];
 
-        QVector3D pos = model.vertices.value(idx, QVector3D());
+        QVector3D pos = model.m_vertices.value(idx, QVector3D());
         fullData << pos.x() << pos.y() << pos.z();
 
-        QVector3D normal = model.normals.value(idx, QVector3D());
+        QVector3D normal = model.m_normals.value(idx, QVector3D());
         fullData << normal.x() << normal.y() << normal.z();
 
-        if (i < model.faceTextureVertexIndices.size()) {
-            int texIdx = model.faceTextureVertexIndices[i];
-            if (texIdx >= 0 && texIdx < model.textureVertices.size()) {
-                QVector2D tex = model.textureVertices[texIdx];
+        if (i < model.m_faceTextureVertexIndices.size()) {
+            int texIdx = model.m_faceTextureVertexIndices[i];
+            if (texIdx >= 0 && texIdx < model.m_textureVertices.size()) {
+                QVector2D tex = model.m_textureVertices[texIdx];
                 fullData << tex.x() << tex.y();
             } else {
                 fullData << 0.0f << 0.0f;
@@ -138,12 +138,12 @@ bool OpenGLRenderer::initializeModel(Model &model)
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    model.vertexCount = model.faceVertexIndices.size();
+    model.m_vertexCount = model.m_faceVertexIndices.size();
 
     glBindVertexArray(0);
 
     qDebug() << "[DEBUG] VAO создан для модели";
-    qDebug() << "Количество вершин:" << model.vertexCount;
+    qDebug() << "Количество вершин:" << model.m_vertexCount;
 
     return true;
 }
@@ -156,10 +156,10 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
 
         shaderProgram->get()->bind();
         shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
-        shaderProgram->get()->setUniformValue("useNormal", model.useNormals);
-        shaderProgram->get()->setUniformValue("useTexture", model.hasTexture);
+        shaderProgram->get()->setUniformValue("useNormal", model.m_useNormals);
+        shaderProgram->get()->setUniformValue("useTexture", model.m_hasTexture);
 
-        if (model.vao == 0) {
+        if (model.m_vao == 0) {
             qDebug() << "VAO не создан — создаём сейчас";
             if (!initializeModel(const_cast<Model&>(model))) {
                 shaderProgram->get()->release();
@@ -167,19 +167,19 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
             }
         }
 
-        glBindVertexArray(model.vao);
+        glBindVertexArray(model.m_vao);
 
-        if (model.hasTexture) {
+        if (model.m_hasTexture) {
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, model.textureId);
+            glBindTexture(GL_TEXTURE_2D, model.m_textureId);
             shaderProgram->get()->setUniformValue("modelTexture", 0);
         }
 
-        for (int i = 0; i < model.polygonStarts.size(); ++i) {
-            int start = model.polygonStarts[i];
-            int count = (i < model.polygonStarts.size() - 1)
-                            ? model.polygonStarts[i + 1] - start
-                            : model.faceVertexIndices.size() - start;
+        for (int i = 0; i < model.m_polygonStarts.size(); ++i) {
+            int start = model.m_polygonStarts[i];
+            int count = (i < model.m_polygonStarts.size() - 1)
+                            ? model.m_polygonStarts[i + 1] - start
+                            : model.m_faceVertexIndices.size() - start;
 
             glDrawArrays(GL_TRIANGLES, start, count);
         }
@@ -189,8 +189,8 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
         shaderProgram->get()->release();
 
     qDebug() << "[DEBUG] Модель отрисована";
-    qDebug() << "hasTexture:" << model.hasTexture;
-    qDebug() << "textureId:" << model.textureId;
+    qDebug() << "hasTexture:" << model.m_hasTexture;
+    qDebug() << "textureId:" << model.m_textureId;
 }
 
 bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
@@ -210,8 +210,8 @@ bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
 
     if (textureImage.width() <= 0 || textureImage.height() <= 0) return false;
 
-    glGenTextures(1, &model.textureId);
-    glBindTexture(GL_TEXTURE_2D, model.textureId);
+    glGenTextures(1, &model.m_textureId);
+    glBindTexture(GL_TEXTURE_2D, model.m_textureId);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -224,11 +224,11 @@ bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
     glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    model.hasTexture = true;
+    model.m_hasTexture = true;
 
     qDebug() << "[SUCCESS] Текстура загружена:" << texturePath;
     qDebug() << "Размер текстуры:" << textureImage.width() << "x" << textureImage.height();
-    qDebug() << "textureId:" << model.textureId;
+    qDebug() << "textureId:" << model.m_textureId;
 
     return true;
 }

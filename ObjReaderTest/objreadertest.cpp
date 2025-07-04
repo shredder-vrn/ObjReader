@@ -25,17 +25,17 @@ static bool parseSingleLine(const QString& line, Model &model)
     const QString type = tokens[0];
 
     if (type == "v")
-        return parseVertex(tokens, model.vertices);
+        return parseVertex(tokens, model.m_vertices);
     if (type == "vt")
-        return parseTexCoord(tokens, model.textureVertices);
+        return parseTexCoord(tokens, model.m_textureVertices);
     if (type == "vn")
-        return parseNormal(tokens, model.normals);
+        return parseNormal(tokens, model.m_normals);
     if (type == "f")
         return parseFace(line,
-                         model.faceVertexIndices,
-                         model.faceTextureVertexIndices,
-                         model.faceNormalIndices,
-                         model.polygonStarts);
+                         model.m_faceVertexIndices,
+                         model.m_faceTextureVertexIndices,
+                         model.m_faceNormalIndices,
+                         model.m_polygonStarts);
 
 
     return false;
@@ -132,8 +132,8 @@ void ObjReaderTest::testParseVertexLine()
     QCOMPARE(result, expectedResult);
 
     if (expectedResult) {
-        QVERIFY(!model.vertices.isEmpty());
-        qDebug() << "Parsed vertex:" << model.vertices.last();
+        QVERIFY(!model.m_vertices.isEmpty());
+        qDebug() << "Parsed vertex:" << model.m_vertices.last();
     }
 }
 
@@ -226,8 +226,8 @@ void ObjReaderTest::testParseTexCoordLine()
     QCOMPARE(result, expectedResult);
 
     if (expectedResult) {
-        QVERIFY(!model.textureVertices.isEmpty());
-        qDebug() << "Parsed textureVertex:" << model.textureVertices.last();
+        QVERIFY(!model.m_textureVertices.isEmpty());
+        qDebug() << "Parsed textureVertex:" << model.m_textureVertices.last();
     }
 }
 
@@ -308,8 +308,8 @@ void ObjReaderTest::testParseNormalLine()
     QCOMPARE(result, expectedResult);
 
     if (expectedResult) {
-        QVERIFY(!model.normals.isEmpty());
-        qDebug() << "Parsed normals:" << model.normals.last();
+        QVERIFY(!model.m_normals.isEmpty());
+        qDebug() << "Parsed normals:" << model.m_normals.last();
     }
 }
 
@@ -397,10 +397,10 @@ void ObjReaderTest::testParseFaceLine()
     int lineNum = 1;
 
     bool result = parseFace(line,
-                            model.faceVertexIndices,
-                            model.faceTextureVertexIndices,
-                            model.faceNormalIndices,
-                            model.polygonStarts);
+                            model.m_faceVertexIndices,
+                            model.m_faceTextureVertexIndices,
+                            model.m_faceNormalIndices,
+                            model.m_polygonStarts);
 
     QCOMPARE(result, expectedResult);
 }
@@ -412,72 +412,72 @@ void ObjReaderTest::testValidateModel_data()
 
     {
         Model model;
-        model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
 
-        model.faceVertexIndices.append(0);
-        model.faceVertexIndices.append(1);
-        model.faceVertexIndices.append(2);
-        model.polygonStarts.append(0);
+        model.m_faceVertexIndices.append(0);
+        model.m_faceVertexIndices.append(1);
+        model.m_faceVertexIndices.append(2);
+        model.m_polygonStarts.append(0);
 
         QTest::newRow("Valid triangle") << model << true;
     }
 
     {
         Model model;
-        model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
 
-        model.faceVertexIndices.append(0);
-        model.faceVertexIndices.append(1);
-        model.faceVertexIndices.append(2);
-        model.polygonStarts.append(0);
+        model.m_faceVertexIndices.append(0);
+        model.m_faceVertexIndices.append(1);
+        model.m_faceVertexIndices.append(2);
+        model.m_polygonStarts.append(0);
 
-        model.textureVertices.append(QVector2D(0.0f, 0.0f));
-        model.textureVertices.append(QVector2D(1.0f, 0.0f));
-        model.textureVertices.append(QVector2D(0.0f, 1.0f));
+        model.m_textureVertices.append(QVector2D(0.0f, 0.0f));
+        model.m_textureVertices.append(QVector2D(1.0f, 0.0f));
+        model.m_textureVertices.append(QVector2D(0.0f, 1.0f));
 
-        model.faceTextureVertexIndices.append(0);
-        model.faceTextureVertexIndices.append(1);
-        model.faceTextureVertexIndices.append(2);
+        model.m_faceTextureVertexIndices.append(0);
+        model.m_faceTextureVertexIndices.append(1);
+        model.m_faceTextureVertexIndices.append(2);
 
-        model.normals.append(QVector3D(0.0f, 0.0f, 1.0f));
-        model.normals.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.normals.append(QVector3D(0.0f, 1.0f, 0.0f));
+        model.m_normals.append(QVector3D(0.0f, 0.0f, 1.0f));
+        model.m_normals.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_normals.append(QVector3D(0.0f, 1.0f, 0.0f));
 
-        model.faceNormalIndices.append(0);
-        model.faceNormalIndices.append(1);
-        model.faceNormalIndices.append(2);
+        model.m_faceNormalIndices.append(0);
+        model.m_faceNormalIndices.append(1);
+        model.m_faceNormalIndices.append(2);
 
         QTest::newRow("Valid full model") << model << true;
     }
 
     {
         Model model;
-        model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
 
-        model.faceVertexIndices.append(0);
-        model.faceVertexIndices.append(1);
-        model.faceVertexIndices.append(5);
-        model.polygonStarts.append(0);
+        model.m_faceVertexIndices.append(0);
+        model.m_faceVertexIndices.append(1);
+        model.m_faceVertexIndices.append(5);
+        model.m_polygonStarts.append(0);
 
         QTest::newRow("Index out of bounds") << model << false;
     }
 
     {
         Model model;
-        model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
 
-        model.faceVertexIndices.append(0);
-        model.faceVertexIndices.append(1);
-        model.faceVertexIndices.append(-1);
-        model.polygonStarts.append(0);
+        model.m_faceVertexIndices.append(0);
+        model.m_faceVertexIndices.append(1);
+        model.m_faceVertexIndices.append(-1);
+        model.m_polygonStarts.append(0);
 
         QTest::newRow("Negative index") << model << false;
     }
@@ -489,61 +489,61 @@ void ObjReaderTest::testValidateModel_data()
 
     {
         Model model;
-        model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
         QTest::newRow("Only one vertex") << model << false;
     }
 
     {
         Model model;
-        model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
 
-        model.faceVertexIndices.append(0);
-        model.faceVertexIndices.append(1);
-        model.polygonStarts.append(0);
+        model.m_faceVertexIndices.append(0);
+        model.m_faceVertexIndices.append(1);
+        model.m_polygonStarts.append(0);
 
         QTest::newRow("Polygon with less than 3 vertices") << model << false;
     }
 
     {
         Model model;
-        model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
 
-        model.faceVertexIndices.append(0);
-        model.faceVertexIndices.append(1);
-        model.faceVertexIndices.append(2);
-        model.polygonStarts.append(0);
+        model.m_faceVertexIndices.append(0);
+        model.m_faceVertexIndices.append(1);
+        model.m_faceVertexIndices.append(2);
+        model.m_polygonStarts.append(0);
 
-        model.textureVertices.append(QVector2D(0.0f, 0.0f));
-        model.textureVertices.append(QVector2D(1.0f, 0.0f));
-        model.textureVertices.append(QVector2D(0.0f, 1.0f));
+        model.m_textureVertices.append(QVector2D(0.0f, 0.0f));
+        model.m_textureVertices.append(QVector2D(1.0f, 0.0f));
+        model.m_textureVertices.append(QVector2D(0.0f, 1.0f));
 
-        model.faceTextureVertexIndices.append(0);
-        model.faceTextureVertexIndices.append(1);
-        model.faceTextureVertexIndices.append(5);
+        model.m_faceTextureVertexIndices.append(0);
+        model.m_faceTextureVertexIndices.append(1);
+        model.m_faceTextureVertexIndices.append(5);
         QTest::newRow("Texture index out of bounds") << model << false;
     }
 
     {
         Model model;
-        model.vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_vertices.append(QVector3D(0.0f, 1.0f, 0.0f));
 
-        model.faceVertexIndices.append(0);
-        model.faceVertexIndices.append(1);
-        model.faceVertexIndices.append(2);
-        model.polygonStarts.append(0);
+        model.m_faceVertexIndices.append(0);
+        model.m_faceVertexIndices.append(1);
+        model.m_faceVertexIndices.append(2);
+        model.m_polygonStarts.append(0);
 
-        model.normals.append(QVector3D(0.0f, 0.0f, 1.0f));
-        model.normals.append(QVector3D(1.0f, 0.0f, 0.0f));
-        model.normals.append(QVector3D(0.0f, 1.0f, 0.0f));
+        model.m_normals.append(QVector3D(0.0f, 0.0f, 1.0f));
+        model.m_normals.append(QVector3D(1.0f, 0.0f, 0.0f));
+        model.m_normals.append(QVector3D(0.0f, 1.0f, 0.0f));
 
-        model.faceNormalIndices.append(0);
-        model.faceNormalIndices.append(1);
-        model.faceNormalIndices.append(5);
+        model.m_faceNormalIndices.append(0);
+        model.m_faceNormalIndices.append(1);
+        model.m_faceNormalIndices.append(5);
         QTest::newRow("Normal index out of bounds") << model << false;
     }
 }
