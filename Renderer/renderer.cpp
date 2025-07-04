@@ -30,11 +30,13 @@ bool OpenGLRenderer::initialize()
                 out vec2 outTexCoord;
                 out vec3 fragNormal;
 
-                void main() {
-                    gl_Position = openGLcurrentMvp * vec4(position, 1.0);
-                    outTexCoord = inTexCoord;
+                void main()
+                {
                     fragNormal = normal;
-                })",
+                    outTexCoord = inTexCoord;
+                    gl_Position = openGLcurrentMvp * vec4(position, 1.0);
+                }
+                )",
                 R"(
                 #version 330 core
 
@@ -47,11 +49,12 @@ bool OpenGLRenderer::initialize()
                 uniform bool useTexture;
                 uniform bool useNormal;
 
-                uniform vec3 lightDirection = vec3(-0.5, 0.5, 1.0);
+                uniform vec3 lightDirection = vec3(0.5, 0.5, 1.0);
                 uniform vec3 lightColor = vec3(1.0, 1.0, 1.0);
-                uniform vec3 objectColor = vec3(0.5, 0.5, 0.3);
+                uniform vec3 objectColor = vec3(0.8, 0.5, 0.3);
 
-                void main() {
+                void main()
+                {
                     vec3 color = objectColor;
 
                     if (useTexture) {
@@ -67,7 +70,8 @@ bool OpenGLRenderer::initialize()
                     }
 
                     outColor = vec4(color, 1.0);
-                })")) {
+                }
+                )")) {
 
         qCritical("Failed to compile shaders");
         delete shaderProgram;
@@ -147,51 +151,46 @@ bool OpenGLRenderer::initializeModel(Model &model)
 void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
 {
     if (!openGLisInitialized || !shaderProgram || !model.isValid()) {
-        return;
-    }
-
-    shaderProgram->get()->bind();
-    shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
-
-    bool hasNormals = !model.normals.isEmpty();
-    shaderProgram->get()->setUniformValue("useNormal", hasNormals);
-    shaderProgram->get()->setUniformValue("useNormal", hasNormals);
-
-    shaderProgram->get()->setUniformValue("useTexture", model.hasTexture);
-
-    if (model.vao == 0) {
-        qDebug() << "VAO не создан — создаём сейчас";
-        if (!initializeModel(const_cast<Model&>(model))) {
-            shaderProgram->get()->release();
             return;
         }
-    }
 
-    glBindVertexArray(model.vao);
+        shaderProgram->get()->bind();
+        shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
+        shaderProgram->get()->setUniformValue("useNormal", model.useNormals);
+        shaderProgram->get()->setUniformValue("useTexture", model.hasTexture);
 
-    if (model.hasTexture) {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, model.textureId);
-        shaderProgram->get()->setUniformValue("modelTexture", 0);
-    }
+        if (model.vao == 0) {
+            qDebug() << "VAO не создан — создаём сейчас";
+            if (!initializeModel(const_cast<Model&>(model))) {
+                shaderProgram->get()->release();
+                return;
+            }
+        }
 
-    for (int i = 0; i < model.polygonStarts.size(); ++i) {
-        int start = model.polygonStarts[i];
-        int count = (i < model.polygonStarts.size() - 1)
-                        ? model.polygonStarts[i + 1] - start
-                        : model.faceVertexIndices.size() - start;
+        glBindVertexArray(model.vao);
 
-        glDrawArrays(GL_TRIANGLES, start, count);
-    }
+        if (model.hasTexture) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, model.textureId);
+            shaderProgram->get()->setUniformValue("modelTexture", 0);
+        }
 
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindVertexArray(0);
-    shaderProgram->get()->release();
+        for (int i = 0; i < model.polygonStarts.size(); ++i) {
+            int start = model.polygonStarts[i];
+            int count = (i < model.polygonStarts.size() - 1)
+                            ? model.polygonStarts[i + 1] - start
+                            : model.faceVertexIndices.size() - start;
+
+            glDrawArrays(GL_TRIANGLES, start, count);
+        }
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindVertexArray(0);
+        shaderProgram->get()->release();
 
     qDebug() << "[DEBUG] Модель отрисована";
     qDebug() << "hasTexture:" << model.hasTexture;
     qDebug() << "textureId:" << model.textureId;
-    qDebug() << "hasNormals:" << hasNormals;
 }
 
 bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)

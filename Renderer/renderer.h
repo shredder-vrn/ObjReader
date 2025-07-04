@@ -28,6 +28,8 @@ public:
 
 private:
     ShaderProgram *shaderProgram = nullptr;
+    bool m_lightingCheck = false;
+
 
     GLuint openGLvao = 0;
     GLuint openGLvbo = 0;

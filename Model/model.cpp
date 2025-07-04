@@ -31,7 +31,7 @@ bool Model::isValid() const {
         return false;
     }
 
-    if (useNormal && normals.isEmpty()) {
+    if (useNormals && normals.isEmpty()) {
         qDebug() << "[WARNING] useNormal == true, но normals пустые";
         return false;
     }

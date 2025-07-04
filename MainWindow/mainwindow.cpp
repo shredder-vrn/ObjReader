@@ -104,13 +104,7 @@ QGroupBox* MainWindow::createRenderOptionsSection()
     layout->addWidget(m_normalsCheck);
 
     connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
-
-    connect(m_lightingCheck, &QCheckBox::toggled, this, [this](bool checked) {
-        for (auto* model : m_models) {
-            model->useNormal = checked;
-        }
-        m_viewport->setModels(m_models, m_modelTransforms);
-    });
+    connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::onLightingToggled); // ✅ подключение
 
     group->setLayout(layout);
     return group;
@@ -229,6 +223,14 @@ void MainWindow::onModelSelected(const QModelIndex& index)
         qDebug() << "[DEBUG] Выбрана модель #" << m_selectedModelIndex;
         qDebug() << "hasTexture:" << model->hasTexture;
         qDebug() << "textureId:" << model->textureId;
+    }
+}
+
+void MainWindow::onLightingToggled(bool checked)
+{
+    if (m_selectedModelIndex >= 0 && m_selectedModelIndex < m_models.size()) {
+        m_models[m_selectedModelIndex]->useNormals = checked;
+        m_viewport->setModels(m_models, m_modelTransforms);
     }
 }
 

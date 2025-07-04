@@ -27,10 +27,11 @@ struct Model {
 
     GLuint textureId = 0;
     bool hasTexture = false;
-    bool useNormal = false;
+    bool useNormals = false;
 
     void clear();
     bool isValid() const;
+    bool hasNormals() const { return !normals.isEmpty(); }
     bool operator!=(const Model& other) const;
 
 };

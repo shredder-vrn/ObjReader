@@ -40,6 +40,7 @@ private slots:
 
     void updateModelList();
     void onModelSelected(const QModelIndex &index);
+    void onLightingToggled(bool checked);
     void updateModelTransform();
 
 
