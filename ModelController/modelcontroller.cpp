@@ -88,7 +88,7 @@ void ModelController::resetTransformations()
     m_modelControllerModelMatrix.setToIdentity();
 }
 
-void ModelController::calculateNormals(Model& model)
+void ModelController::calculateNormals(Model &model)
     {
         if (model.vertices.isEmpty() || model.faceVertexIndices.size() % 3 != 0) {
             qDebug() << "[ERROR] Неверные данные модели для расчёта нормалей";

@@ -1,17 +1,13 @@
-!MAIN_WINDOW {
-CONFIG += MAIN_WINDOW
+!MAIN_WINDOW_PRI {
+CONFIG += MAIN_WINDOW_PRI
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
 HEADERS += \
     $$PWD/mainwindow.h\
- #   $$PWD/mainwindowrefactoring.h
-
 
 SOURCES += \
     $$PWD/mainwindow.cpp\
- #   $$PWD/mainwindowrefactoring.cpp
-
 
 }
 
