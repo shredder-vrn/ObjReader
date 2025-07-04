@@ -36,22 +36,29 @@ public:
 
 private slots:
     void openModel();
+
     void loadTextureForSelectedModel();
 
     void updateModelList();
+
     void onModelSelected(const QModelIndex &index);
+
     void onLightingToggled(bool checked);
+
     void updateModelTransform();
 
 
 private:
     void setupDockWidgets();
+
     void onTextureCheckToggled(bool checked);
+
     void updateSelectedModelTextureState(bool checked);
 
-
     QGroupBox* createModelPropertiesSection();
+
     QGroupBox* createRenderOptionsSection();
+
     QGroupBox* createTransformSection();
 
     ViewportWidget* m_viewport = nullptr;

@@ -195,7 +195,10 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
 
 bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
 {
-    if (!openGLisInitialized) return false;
+    if (!openGLisInitialized) {
+        qDebug() << "[ERROR] OpenGL не инициализирован";
+        return false;
+    }
 
     QImage textureImage(texturePath);
     if (textureImage.isNull()) {
@@ -203,7 +206,8 @@ bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
         return false;
     }
 
-    textureImage = textureImage.convertToFormat(QImage::Format_RGBA8888);
+    textureImage = textureImage.convertToFormat(QImage::Format_RGBA8888).mirrored();
+
     if (textureImage.width() <= 0 || textureImage.height() <= 0) return false;
 
     glGenTextures(1, &model.textureId);
