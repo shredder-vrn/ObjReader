@@ -32,7 +32,7 @@ bool ModelController::loadModel(const QString &filePath)
         return false;
     }
 
-    triangulateModel(
+    simpleTriangulateModel(
                 newModel.vertices,
                 newModel.faceVertexIndices,
                 newModel.faceTextureVertexIndices,
