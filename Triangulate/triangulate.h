@@ -4,7 +4,6 @@
 #include <QVector3D>
 #include <QVector>
 
-//! REVIEW: out
 void simpleTriangulateModel(
     const QVector<QVector3D> &vertices,
     QVector<int> &faceVertexIndices,

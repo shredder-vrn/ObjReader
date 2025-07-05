@@ -4,27 +4,13 @@
 #include <QtMath>
 
 namespace Viewer {
-
 Camera :: Camera()
 {
-    qDebug() << "Camera :: Camera : запустили конструктор";
-    qDebug() << "cameraPosition" << m_cameraPosition;
-    qDebug() << "cameraUp" << m_cameraUp;
-    qDebug() << "cameraTarget" << m_cameraTarget;
-    qDebug() << "cameraWidth" << m_cameraWidth;
-    qDebug() << "cameraHeight" << m_cameraHeight;
-    qDebug() << "cameraFov" << m_cameraFov;
-    qDebug() << "cameraNearPlane" << m_cameraNearPlane;
-    qDebug() << "cameraFarPlane" << m_cameraFarPlane;
-
     updateViewMatrix();
 }
 
-
 void Camera :: setViewportSize(const int width, const int height)
 {
-    qDebug() << "Camera :: setViewportSize : запустили метод setViewportSize";
-
     this->m_cameraWidth = width;
     this->m_cameraHeight = height;
 
@@ -34,19 +20,16 @@ void Camera :: setViewportSize(const int width, const int height)
 
 QMatrix4x4 Camera :: viewMatrix() const
 {
-    qDebug() << "Camera :: getViewMatrix : запустили метод getViewMatrix";
     return m_cameraViewMatrix;
 }
 
 QMatrix4x4 Camera :: projectionMatrix() const
 {
-    qDebug() << "Camera :: getProjectionMatrix : запустили метод getProjectionMatrix";
     return m_cameraProjectionMatrix;
 }
 
 void Camera :: updateViewMatrix()
 {
-    qDebug() << "Camera :: updateViewMatrix : запустили метод updateViewMatrix";
     QVector3D rotatedFront = m_cameraOrientation.rotatedVector(m_cameraFront);
     QVector3D rotatedUp = m_cameraOrientation.rotatedVector(m_cameraUp);
 
@@ -58,7 +41,6 @@ void Camera :: updateViewMatrix()
 
 void Camera::rotateAroundTarget(const float deltaX, const float deltaY)
 {
-    qDebug() << "Camera :: rotateAroundTarget : запустили метод rotateAroundTarget";
     const float rotationSpeed = 0.5f;
 
     QQuaternion yawRotation = QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), deltaX * rotationSpeed);
@@ -71,7 +53,6 @@ void Camera::rotateAroundTarget(const float deltaX, const float deltaY)
 }
 
 void Camera::zoom(const float delta) {
-    qDebug() << "Camera :: zoom : запустили метод zoom";
     float zoomSpeed = 3.0f;
 
     QVector3D direction = (m_cameraTarget - m_cameraPosition).normalized();
@@ -80,7 +61,6 @@ void Camera::zoom(const float delta) {
     m_cameraPosition += direction * delta * zoomSpeed;
 
     updateViewMatrix();
-
 }
 }
 

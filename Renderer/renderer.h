@@ -21,7 +21,7 @@ public:
     void render(const Model &model, const QMatrix4x4 &mvp);
 
     bool initializeModel(Model &model);
-    bool loadTexture(Model& model, const QString& texturePath);
+    bool loadTexture(Model &model, const QString &texturePath);
 
     void setModel(const Model &model);
     void setMVPmatrix(const QMatrix4x4 &mvp);

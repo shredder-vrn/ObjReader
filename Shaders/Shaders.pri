@@ -1,12 +1,8 @@
-!VERTEX_SHADER {
+!SHADERS_PRI {
 
-CONFIG += VERTEX_SHADER
+CONFIG += SHADERS_PRI
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
-
-include($$PWD/../VertexShader/VertexShader.pri)
-include($$PWD/../FragmentShader/FragmentShader.pri)
-
 
 SOURCES += \
     $$PWD/shadersprogram.cpp

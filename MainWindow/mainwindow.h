@@ -18,12 +18,10 @@
 #include <QGroupBox>
 #include <QPushButton>
 
-
 #include "Viewport/viewport.h"
 #include "ModelController/modelcontroller.h"
 
 namespace Viewer{
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -43,8 +41,6 @@ private slots:
 
 private:
     void setupUserInterface();
-    void connectSignals();
-    void updatePropertiesPanel();
 
     QGroupBox *createModelInfoSection();
     QGroupBox *createRenderSettingsSection();
@@ -82,7 +78,6 @@ private:
     QDoubleSpinBox *m_scalingSpinboxY = nullptr;
     QDoubleSpinBox *m_scalingSpinboxZ = nullptr;
 };
-
 }
 
 #endif // MAINWINNDOW_H

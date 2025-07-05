@@ -4,21 +4,23 @@
 #include <QObject>
 #include <QOpenGLShaderProgram>
 
+namespace Viewer {
 class ShaderProgram : public QObject {
     Q_OBJECT
 
 public:
-    ShaderProgram(QObject* parent = nullptr);
+    ShaderProgram(QObject *parent = nullptr);
     ~ShaderProgram();
 
-    bool compileFromString(const QString& vertexSrc, const QString& fragmentSrc);
-    bool compileFromFile(const QString& vertexPath, const QString& fragmentPath);
+    bool compileFromString(const QString &vertexSrc, const QString &fragmentSrc);
+    bool compileFromFile(const QString &vertexPath, const QString &fragmentPath);
 
-    QOpenGLShaderProgram* get() const;
+    QOpenGLShaderProgram *get() const;
 
 
 private:
     QOpenGLShaderProgram *myShaderProgram = nullptr;
 };
+}
 
 #endif // SHADERSPROGRAM_H

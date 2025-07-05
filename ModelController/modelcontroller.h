@@ -17,7 +17,6 @@ public:
     QMatrix4x4 getModelMatrix() const;
     const QVector<Model> &getModels() const {return m_models;}
     QVector<QMatrix4x4> const getModelMatrices(){return m_modelMatrices;}
-    void setTransform(int index, const QMatrix4x4 &transform);
     void translate(const QVector3D &translation);
     void rotate(float angle, const QVector3D &axis);
     void scale(const QVector3D &scalingFactors);

@@ -30,31 +30,25 @@ void simpleTriangulateModel(
 
         int vertexCount = end - start;
         if (vertexCount != 4) {
-            qWarning() << "Поддерживаются только четырёхугольники!";
             continue;
         }
 
-        // Сохраняем начало этой грани в массиве новых индексов
         newPolygonStarts.append(newFaceVertexIndices.size());
         newPolygonStarts.append(newFaceVertexIndices.size() + 3);
 
-        // Индексы вершин четырёхугольника
         int a = faceVertexIndices[start + 0];
         int b = faceVertexIndices[start + 1];
         int c = faceVertexIndices[start + 2];
         int d = faceVertexIndices[start + 3];
 
-        // Первый треугольник: A -> B -> C
         newFaceVertexIndices.append(a);
         newFaceVertexIndices.append(b);
         newFaceVertexIndices.append(c);
 
-        // Второй треугольник: A -> C -> D
         newFaceVertexIndices.append(a);
         newFaceVertexIndices.append(c);
         newFaceVertexIndices.append(d);
 
-        // Обрабатываем текстурные координаты
         if (!faceTextureVertexIndices.isEmpty()) {
             int ta = faceTextureVertexIndices[start + 0];
             int tb = faceTextureVertexIndices[start + 1];
@@ -70,7 +64,6 @@ void simpleTriangulateModel(
             newFaceTextureVertexIndices.append(td);
         }
 
-        // Обрабатываем нормали
         if (!faceNormalIndices.isEmpty()) {
             int na = faceNormalIndices[start + 0];
             int nb = faceNormalIndices[start + 1];
@@ -87,17 +80,11 @@ void simpleTriangulateModel(
         }
     }
 
-    // Перезаписываем старые данные новыми
     faceVertexIndices = newFaceVertexIndices;
     faceTextureVertexIndices = newFaceTextureVertexIndices;
     faceNormalIndices = newFaceNormalIndices;
     polygonStarts = newPolygonStarts;
-
-    qDebug() << "vertices" << vertices;
-    qDebug() << "newFaceVertexIndices" << faceVertexIndices;
-    qDebug() << "newPolygonStarts" << polygonStarts;
 }
-
 
 bool pointsEqual(const QVector3D &a, const QVector3D &b, float epsilon = 1e-5f) {
     Q_UNUSED(epsilon);
@@ -162,7 +149,6 @@ void triangulateModel(
     QVector<int> &faceNormalIndices,
     QVector<int> &polygonStarts)
 {
-    qDebug() << "triangulateModel :: triangulateModel : запустили метод triangulateModel";
 
     QVector<int> newFaceVertexIndices;
     QVector<int> newFaceTextureVertexIndices;
@@ -255,12 +241,4 @@ void triangulateModel(
     faceTextureVertexIndices = newFaceTextureVertexIndices;
     faceNormalIndices = newFaceNormalIndices;
     polygonStarts = newPolygonStarts;
-
-    qDebug() << "vertices" << vertices;
-    qDebug() << "faceVertexIndices" << faceVertexIndices;
-    qDebug() << "faceTextureVertexIndices" << faceTextureVertexIndices;
-    qDebug() << "faceNormalIndices" << faceNormalIndices;
-    qDebug() << "polygonStarts" << polygonStarts;
-    qDebug() << "triangulateModel :: triangulateModel : метод triangulateModel отработал";
-
 }

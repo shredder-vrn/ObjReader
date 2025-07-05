@@ -6,7 +6,6 @@
 #include <QQuaternion>
 
 namespace Viewer {
-
 class Camera
 {
 public:

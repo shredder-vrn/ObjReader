@@ -13,22 +13,17 @@
 namespace Viewer{
 bool ModelController::loadModel(const QString &filePath)
 {
-    qDebug() << "ModelController :: loadModel : запустили метод loadModel";
-
     Model newModel;
 
     QFile file(filePath);
 
     if (!file.exists()) {
-        qWarning() << "Файл не найден:" << filePath;
         return false;
     }
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Не удалось открыть файл для чтения:" << filePath;
         return false;
     }
     if (!parseObj(filePath, newModel)) {
-        qWarning() << "Ошибка при разборе файла OBJ.";
         return false;
     }
 
@@ -50,36 +45,26 @@ bool ModelController::loadModel(const QString &filePath)
 
 const Model &ModelController::getModel() const
 {
-    qDebug() << "ModelController :: getModel : запустили метод getModel";
     return m_modelControllerModel;
 }
 
 QMatrix4x4 ModelController :: getModelMatrix() const
 {
-    qDebug() << "ModelController :: getModelMatrix : запустили метод getModelMatrix";
     return m_modelControllerModelMatrix;
-}
-
-void ModelController::setTransform(int index, const QMatrix4x4 &transform)
-{
-
 }
 
 void ModelController::translate(const QVector3D &translation)
 {
-    qDebug() << "ModelController :: translate : запустили метод translate";
     m_modelControllerModelMatrix.translate(translation);
 }
 
 void ModelController::rotate(float angle, const QVector3D &axis)
 {
-    qDebug() << "ModelController :: rotate : запустили метод rotate";
     m_modelControllerModelMatrix.rotate(angle, axis);
 }
 
 void ModelController::scale(const QVector3D &scalingFactors)
 {
-    qDebug() << "ModelController :: scale : запустили метод scale";
     m_modelControllerModelMatrix.scale(scalingFactors);
 }
 
@@ -91,7 +76,6 @@ void ModelController::resetTransformations()
 void ModelController::calculateNormals(Model &model)
     {
         if (model.vertices().isEmpty() || model.faceVertexIndices().size() % 3 != 0) {
-            qDebug() << "[ERROR] Неверные данные модели для расчёта нормалей";
             return;
         }
 
@@ -122,9 +106,6 @@ void ModelController::calculateNormals(Model &model)
         for (auto& n : model.setNormals()) {
             n = n.normalized();
         }
-
-        qDebug() << "[SUCCESS] Нормали рассчитаны";
     }
-
 }
 

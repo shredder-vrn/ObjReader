@@ -1,6 +1,5 @@
 #include "cameraper.h"
 namespace Viewer{
-
 CameraPer::CameraPer()
 {
     updateViewMatrix();

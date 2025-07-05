@@ -21,12 +21,8 @@ public:
     void rotateAroundTarget(const float deltaX, const float deltaY) override;
     void zoom(const float delta) override;
 
-    QVector3D position() const override {
-        qDebug() << "CameraPer::position()" << m_position;
-        return m_position; }
-    QVector3D target() const override {
-        qDebug() << "CameraPer::target()" << m_target;
-        return m_target; }
+    QVector3D position() const override { return m_position; }
+    QVector3D target() const override { return m_target; }
     QVector3D up() const override { return m_up; }
 
     void setPosition(const QVector3D& pos) override {

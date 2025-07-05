@@ -8,10 +8,8 @@
 #include "ObjReader/objreader.h"
 
 namespace Viewer{
-
-ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
+ViewportWidget::ViewportWidget(QWidget *parent) : QOpenGLWidget(parent)
 {
-    qDebug() << "Viewport :: Viewport : запустили конструктор";
     QSurfaceFormat format;
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat :: CoreProfile);
@@ -19,7 +17,7 @@ ViewportWidget::ViewportWidget(QWidget* parent) : QOpenGLWidget(parent)
     m_camera = std::make_unique<CameraPer>();
 }
 
-void ViewportWidget::setModels(const QVector<Model*>& models, const QVector<QMatrix4x4>& transforms)
+void ViewportWidget::setModels(const QVector<Model*> &models, const QVector<QMatrix4x4>& transforms)
 {
     m_models = models;
     m_modelTransforms = transforms;
@@ -27,7 +25,7 @@ void ViewportWidget::setModels(const QVector<Model*>& models, const QVector<QMat
     update();
 }
 
-bool ViewportWidget::loadTextureForModel(const QString& texturePath, int modelIndex)
+bool ViewportWidget::loadTextureForModel(const QString &texturePath, int modelIndex)
 {
     if (modelIndex < 0 || modelIndex >= m_models.size())
         return false;
@@ -37,8 +35,6 @@ bool ViewportWidget::loadTextureForModel(const QString& texturePath, int modelIn
 
 void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
-    qDebug() << "Viewport :: resizeEvent : запустили метод resizeEvent";
-
     m_viewportWidth = event->size().width();
     m_viewportHeight = event->size().height();
     m_camera->setViewportSize(m_viewportWidth, m_viewportHeight);
@@ -73,7 +69,6 @@ void ViewportWidget::paintGL()
 
     for (int i = 0; i < m_models.size(); ++i) {
         if (!m_models[i] || !m_models[i]->isValid()) {
-            qDebug() << "[ERROR] Модель #" << i << "невалидна";
             continue;
         }
 
@@ -84,7 +79,6 @@ void ViewportWidget::paintGL()
 
 void ViewportWidget::wheelEvent(QWheelEvent *event)
 {
-    qDebug() << "Viewport :: wheelEvent : запустили метод wheelEvent";
     const float delta = event->angleDelta().y() > 0 ? 0.5f : -0.5f;
     m_camera->zoom(delta);
     update();
@@ -185,7 +179,6 @@ void ViewportWidget::switchToOrthographic()
 void ViewportWidget::fitToView()
 {
     if (m_models.isEmpty() || m_modelTransforms.isEmpty()) {
-        qDebug() << "[INFO] Нет моделей для Fit to View";
         return;
     }
 

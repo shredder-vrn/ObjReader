@@ -2,14 +2,13 @@
 
 namespace Viewer
 {
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    qDebug() << "MainWindow::MainWindow : запустили конструктор";
     setWindowTitle("OBJ Viewer");
     resize(1400, 900);    
 
-    QWidget* centralWidget = new QWidget(this);
-    QVBoxLayout* layout = new QVBoxLayout(centralWidget);
+    QWidget *centralWidget = new QWidget(this);
+    QVBoxLayout *layout = new QVBoxLayout(centralWidget);
 
     m_viewport = new ViewportWidget(this);
     layout->addWidget(m_viewport);
@@ -25,15 +24,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 
 MainWindow::~MainWindow()
 {
-    qDebug() << "MainWindow::~MainWindow : запустили деструктор";
-    for (auto* model : m_models) {delete model;}
-
+    for (auto *model : m_models) {delete model;}
     m_models.clear();
 }
 
 void MainWindow::setupUserInterface()
 {
-    qDebug() << "MainWindow :: setupUserInterface : запустили конструктор";
     m_explorerDock = new QDockWidget("Explorer", this);
     m_explorerView = new QTreeView(m_explorerDock);
     m_explorerModel = new QStandardItemModel(this);
@@ -48,8 +44,8 @@ void MainWindow::setupUserInterface()
             this, &MainWindow::onExplorerModelSelected);
 
     m_propertiesDock = new QDockWidget("Properties", this);
-    QWidget* propertiesPanel = new QWidget(m_propertiesDock);
-    QVBoxLayout* mainLayout = new QVBoxLayout(propertiesPanel);
+    QWidget *propertiesPanel = new QWidget(m_propertiesDock);
+    QVBoxLayout *mainLayout = new QVBoxLayout(propertiesPanel);
 
     mainLayout->addWidget(createModelInfoSection());
     mainLayout->addWidget(createRenderSettingsSection());
@@ -61,21 +57,11 @@ void MainWindow::setupUserInterface()
     m_propertiesDock->setMinimumWidth(350);
     addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
 
-    QMenu* cameraMenu = menuBar()->addMenu("Camera");
-    QAction* perspAct = cameraMenu->addAction("Perspective");
-    QAction* orthoAct = cameraMenu->addAction("Orthographic");
+    QMenu *cameraMenu = menuBar()->addMenu("Camera");
+    QAction *perspAct = cameraMenu->addAction("Perspective");
+    QAction *orthoAct = cameraMenu->addAction("Orthographic");
     connect(perspAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToPerspective);
     connect(orthoAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToOrthographic);
-}
-
-void MainWindow::connectSignals()
-{
-
-}
-
-void MainWindow::updatePropertiesPanel()
-{
-
 }
 
 QGroupBox *MainWindow::createModelInfoSection()
@@ -97,8 +83,8 @@ QGroupBox *MainWindow::createModelInfoSection()
 
 QGroupBox *MainWindow::createRenderSettingsSection()
 {
-    QGroupBox* group = new QGroupBox("Render Options");
-    QVBoxLayout* layout = new QVBoxLayout();
+    QGroupBox *group = new QGroupBox("Render Options");
+    QVBoxLayout *layout = new QVBoxLayout();
 
     m_wireframeCheck = new QCheckBox("Wireframe");
     m_textureCheck = new QCheckBox("Use Texture");
@@ -117,13 +103,13 @@ QGroupBox *MainWindow::createRenderSettingsSection()
     return group;
 }
 
-QGroupBox* MainWindow::createTransformControls()
+QGroupBox *MainWindow::createTransformControls()
 {
-    QGroupBox* group = new QGroupBox("Transform");
-    QFormLayout* layout = new QFormLayout();
+    QGroupBox *group = new QGroupBox("Transform");
+    QFormLayout *layout = new QFormLayout();
 
     auto initSpinBox = [this](double min, double max, double value) {
-        QDoubleSpinBox* spin = new QDoubleSpinBox(this);
+        QDoubleSpinBox *spin = new QDoubleSpinBox(this);
         spin->setRange(min, max);
         spin->setValue(value);
         spin->setSingleStep(0.1);
@@ -162,7 +148,7 @@ QGroupBox* MainWindow::createTransformControls()
 
     connect(m_loadTextureButton, &QPushButton::clicked, this, &MainWindow::loadTextureForSelectedModel);
 
-    QPushButton* m_fitToViewButton = new QPushButton("Fit to View", this);
+    QPushButton *m_fitToViewButton = new QPushButton("Fit to View", this);
     layout->addRow(m_fitToViewButton);
 
     connect(m_fitToViewButton, &QPushButton::clicked, m_viewport, &ViewportWidget::fitToView);
@@ -186,7 +172,7 @@ void MainWindow::openModelFile()
         return;
     }
 
-    Model* model = new Model();
+    Model *model = new Model();
     *model = controller.getModel();
 
     m_models.append(model);
@@ -207,12 +193,12 @@ void MainWindow::updateModelList()
     }
 }
 
-void MainWindow::onExplorerModelSelected(const QModelIndex& index)
+void MainWindow::onExplorerModelSelected(const QModelIndex &index)
 {
     m_currentModelIndex = index.row();
 
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_models.size()) {
-        const Model* model = m_models[m_currentModelIndex];
+        const Model *model = m_models[m_currentModelIndex];
 
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));
         m_verticesLabel->setText(QString::number(model->vertices().size()));
@@ -220,9 +206,6 @@ void MainWindow::onExplorerModelSelected(const QModelIndex& index)
 
         m_textureCheck->setChecked(model->hasTexture());
 
-        qDebug() << "[DEBUG] Выбрана модель #" << m_currentModelIndex;
-        qDebug() << "hasTexture:" << model->hasTexture();
-        qDebug() << "textureId:" << model->textureId();
         if (!model->isValid()) {
             QMessageBox::warning(this, "Предупреждение", "Модель повреждена или не содержит полигонов");
         }

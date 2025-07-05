@@ -4,88 +4,33 @@
 #include <QImage>
 
 namespace Viewer {
-
 bool OpenGLRenderer::initialize()
 {
-    qDebug() << "OpenGLRenderer :: initialize : запустили метод initialize";
-
     initializeOpenGLFunctions();
 
     glEnable(GL_DEPTH_TEST);
 
     shaderProgram = new ShaderProgram();
 
-    if (!shaderProgram->compileFromString(
-                R"(
-                #version 330 core
+    QString vertexShaderPath = "../Shaders/vertexshader.glsl";
+    QString fragmentShaderPath = "../Shaders/fragmentshader.glsl";
 
-                layout(location=0) in vec3 position;
-                layout(location=1) in vec3 normal;
-                layout(location=2) in vec2 inTexCoord;
 
-                uniform mat4 openGLcurrentMvp;
 
-                out vec2 outTexCoord;
-                out vec3 fragNormal;
-
-                void main()
-                {
-                    fragNormal = normal;
-                    outTexCoord = inTexCoord;
-                    gl_Position = openGLcurrentMvp * vec4(position, 1.0);
-                }
-                )",
-                R"(
-                #version 330 core
-
-                in vec2 outTexCoord;
-                in vec3 fragNormal;
-
-                out vec4 outColor;
-
-                uniform sampler2D modelTexture;
-                uniform bool useTexture;
-                uniform bool useNormal;
-
-                uniform vec3 lightDirection = vec3(0.5, 0.5, 1.0);
-                uniform vec3 lightColor = vec3(1.0, 1.0, 1.0);
-                uniform vec3 objectColor = vec3(0.8, 0.5, 0.3);
-
-                void main()
-                {
-                    vec3 color = objectColor;
-
-                    if (useTexture) {
-                        color = texture(modelTexture, outTexCoord).rgb;
-                    }
-
-                    if (useNormal) {
-                        vec3 norm = normalize(fragNormal);
-                        vec3 lightDir = normalize(-lightDirection);
-                        float diff = max(dot(norm, lightDir), 0.0);
-                        vec3 diffuse = diff * lightColor;
-                        color = diffuse * color;
-                    }
-
-                    outColor = vec4(color, 1.0);
-                }
-                )")) {
-
-        qCritical("Failed to compile shaders");
+    if (!shaderProgram->compileFromFile(vertexShaderPath, fragmentShaderPath)) {
+        qCritical("Failed to compile shaders from file");
         delete shaderProgram;
         shaderProgram = nullptr;
         return false;
     }
+
     openGLisInitialized = true;
     return true;
 }
 
 bool OpenGLRenderer::initializeModel(Model &model)
 {
-    qDebug() << "OpenGLRenderer :: initializeModel : запустили метод initializeModel";
-
     if (!openGLisInitialized || model.vertices().isEmpty()) {
-        qDebug() << "Досрочное завершение из-за openGLisInitialized или отсутствия вершин";
         return false;
     }
 
@@ -106,10 +51,10 @@ bool OpenGLRenderer::initializeModel(Model &model)
 
     QVector<float> fullData;
 
-    const auto& faceIndices = model.faceVertexIndices();
-    const auto& normals = model.normals();
-    const auto& textureVerts = model.textureVertices();
-    const auto& textureIndices = model.faceTextureVertexIndices();
+    const auto &faceIndices = model.faceVertexIndices();
+    const auto &normals = model.normals();
+    const auto &textureVerts = model.textureVertices();
+    const auto &textureIndices = model.faceTextureVertexIndices();
 
     fullData.reserve(faceIndices.size() * 8);
 
@@ -153,7 +98,7 @@ bool OpenGLRenderer::initializeModel(Model &model)
     return true;
 }
 
-void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
+void OpenGLRenderer::render(const Model &model, const QMatrix4x4 &mvp)
 {
     if (!openGLisInitialized || !shaderProgram || !model.isValid()) {
         return;
@@ -164,11 +109,7 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
     shaderProgram->get()->setUniformValue("useNormal", model.useNormals());
     shaderProgram->get()->setUniformValue("useTexture", model.hasTexture());
 
-    qDebug() << "[DEBUG] hasTexture:" << model.hasTexture();
-    qDebug() << "[DEBUG] textureId:" << model.textureId();
-
     if (model.vao() == 0) {
-        qDebug() << "VAO не создан — создаём сейчас";
         if (!initializeModel(const_cast<Model&>(model))) {
             shaderProgram->get()->release();
             return;
@@ -178,12 +119,9 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
     glBindVertexArray(model.vao());
 
     if (model.hasTexture()) {
-        qDebug() << "[DEBUG] Привязываем текстуру ID:" << model.textureId();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, model.textureId());
         shaderProgram->get()->setUniformValue("modelTexture", 0);
-    } else {
-        qDebug() << "[DEBUG] Текстура не используется";
     }
 
     for (int i = 0; i < model.polygonStarts().size(); ++i) {
@@ -202,34 +140,26 @@ void OpenGLRenderer::render(const Model& model, const QMatrix4x4& mvp)
 
 bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
 {
-    if (!openGLisInitialized) {
-        qDebug() << "[ERROR] OpenGL не инициализирован";
+    if (!openGLisInitialized)
         return false;
-    }
 
     QImage textureImage(texturePath);
-    if (textureImage.isNull()) {
-        qWarning() << "Не удалось загрузить текстуру:" << texturePath;
+    if (textureImage.isNull())
         return false;
-    }
 
     textureImage = textureImage.convertToFormat(QImage::Format_RGBA8888).mirrored();
 
-    if (textureImage.width() <= 0 || textureImage.height() <= 0) {
-        qWarning() << "Некорректный размер текстуры";
+    if (textureImage.width() <= 0 || textureImage.height() <= 0)
         return false;
-    }
 
     GLuint textureId = model.textureId();
-    if (textureId != 0) {
+    if (textureId != 0)
         glDeleteTextures(1, &textureId);
-    }
 
     glGenTextures(1, &textureId);
     model.setTextureId(textureId);
     model.setHasTexture(true);
 
-    qDebug() << "[DEBUG] Новая текстура создана с ID:" << textureId;
     glBindTexture(GL_TEXTURE_2D, textureId);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -237,32 +167,26 @@ bool OpenGLRenderer::loadTexture(Model &model, const QString &texturePath)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureImage.width(), textureImage.height(),
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, textureImage.bits());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 textureImage.width(), textureImage.height(), 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, textureImage.bits());
 
     glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     model.setHasTexture(true);
 
-    qDebug() << "[SUCCESS] Текстура загружена:" << texturePath;
-    qDebug() << "Размер текстуры:" << textureImage.width() << "x" << textureImage.height();
-    qDebug() << "textureId:" << textureId;
-
     return true;
 }
 
-void OpenGLRenderer::setModel(const Model& model)
+void OpenGLRenderer::setModel(const Model &model)
 {
-    qDebug() << "OpenGLRenderer :: setModel : запустили метод setModel";
     openGLcurrentModel = model;
     initializeModel(openGLcurrentModel);
 }
 
-void OpenGLRenderer::setMVPmatrix(const QMatrix4x4& mvp)
+void OpenGLRenderer::setMVPmatrix(const QMatrix4x4 &mvp)
 {
-    qDebug() << "OpenGLRenderer :: setViewProjectionMatrix : запустили метод setViewProjectionMatrix";
     openGLcurrentMvp = mvp;
-    qDebug() << "openGLcurrentMvp: " << openGLcurrentMvp;
 }
 }
