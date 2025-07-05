@@ -8,13 +8,15 @@ include($$PWD/../VertexShader/VertexShader.pri)
 include($$PWD/../FragmentShader/FragmentShader.pri)
 
 
-}
-
 SOURCES += \
     $$PWD/shadersprogram.cpp
 
 HEADERS += \
     $$PWD/shadersprogram.h
+
+
+}
+
 
 
 

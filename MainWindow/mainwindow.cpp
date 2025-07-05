@@ -215,14 +215,14 @@ void MainWindow::onExplorerModelSelected(const QModelIndex& index)
         const Model* model = m_models[m_currentModelIndex];
 
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));
-        m_verticesLabel->setText(QString::number(model->m_vertices.size()));
-        m_facesLabel->setText(QString::number(model->m_faceVertexIndices.size() / 3));
+        m_verticesLabel->setText(QString::number(model->vertices().size()));
+        m_facesLabel->setText(QString::number(model->faceVertexIndices().size() / 3));
 
-        m_textureCheck->setChecked(model->m_hasTexture);
+        m_textureCheck->setChecked(model->hasTexture());
 
         qDebug() << "[DEBUG] Выбрана модель #" << m_currentModelIndex;
-        qDebug() << "hasTexture:" << model->m_hasTexture;
-        qDebug() << "textureId:" << model->m_textureId;
+        qDebug() << "hasTexture:" << model->hasTexture();
+        qDebug() << "textureId:" << model->textureId();
         if (!model->isValid()) {
             QMessageBox::warning(this, "Предупреждение", "Модель повреждена или не содержит полигонов");
         }
@@ -232,7 +232,7 @@ void MainWindow::onExplorerModelSelected(const QModelIndex& index)
 void MainWindow::UpdateSceneLightingState(bool checked)
 {
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_models.size()) {
-        m_models[m_currentModelIndex]->m_useNormals = checked;
+        m_models[m_currentModelIndex]->setUseNormals(checked);
         m_viewport->setModels(m_models, m_modelTransforms);
     }
 }
@@ -240,7 +240,7 @@ void MainWindow::UpdateSceneLightingState(bool checked)
 void MainWindow::updateSelectedModelTextureState(bool checked)
 {
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_models.size()) {
-        m_models[m_currentModelIndex]->m_hasTexture = checked;
+        m_models[m_currentModelIndex]->setHasTexture(checked);
         m_viewport->setModels(m_models, m_modelTransforms);
     }
 }
@@ -293,7 +293,7 @@ void MainWindow::loadTextureForSelectedModel()
         return;
     }
 
-    m_models[m_currentModelIndex]->m_hasTexture = true;
+    m_models[m_currentModelIndex]->setHasTexture(true);
     m_textureCheck->setChecked(true);
     m_viewport->setModels(m_models, m_modelTransforms);
 }

@@ -111,53 +111,53 @@ void ViewportWidget::createGrid(float size, float step)
     float halfSize = size * 0.5f;
     int linesX = static_cast<int>(size / step) + 1;
     int linesZ = static_cast<int>(size / step) + 1;
-    m_grid.m_vertices.reserve((linesX + linesZ) * 2);
+    m_grid.setVertices().reserve((linesX + linesZ) * 2);
     for (int i = 0; i < linesX; ++i) {
         float x = -halfSize + i * step;
-        m_grid.m_vertices.append(QVector3D(x, 0.0f, -halfSize));
-        m_grid.m_vertices.append(QVector3D(x, 0.0f,  halfSize));
+        m_grid.setVertices().append(QVector3D(x, 0.0f, -halfSize));
+        m_grid.setVertices().append(QVector3D(x, 0.0f,  halfSize));
     }
     for (int i = 0; i < linesZ; ++i) {
         float z = -halfSize + i * step;
-        m_grid.m_vertices.append(QVector3D(-halfSize, 0.0f, z));
-        m_grid.m_vertices.append(QVector3D( halfSize, 0.0f, z));
+        m_grid.setVertices().append(QVector3D(-halfSize, 0.0f, z));
+        m_grid.setVertices().append(QVector3D( halfSize, 0.0f, z));
     }
-    for (int i = 0; i < m_grid.m_vertices.size(); i += 2) {
-        m_grid.m_faceVertexIndices.append(i);
-        m_grid.m_faceVertexIndices.append(i + 1);
-        m_grid.m_polygonStarts.append(i);
+    for (int i = 0; i < m_grid.vertices().size(); i += 2) {
+        m_grid.setFaceVertexIndices().append(i);
+        m_grid.setFaceVertexIndices().append(i + 1);
+        m_grid.setPolygonStarts().append(i);
     }
     m_renderer.initializeModel(m_grid);
 }
 
 void ViewportWidget::createWorldAxes(float size)
 {
-    m_worldAxes.m_vertices.append(QVector3D(0, 0, 0));
-    m_worldAxes.m_vertices.append(QVector3D(size, 0, 0));
-    m_worldAxes.m_vertices.append(QVector3D(0, 0, 0));
-    m_worldAxes.m_vertices.append(QVector3D(0, size, 0));
-    m_worldAxes.m_vertices.append(QVector3D(0, 0, 0));
-    m_worldAxes.m_vertices.append(QVector3D(0, 0, size));
+    m_worldAxes.setVertices().append(QVector3D(0, 0, 0));
+    m_worldAxes.setVertices().append(QVector3D(size, 0, 0));
+    m_worldAxes.setVertices().append(QVector3D(0, 0, 0));
+    m_worldAxes.setVertices().append(QVector3D(0, size, 0));
+    m_worldAxes.setVertices().append(QVector3D(0, 0, 0));
+    m_worldAxes.setVertices().append(QVector3D(0, 0, size));
     for (int i = 0; i < 6; i += 2) {
-        m_worldAxes.m_faceVertexIndices.append(i);
-        m_worldAxes.m_faceVertexIndices.append(i + 1);
-        m_worldAxes.m_polygonStarts.append(i);
+        m_worldAxes.setFaceVertexIndices().append(i);
+        m_worldAxes.setFaceVertexIndices().append(i + 1);
+        m_worldAxes.setPolygonStarts().append(i);
     }
     m_renderer.initializeModel(m_worldAxes);
 }
 
 void ViewportWidget::createLocalAxes(float size)
 {
-    m_localAxes.m_vertices.append(QVector3D(0, 0, 0));
-    m_localAxes.m_vertices.append(QVector3D(size, 0, 0));
-    m_localAxes.m_vertices.append(QVector3D(0, 0, 0));
-    m_localAxes.m_vertices.append(QVector3D(0, size, 0));
-    m_localAxes.m_vertices.append(QVector3D(0, 0, 0));
-    m_localAxes.m_vertices.append(QVector3D(0, 0, size));
+    m_localAxes.setVertices().append(QVector3D(0, 0, 0));
+    m_localAxes.setVertices().append(QVector3D(size, 0, 0));
+    m_localAxes.setVertices().append(QVector3D(0, 0, 0));
+    m_localAxes.setVertices().append(QVector3D(0, size, 0));
+    m_localAxes.setVertices().append(QVector3D(0, 0, 0));
+    m_localAxes.setVertices().append(QVector3D(0, 0, size));
     for (int i = 0; i < 6; i += 2) {
-        m_localAxes.m_faceVertexIndices.append(i);
-        m_localAxes.m_faceVertexIndices.append(i + 1);
-        m_localAxes.m_polygonStarts.append(i);
+        m_localAxes.setFaceVertexIndices().append(i);
+        m_localAxes.setFaceVertexIndices().append(i + 1);
+        m_localAxes.setPolygonStarts().append(i);
     }
     m_renderer.initializeModel(m_localAxes);
 }
@@ -201,7 +201,7 @@ void ViewportWidget::fitToView()
         const Model* model = m_models[i];
         const QMatrix4x4& transform = m_modelTransforms[i];
 
-        for (const QVector3D& v : model->m_vertices) {
+        for (const QVector3D& v : model->vertices()) {
             QVector4D transformed = transform * QVector4D(v, 1.0f);
             QVector3D tv = transformed.toVector3DAffine();
 
@@ -224,12 +224,10 @@ void ViewportWidget::fitToView()
 
     QVector3D cameraPos(center.x(), center.y(), center.z() + zDistance);
 
-    // Обновляем камеру
     m_camera->setPosition(cameraPos);
     m_camera->setTarget(center);
     m_camera->setUp(QVector3D(0.0f, 1.0f, 0.0f));
 
-    // ✅ Принудительно обновляем viewport
     update();
 }
 }

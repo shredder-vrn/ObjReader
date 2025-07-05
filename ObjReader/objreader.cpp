@@ -112,7 +112,7 @@ bool parseFace(
     QString cleanLine = line.section('#', 0, 0).trimmed();
 
     QRegularExpression re("\\s+");
-    QStringList tokensCleaned = cleanLine.split(re, Qt::SkipEmptyParts); //QString::SkipEmptyParts
+    QStringList tokensCleaned = cleanLine.split(re, Qt::SkipEmptyParts);
 
     if (tokensCleaned.isEmpty() || tokensCleaned[0] != "f") {
         return false;
@@ -305,10 +305,10 @@ bool checkFaces(
 
 bool validateModel(const Model &model)
 {
-    bool verticesOk = checkVertices(model.m_vertices);
-    bool texCoordsOk = checkTexCoords(model.m_textureVertices, model.m_faceTextureVertexIndices, model.m_polygonStarts);
-    bool normalsOk = checkNormals(model.m_normals, model.m_faceNormalIndices, model.m_polygonStarts);
-    bool facesOk = checkFaces(model.m_vertices, model.m_faceVertexIndices, model.m_polygonStarts);
+    bool verticesOk = checkVertices(model.vertices());
+    bool texCoordsOk = checkTexCoords(model.textureVertices(), model.faceTextureVertexIndices(), model.polygonStarts());
+    bool normalsOk = checkNormals(model.normals(), model.faceNormalIndices(), model.polygonStarts());
+    bool facesOk = checkFaces(model.vertices(), model.faceVertexIndices(), model.polygonStarts());
     return verticesOk && texCoordsOk && normalsOk && facesOk;
 }
 
@@ -331,13 +331,13 @@ bool parseTokens(QTextStream &in, Model &model)
 
         if (type == "#")
             continue;
-        if (type == "v" && !parseVertex(tokens, model.m_vertices))
+        if (type == "v" && !parseVertex(tokens, model.setVertices()))
             return false;
-        if (type == "vt" && !parseTexCoord(tokens, model.m_textureVertices))
+        if (type == "vt" && !parseTexCoord(tokens, model.setTextureVertices()))
             return false;
-        if (type == "vn" && !parseNormal(tokens, model.m_normals))
+        if (type == "vn" && !parseNormal(tokens, model.setNormals()))
             return false;
-        if (type == "f" && !parseFace(line, model.m_faceVertexIndices, model.m_faceTextureVertexIndices, model.m_faceNormalIndices, model.m_polygonStarts))
+      if (type == "f" && !parseFace(line, model.setFaceVertexIndices(), model.setFaceTextureVertexIndices(), model.setFaceNormalIndices(), model.setPolygonStarts()))
             return false;
     }
 

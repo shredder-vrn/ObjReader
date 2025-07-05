@@ -3,6 +3,109 @@
 #include <QDebug>
 
 
+
+const QVector<QVector3D>& Model::vertices() const {
+    return m_vertices;
+}
+
+const QVector<QVector2D>& Model::textureVertices() const {
+    return m_textureVertices;
+}
+
+const QVector<QVector3D>& Model::normals() const {
+    return m_normals;
+}
+
+const QVector<int>& Model::faceVertexIndices() const {
+    return m_faceVertexIndices;
+}
+
+const QVector<int>& Model::faceTextureVertexIndices() const {
+    return m_faceTextureVertexIndices;
+}
+
+const QVector<int>& Model::faceNormalIndices() const {
+    return m_faceNormalIndices;
+}
+
+const QVector<int>& Model::polygonStarts() const {
+    return m_polygonStarts;
+}
+
+QVector<QVector3D>& Model::setVertices() {
+    return m_vertices;
+}
+
+QVector<QVector2D> &Model::setTextureVertices()
+{
+    return m_textureVertices;
+}
+
+QVector<QVector3D> &Model::setNormals()
+{
+    return m_normals;
+}
+
+QVector<int> &Model::setFaceVertexIndices()
+{
+    return m_faceVertexIndices;
+}
+
+QVector<int> &Model::setFaceTextureVertexIndices()
+{
+    return m_faceTextureVertexIndices;
+}
+
+QVector<int> &Model::setFaceNormalIndices()
+{
+    return m_faceNormalIndices;
+}
+
+QVector<int> &Model::setPolygonStarts()
+{
+    return m_polygonStarts;
+}
+
+GLuint Model::vao() const {
+    return m_vao;
+}
+
+GLuint Model::vertexCount() const {
+    return m_vertexCount;
+}
+
+GLuint Model::textureId() const {
+    return m_textureId;
+}
+
+void Model::setVao(GLuint vao) {
+    m_vao = vao;
+}
+
+void Model::setVertexCount(GLuint count) {
+    m_vertexCount = count;
+}
+
+bool Model::hasTexture() const {
+    return m_hasTexture;
+}
+
+bool Model::useNormals() const {
+    return m_useNormals;
+}
+
+void Model::setHasTexture(bool enabled) {
+    m_hasTexture = enabled;
+}
+
+void Model::setUseNormals(bool enabled) {
+    m_useNormals = enabled;
+}
+
+void Model::setTextureId(GLuint id) {
+    m_textureId = id;
+}
+
 void Model::clear() {
     m_vertices.clear();
     m_textureVertices.clear();
@@ -11,15 +114,17 @@ void Model::clear() {
     m_faceVertexIndices.clear();
     m_faceTextureVertexIndices.clear();
     m_faceNormalIndices.clear();
-
     m_polygonStarts.clear();
+
+    m_vao = 0;
+    m_vertexCount = 0;
+    m_textureId = 0;
 }
 
 bool Model::isValid() const {
-
     bool valid = !m_vertices.isEmpty() &&
-                     !m_faceVertexIndices.isEmpty() &&
-                     m_faceVertexIndices.size() % 3 == 0;
+                 !m_faceVertexIndices.isEmpty() &&
+                 m_faceVertexIndices.size() % 3 == 0;
 
     if (!valid) return false;
 
@@ -29,11 +134,15 @@ bool Model::isValid() const {
     }
 
     if (m_useNormals && m_normals.isEmpty()) {
-        qDebug() << "[WARNING] useNormal == true, но normals пустые";
+        qDebug() << "[WARNING] useNormals == true, но normals пустые";
         return false;
     }
 
     return true;
+}
+
+bool Model::hasNormals() const {
+    return !m_normals.isEmpty();
 }
 
 bool Model::operator!=(const Model& other) const {
