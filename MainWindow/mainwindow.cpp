@@ -280,4 +280,5 @@ void MainWindow::loadTextureForSelectedModel()
     m_textureCheck->setChecked(true);
     m_viewport->setModels(m_models, m_modelTransforms);
 }
+
 }

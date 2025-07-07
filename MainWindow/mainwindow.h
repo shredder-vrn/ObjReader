@@ -50,6 +50,15 @@ private:
 
     ViewportWidget *m_viewport = nullptr;
     QVector<Model*> m_models;
+
+
+
+//*************************************
+    QVector<ModelGL*> m_modelsGL;
+//*************************************
+
+
+
     QVector<QMatrix4x4> m_modelTransforms;
 
     QDockWidget *m_propertiesDock = nullptr;
