@@ -31,6 +31,7 @@ public:
     bool isValid() const;
     bool hasNormals() const;
 
+
     void setHasTexture(bool enabled);
     void setUseNormals(bool enabled);
     void setTextureId(GLuint id);

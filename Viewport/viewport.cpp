@@ -17,20 +17,14 @@ ViewportWidget::ViewportWidget(QWidget *parent) : QOpenGLWidget(parent)
     m_camera = std::make_unique<CameraPer>();
 }
 
-void ViewportWidget::setModels(const QVector<Model*> &models, const QVector<QMatrix4x4>& transforms)
-{
-    m_models = models;
-    m_modelTransforms = transforms;
 
-    update();
-}
 
 bool ViewportWidget::loadTextureForModel(const QString &texturePath, int modelIndex)
 {
-    if (modelIndex < 0 || modelIndex >= m_models.size())
+    if (modelIndex < 0 || modelIndex >= m_modelsGL.size())
         return false;
 
-    return m_renderer.loadTexture(*m_models[modelIndex], texturePath);
+    return m_renderer.loadTexture(*m_modelsGL[modelIndex], texturePath);
 }
 
 void ViewportWidget::resizeEvent(QResizeEvent *event)
@@ -45,10 +39,6 @@ void ViewportWidget::initializeGL()
 {
     m_renderer.initialize();
     m_camera->setViewportSize(width(), height());
-
-    //createGrid(10.0f, 1.0f);
-    //createWorldAxes(1.0f);
-    //createLocalAxes(1.0f);
 
     m_renderer.initializeModel(m_grid);
     m_renderer.initializeModel(m_worldAxes);
@@ -67,13 +57,13 @@ void ViewportWidget::paintGL()
     QMatrix4x4 gridMVP = proj * view;
     m_renderer.render(m_grid, gridMVP);
 
-    for (int i = 0; i < m_models.size(); ++i) {
-        if (!m_models[i] || !m_models[i]->isValid()) {
+    for (int i = 0; i < m_modelsGL.size(); ++i) {
+        if (!m_modelsGL[i] || !m_modelsGL[i]->isValid()) {
             continue;
         }
 
         QMatrix4x4 mvp = proj * view * m_modelTransforms[i];
-        m_renderer.render(*m_models[i], mvp);
+        m_renderer.render(*m_modelsGL[i], mvp);
     }
 }
 
@@ -178,7 +168,7 @@ void ViewportWidget::switchToOrthographic()
 
 void ViewportWidget::fitToView()
 {
-    if (m_models.isEmpty() || m_modelTransforms.isEmpty()) {
+    if (m_modelsGL.isEmpty() || m_modelTransforms.isEmpty()) {
         return;
     }
 
@@ -190,11 +180,11 @@ void ViewportWidget::fitToView()
                        -std::numeric_limits<float>::max(),
                        -std::numeric_limits<float>::max());
 
-    for (int i = 0; i < m_models.size(); ++i) {
-        const Model* model = m_models[i];
+    for (int i = 0; i < m_modelsGL.size(); ++i) {
+        const ModelGL* model = m_modelsGL[i];
         const QMatrix4x4& transform = m_modelTransforms[i];
 
-        for (const QVector3D& v : model->vertices()) {
+        for (const QVector3D& v : model->getModelData()->vertices()) {
             QVector4D transformed = transform * QVector4D(v, 1.0f);
             QVector3D tv = transformed.toVector3DAffine();
 
@@ -224,9 +214,6 @@ void ViewportWidget::fitToView()
     update();
 }
 
-
-
-//*************************************
 void ViewportWidget::setModels(const QVector<ModelGL*>& models, const QVector<QMatrix4x4>& transforms)
 {
     m_modelsGL = models;
@@ -236,5 +223,5 @@ void ViewportWidget::setModels(const QVector<ModelGL*>& models, const QVector<QM
 
     update();
 }
-//*************************************
+
 }

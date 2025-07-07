@@ -156,9 +156,6 @@ QGroupBox *MainWindow::createTransformControls()
     return group;
 }
 
-
-
-//!**********************************************
 void MainWindow::openModelFile()
 {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
@@ -180,12 +177,6 @@ void MainWindow::openModelFile()
         return;
     }
 
-    qDebug() << "Vertices count:" << data->vertices().size();
-    qDebug() << "Face indices count:" << data->faceVertexIndices().size();
-    qDebug() << "Polygon starts count:" << data->polygonStarts().size();
-    qDebug() << "Has texture coords?" << !data->textureVertices().isEmpty();
-    qDebug() << "Has normals?" << !data->normals().isEmpty();
-
     ModelData* persistentData = new ModelData(*data);
 
     ModelGL* modelGL = new ModelGL();
@@ -195,20 +186,16 @@ void MainWindow::openModelFile()
     m_modelsGL.append(modelGL);
     m_modelTransforms.append(QMatrix4x4());
 
-    qDebug() << "[INFO] Количество моделей после добавления:" << m_modelsGL.size();
-
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
 
     updateModelList();
 
     m_viewport->fitToView();
 }
-//!**********************************************
-
-
 
 void MainWindow::updateModelList()
 {
+
     m_explorerModel->removeRows(0, m_explorerModel->rowCount());
     for (int i = 0; i < m_modelsGL.size(); ++i) {
         QStandardItem* item = new QStandardItem(QString("Model %1").arg(i + 1));
@@ -216,9 +203,6 @@ void MainWindow::updateModelList()
     }
 }
 
-
-
-//!**********************************************
 void MainWindow::onExplorerModelSelected(const QModelIndex &index)
 {
     m_currentModelIndex = index.row();
@@ -237,9 +221,11 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
         }
     }
 }
-//!**********************************************
+
 void MainWindow::UpdateSceneLightingState(bool checked)
 {
+    qDebug() << "[DEBUG] Изменение состояния освещения:" << (checked ? "включено" : "выключено");
+
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setUseNormals(checked);
         m_viewport->setModels(m_modelsGL, m_modelTransforms);
@@ -248,18 +234,19 @@ void MainWindow::UpdateSceneLightingState(bool checked)
 
 void MainWindow::updateSelectedModelTextureState(bool checked)
 {
+    qDebug() << "[DEBUG] Изменение состояния текстуры модели:" << (checked ? "включено" : "выключено");
+
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setHasTexture(checked);
         m_viewport->setModels(m_modelsGL, m_modelTransforms);
     }
 }
-//**********************************************
-
 
 void MainWindow::updateTransformFromUI()
 {
-    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
+    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size()) {
         return;
+    }
 
     float px = m_positionSpinboxX->value();
     float py = m_positionSpinboxY->value();
@@ -284,10 +271,9 @@ void MainWindow::updateTransformFromUI()
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
 }
 
-
-//**********************************************
 void MainWindow::loadTextureForSelectedModel()
 {
+
     if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size()) {
         QMessageBox::warning(this, "Ошибка", "Не выбрана модель для загрузки текстуры.");
         return;
@@ -300,6 +286,7 @@ void MainWindow::loadTextureForSelectedModel()
     }
 
     if (!m_viewport->loadTextureForModel(texturePath, m_currentModelIndex)) {
+        qDebug() << "[ERROR] Не удалось загрузить текстуру:" << texturePath;
         QMessageBox::critical(this, "Ошибка", QString("Не удалось загрузить текстуру:\n%1").arg(texturePath));
         return;
     }
@@ -307,6 +294,7 @@ void MainWindow::loadTextureForSelectedModel()
     m_modelsGL[m_currentModelIndex]->setHasTexture(true);
     m_textureCheck->setChecked(true);
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
+    qDebug() << "[INFO] Текстура успешно загружена и применена";
 }
-//**********************************************
+
 }

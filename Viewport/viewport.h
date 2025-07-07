@@ -24,17 +24,11 @@ public:
     explicit ViewportWidget(QWidget *parent = nullptr);
     ~ViewportWidget() override = default;
 
-    void setModels(const QVector<Model*>& models, const QVector<QMatrix4x4>& transforms);
-
     void switchToPerspective();
     void switchToOrthographic();
     void fitToView();
     bool loadTextureForModel(const QString& texturePath, int modelIndex);
-
-
-//*************************************
     void setModels(const QVector<ModelGL*>& models, const QVector<QMatrix4x4>& transforms);
-//*************************************
 
 protected:
     void initializeGL() override;
@@ -56,7 +50,6 @@ private:
     OpenGLRenderer m_renderer;
     std::unique_ptr<CameraInterface> m_camera;
 
-    QVector<Model*> m_models;
     QVector<QMatrix4x4> m_modelTransforms;
 
     Model m_grid;
@@ -66,13 +59,11 @@ private:
 
 
 
-//*************************************
     QVector<ModelGL*> m_modelsGL;
     ModelGL m_gridGL;
     ModelGL m_worldAxesGL;
     ModelGL m_cameraTargetGL;
     ModelGL m_localAxesGL;
-//*************************************
 };
 }
 

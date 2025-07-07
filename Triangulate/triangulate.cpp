@@ -16,12 +16,6 @@ void simpleTriangulateModel(
     QVector<int> newFaceNormalIndices;
     QVector<int> newPolygonStarts;
 
-    qDebug() << "vertices" << vertices;
-    qDebug() << "faceVertexIndices" << faceVertexIndices;
-    qDebug() << "faceTextureVertexIndices" << faceTextureVertexIndices;
-    qDebug() << "faceNormalIndices" << faceNormalIndices;
-    qDebug() << "polygonStarts" << polygonStarts;
-
     int faceCount = polygonStarts.size();
 
     for (int i = 0; i < faceCount; ++i) {
