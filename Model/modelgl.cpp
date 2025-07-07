@@ -1,6 +1,5 @@
 #include "modelgl.h"
 
-
 void ModelGL::setModelData(const ModelData *modelData)
 {
     m_modelData = modelData;
@@ -9,45 +8,12 @@ void ModelGL::setModelData(const ModelData *modelData)
     }
 }
 
-const ModelData *ModelGL::getModelData() const
-{
-    return m_modelData;
-}
-
-void ModelGL::setVao(GLuint vao) {
-    m_vao = vao;
-}
-
-void ModelGL::setVertexCount(GLuint count) {
-    m_vertexCount = count;
-}
-
-bool ModelGL::hasTexture() const {
-    return m_hasTexture;
-}
-
-bool ModelGL::useNormals() const {
-    return m_useNormals;
-}
-
 bool ModelGL::isValid() const {
     return m_vao != 0 && m_vertexCount > 0 && m_modelData && m_modelData->isValid();
 }
 
 bool ModelGL::hasNormals() const {
     return m_modelData && !m_modelData->normals().isEmpty();
-}
-
-void ModelGL::setHasTexture(bool enabled) {
-    m_hasTexture = enabled;
-}
-
-void ModelGL::setUseNormals(bool enabled) {
-    m_useNormals = enabled;
-}
-
-void ModelGL::setTextureId(GLuint id) {
-    m_textureId = id;
 }
 
 void ModelGL::clear() {

@@ -16,23 +16,23 @@ public:
     ~ModelGL() = default;
 
     void setModelData(const ModelData *modelData);
-    const ModelData *getModelData() const;
+    const ModelData *getModelData() const {return m_modelData;};
 
     GLuint vao() const { return m_vao; };
     GLuint vertexCount() const { return m_vertexCount; };
     GLuint textureId() const { return m_textureId; };
 
-    void setVao(GLuint vao);
-    void setVertexCount(GLuint count);
+    void setVao(GLuint vao) {m_vao = vao;};
+    void setVertexCount(GLuint count) {m_vertexCount = count;};
 
-    bool hasTexture() const;
-    bool useNormals() const;
+    bool hasTexture() const {return m_hasTexture;};
+    bool useNormals() const {return m_useNormals;};
     bool isValid() const;
     bool hasNormals() const;
 
-    void setHasTexture(bool enabled);
-    void setUseNormals(bool enabled);
-    void setTextureId(GLuint id);
+    void setHasTexture(bool enabled) {m_hasTexture = enabled;};
+    void setUseNormals(bool enabled) {m_useNormals = enabled;};
+    void setTextureId(GLuint id) {m_textureId = id;};
 
     void clear();
 
