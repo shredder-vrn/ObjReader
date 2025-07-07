@@ -28,6 +28,7 @@ public:
 
 
     //*************************************
+    bool loadModel(const QString &filePath, const int a);
     void calculateNormals(ModelData &model);
     const ModelData &getModel(const int a) const;
     const QVector<ModelGL> &getModelGLs() const { return m_modelGLs; }

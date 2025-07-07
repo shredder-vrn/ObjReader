@@ -108,7 +108,51 @@ void ModelController::calculateNormals(Model &model)
     }
 }
 
+
+
 const ModelData &ModelController::getModel(const int a) const
+{
+
+}
+
+bool ModelController::loadModel(const QString &filePath, const int a)
+{
+    if (a == 0)
+        qDebug() << "use new method loadModel from modelController";
+
+    ModelData newData;
+
+    QFile file(filePath);
+
+    if (!file.exists())
+        return false;
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+
+    QTextStream in(&file);
+    if (!parseTokens(in, newData))
+        return false;
+
+//    simpleTriangulateModel(
+//        newData.vertices(),
+//        newData.setFaceVertexIndices(),
+//        newData.setFaceTextureVertexIndices(),
+//        newData.setFaceNormalIndices(),
+//        newData.setPolygonStarts()
+//    );
+
+    calculateNormals(newData);
+
+    m_modelGL.setModelData(&newData);
+
+    m_modelData = newData;
+    m_modelGLs.append(m_modelGL);
+    m_modelMatrices.append(QMatrix4x4());
+
+    return true;
+}
+
+void ModelController::calculateNormals(ModelData &model)
 {
 
 }
