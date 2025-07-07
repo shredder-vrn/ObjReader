@@ -223,4 +223,16 @@ void ViewportWidget::fitToView()
 
     update();
 }
+
+
+
+//*************************************
+void ViewportWidget::setModels(const QVector<ModelGL*>& models, const QVector<QMatrix4x4>& transforms)
+{
+    m_modelsGL = models;
+    m_modelTransforms = transforms;
+
+    update();
+}
+//*************************************
 }
