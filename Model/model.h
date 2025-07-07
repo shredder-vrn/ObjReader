@@ -15,14 +15,14 @@ public:
     Model() = default;
     ~Model() = default;
 
-    const QVector<QVector3D> &vertices() const;
-    const QVector<QVector2D> &textureVertices() const;
-    const QVector<QVector3D> &normals() const;
+    const QVector<QVector3D> &vertices() const {return m_vertices;};
+    const QVector<QVector2D> &textureVertices() const {return m_textureVertices;};
+    const QVector<QVector3D> &normals() const {return m_normals;};
 
-    const QVector<int> &faceVertexIndices() const;
-    const QVector<int> &faceTextureVertexIndices() const;
-    const QVector<int> &faceNormalIndices() const;
-    const QVector<int> &polygonStarts() const;
+    const QVector<int> &faceVertexIndices() const {return m_faceVertexIndices;};
+    const QVector<int> &faceTextureVertexIndices() const {return m_faceTextureVertexIndices;};
+    const QVector<int> &faceNormalIndices() const {return m_faceNormalIndices;};
+    const QVector<int> &polygonStarts() const {return m_polygonStarts;};
 
     QVector<QVector3D> &setVertices();
     QVector<QVector2D> &setTextureVertices();

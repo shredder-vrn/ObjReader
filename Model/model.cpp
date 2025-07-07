@@ -2,36 +2,6 @@
 
 #include <QDebug>
 
-
-
-const QVector<QVector3D>& Model::vertices() const {
-    return m_vertices;
-}
-
-const QVector<QVector2D>& Model::textureVertices() const {
-    return m_textureVertices;
-}
-
-const QVector<QVector3D>& Model::normals() const {
-    return m_normals;
-}
-
-const QVector<int>& Model::faceVertexIndices() const {
-    return m_faceVertexIndices;
-}
-
-const QVector<int>& Model::faceTextureVertexIndices() const {
-    return m_faceTextureVertexIndices;
-}
-
-const QVector<int>& Model::faceNormalIndices() const {
-    return m_faceNormalIndices;
-}
-
-const QVector<int>& Model::polygonStarts() const {
-    return m_polygonStarts;
-}
-
 QVector<QVector3D>& Model::setVertices() {
     return m_vertices;
 }

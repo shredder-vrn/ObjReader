@@ -5,12 +5,12 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 
 HEADERS += \
     $$PWD/model.h\
-    $$PWD/modelgl.h
-
+    $$PWD/modelgl.h\
+    $$PWD/modeldata.h
 
 SOURCES += \
     $$PWD/model.cpp\
-    $$PWD/modelgl.cpp
+    $$PWD/modelgl.cpp\
+    $$PWD/modeldata.cpp
 
 }
-
