@@ -9,7 +9,6 @@
 #include <QRegularExpression>
 #include <QRegExp>
 #include <QString>
-#include "Model/model.h"
 
 namespace Viewer {
 
@@ -181,48 +180,6 @@ bool parseFace(
     faceNormalIndices.append(normalIndices);
 
     return true;
-}
-
-bool parseTokens(QTextStream &in, Model &model)
-{
-    int lineNum = 0;
-    while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
-        ++lineNum;
-
-        if (line.isEmpty()) {
-            continue;
-        }
-        QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-        if (tokens.isEmpty()) {
-            continue;
-        }
-        const QString type = tokens[0];
-
-        if (type == "#")
-            continue;
-        if (type == "v" && !parseVertex(tokens, model.setVertices()))
-            return false;
-        if (type == "vt" && !parseTexCoord(tokens, model.setTextureVertices()))
-            return false;
-        if (type == "vn" && !parseNormal(tokens, model.setNormals()))
-            return false;
-        if (type == "f" && !parseFace(line, model.setFaceVertexIndices(), model.setFaceTextureVertexIndices(), model.setFaceNormalIndices(), model.setPolygonStarts()))
-            return false;
-    }
-
-    return true;
-}
-
-bool parseObj(const QString &filePath, Model &model)
-{
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return false;
-    }
-
-    QTextStream in(&file);
-    return parseTokens(in, model);
 }
 
 bool parseTokens(QTextStream &in, ModelData &model)
@@ -398,13 +355,13 @@ bool checkFaces(
     return true;
 }
 
-bool validateModel(const Model &model)
-{
-    bool verticesOk = checkVertices(model.vertices());
-    bool texCoordsOk = checkTexCoords(model.textureVertices(), model.faceTextureVertexIndices(), model.polygonStarts());
-    bool normalsOk = checkNormals(model.normals(), model.faceNormalIndices(), model.polygonStarts());
-    bool facesOk = checkFaces(model.vertices(), model.faceVertexIndices(), model.polygonStarts());
-    return verticesOk && texCoordsOk && normalsOk && facesOk;
-}
+//bool validateModel(const Model &model)
+//{
+//    bool verticesOk = checkVertices(model.vertices());
+//    bool texCoordsOk = checkTexCoords(model.textureVertices(), model.faceTextureVertexIndices(), model.polygonStarts());
+//    bool normalsOk = checkNormals(model.normals(), model.faceNormalIndices(), model.polygonStarts());
+//    bool facesOk = checkFaces(model.vertices(), model.faceVertexIndices(), model.polygonStarts());
+//    return verticesOk && texCoordsOk && normalsOk && facesOk;
+//}
 
 }

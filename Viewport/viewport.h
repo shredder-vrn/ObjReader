@@ -52,13 +52,6 @@ private:
 
     QVector<QMatrix4x4> m_modelTransforms;
 
-    Model m_grid;
-    Model m_worldAxes;
-    Model m_cameraTarget;
-    Model m_localAxes;
-
-
-
     QVector<ModelGL*> m_modelsGL;
     ModelGL m_gridGL;
     ModelGL m_worldAxesGL;

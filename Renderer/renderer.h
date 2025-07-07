@@ -8,7 +8,6 @@
 #include <QVector>
 #include <QMatrix4x4>
 
-#include "Model/model.h"
 #include "Model/modelgl.h"
 #include "Shaders/shadersprogram.h"
 
@@ -19,12 +18,6 @@ public:
     ~OpenGLRenderer() = default;
 
     bool initialize();
-    void render(const Model &model, const QMatrix4x4 &mvp);
-
-    bool initializeModel(Model &model);
-    bool loadTexture(Model &model, const QString &texturePath);
-
-    void setModel(const Model &model);
     void setMVPmatrix(const QMatrix4x4 &mvp);
 
 
@@ -43,7 +36,6 @@ private:
 
     GLuint openGLvao = 0;
     GLuint openGLvbo = 0;
-    Model openGLcurrentModel;
     bool openGLisInitialized = false;
     QMatrix4x4 openGLcurrentMvp;
 

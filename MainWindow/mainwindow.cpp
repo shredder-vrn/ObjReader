@@ -224,8 +224,6 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
 
 void MainWindow::UpdateSceneLightingState(bool checked)
 {
-    qDebug() << "[DEBUG] Изменение состояния освещения:" << (checked ? "включено" : "выключено");
-
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setUseNormals(checked);
         m_viewport->setModels(m_modelsGL, m_modelTransforms);
@@ -234,8 +232,6 @@ void MainWindow::UpdateSceneLightingState(bool checked)
 
 void MainWindow::updateSelectedModelTextureState(bool checked)
 {
-    qDebug() << "[DEBUG] Изменение состояния текстуры модели:" << (checked ? "включено" : "выключено");
-
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setHasTexture(checked);
         m_viewport->setModels(m_modelsGL, m_modelTransforms);

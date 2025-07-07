@@ -1,7 +1,6 @@
 #ifndef OBJREADER_H
 #define OBJREADER_H
 
-#include "Model/model.h"
 #include "Model/modeldata.h"
 
 #include <QTextStream>
@@ -14,11 +13,7 @@ bool parseTexCoord(const QStringList &tokens, QVector<QVector2D> &outTextureVert
 
 bool parseNormal(const QStringList &tokens, QVector<QVector3D> &outNormals);
 
-bool validateModel(const Model &model);
-
-bool parseTokens(QTextStream &in, Model &model);
-
-bool parseObj(const QString &filePath, Model &model);
+//bool validateModel(const Model &model);
 
 bool parseFace(
         const QString &line,
