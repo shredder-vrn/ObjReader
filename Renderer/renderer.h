@@ -9,6 +9,7 @@
 #include <QMatrix4x4>
 
 #include "Model/model.h"
+#include "Model/modelgl.h"
 #include "Shaders/shadersprogram.h"
 
 namespace Viewer{
@@ -26,16 +27,30 @@ public:
     void setModel(const Model &model);
     void setMVPmatrix(const QMatrix4x4 &mvp);
 
+
+
+//*************************************
+    void render(const ModelGL &modelGL, const QMatrix4x4 &mvp);
+    bool loadTexture(ModelGL &modelGL, const QString &texturePath);
+    void setModelGL(const ModelGL &modelGL);
+//*************************************
+
+
 private:
     ShaderProgram *shaderProgram = nullptr;
     bool m_lightingCheck = false;
-
 
     GLuint openGLvao = 0;
     GLuint openGLvbo = 0;
     Model openGLcurrentModel;
     bool openGLisInitialized = false;
     QMatrix4x4 openGLcurrentMvp;
+
+
+
+//*************************************
+    ModelGL openGLcurrentModelGL;
+//*************************************
 };
 }
 #endif // RENDER_H

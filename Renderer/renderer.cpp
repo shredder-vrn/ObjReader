@@ -189,4 +189,23 @@ void OpenGLRenderer::setMVPmatrix(const QMatrix4x4 &mvp)
 {
     openGLcurrentMvp = mvp;
 }
+
+
+
+//*************************************
+void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
+{
+
+}
+
+bool OpenGLRenderer::loadTexture(ModelGL &modelGL, const QString &texturePath)
+{
+
+}
+
+void OpenGLRenderer::setModelGL(const ModelGL &modelGL)
+{
+
+}
+//*************************************
 }
