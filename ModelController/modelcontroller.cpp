@@ -74,38 +74,43 @@ void ModelController::resetTransformations()
 }
 
 void ModelController::calculateNormals(Model &model)
-    {
-        if (model.vertices().isEmpty() || model.faceVertexIndices().size() % 3 != 0) {
-            return;
-        }
-
-        model.setNormals().fill(QVector3D(0.0f, 0.0f, 0.0f), model.vertices().size());
-
-        for (int i = 0; i < model.faceVertexIndices().size(); i += 3) {
-            int idx0 = model.faceVertexIndices()[i];
-            int idx1 = model.faceVertexIndices()[i + 1];
-            int idx2 = model.faceVertexIndices()[i + 2];
-
-            if (idx0 < 0 || idx1 < 0 || idx2 < 0 ||
-                idx0 >= model.vertices().size() ||
-                idx1 >= model.vertices().size() ||
-                idx2 >= model.vertices().size()) {
-                continue;
-            }
-
-            QVector3D v1 = model.vertices()[idx1] - model.vertices()[idx0];
-            QVector3D v2 = model.vertices()[idx2] - model.vertices()[idx0];
-
-            QVector3D normal = QVector3D::crossProduct(v2, v1).normalized();
-
-            model.setNormals()[idx0] += normal;
-            model.setNormals()[idx1] += normal;
-            model.setNormals()[idx2] += normal;
-        }
-
-        for (auto& n : model.setNormals()) {
-            n = n.normalized();
-        }
+{
+    if (model.vertices().isEmpty() || model.faceVertexIndices().size() % 3 != 0) {
+        return;
     }
+
+    model.setNormals().fill(QVector3D(0.0f, 0.0f, 0.0f), model.vertices().size());
+
+    for (int i = 0; i < model.faceVertexIndices().size(); i += 3) {
+        int idx0 = model.faceVertexIndices()[i];
+        int idx1 = model.faceVertexIndices()[i + 1];
+        int idx2 = model.faceVertexIndices()[i + 2];
+
+        if (idx0 < 0 || idx1 < 0 || idx2 < 0 ||
+            idx0 >= model.vertices().size() ||
+            idx1 >= model.vertices().size() ||
+            idx2 >= model.vertices().size()) {
+            continue;
+        }
+
+        QVector3D v1 = model.vertices()[idx1] - model.vertices()[idx0];
+        QVector3D v2 = model.vertices()[idx2] - model.vertices()[idx0];
+
+        QVector3D normal = QVector3D::crossProduct(v2, v1).normalized();
+
+        model.setNormals()[idx0] += normal;
+        model.setNormals()[idx1] += normal;
+        model.setNormals()[idx2] += normal;
+    }
+
+    for (auto& n : model.setNormals()) {
+        n = n.normalized();
+    }
+}
+
+const ModelData &ModelController::getModel(const int a) const
+{
+
+}
 }
 
