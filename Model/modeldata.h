@@ -11,6 +11,7 @@ public:
     ModelData() = default;
     ~ModelData() = default;
 
+    //! REVIEW: ';' в конце строк явно лишнее
     const QVector<QVector3D> &vertices() const {return m_vertices;};
     const QVector<QVector2D> &textureVertices() const {return m_textureVertices;};
     const QVector<QVector3D> &normals() const {return m_normals;};
@@ -20,11 +21,14 @@ public:
     const QVector<int> &faceNormalIndices() const {return m_faceNormalIndices;};
     const QVector<int> &polygonStarts() const {return m_polygonStarts;};
 
+    //! REVIEW: переносы похерены + это надо в сурс перенести
     ModelData &setVertices(const QVector<QVector3D> &v) {
             m_vertices = v;
             return *this;
         }
 
+
+    //! REVIEW: тут явно не хватает ассертов на isValid. вот мы говорили, что не стоит инкапсулировать просто так. нужно, чтобы констрейнты не нарушались. щас все геттеры и сеттеры абсолютно прозрачные. их могло бы и не быть и ничего бы не изменгилось
     ModelData &setTextureVertices(const QVector<QVector2D> &v) {
         m_textureVertices = v;
         return *this;
@@ -55,6 +59,7 @@ public:
         return *this;
     }
 
+    //! REVIEW: кодстайл
     bool isValid() const {
             return !m_vertices.isEmpty() &&
                    !m_faceVertexIndices.isEmpty() &&

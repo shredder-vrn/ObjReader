@@ -10,6 +10,7 @@
 
 #include "Model/modeldata.h"
 
+//! REVIEW: наследование от QOpenGLFunctions? страшно, поговорим
 class ModelGL : protected QOpenGLFunctions
 {
 public:
@@ -17,12 +18,14 @@ public:
     ~ModelGL() = default;
 
     void setModelData(const ModelData *modelData);
+    //! REVIEW: этот метод используется? оч страшно
     const ModelData *getModelData() const;
 
     GLuint vao() const;
     GLuint vertexCount() const;
     GLuint textureId() const;
 
+    //! REVIEW: что такое вао? не оч популярная абревиатура
     void setVao(GLuint vao);
     void setVertexCount(GLuint count);
 

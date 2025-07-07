@@ -173,6 +173,7 @@ void MainWindow::openModelFile()
 
     const ModelData *data = controller.getModelGL().getModelData();
     if (!data) {
+        //! REVIEW: тебе не кажется что это не ошибка пользователя? вот я получил такое сообщение, что я сделал не так? как мне это исправить?
         QMessageBox::critical(this, "Ошибка", "ModelData == nullptr");
         return;
     }
