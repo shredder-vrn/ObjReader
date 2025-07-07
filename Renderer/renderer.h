@@ -31,6 +31,7 @@ public:
 
 //*************************************
     void render(const ModelGL &modelGL, const QMatrix4x4 &mvp);
+    bool initializeModel(ModelGL &modelGL);
     bool loadTexture(ModelGL &modelGL, const QString &texturePath);
     void setModelGL(const ModelGL &modelGL);
 //*************************************
