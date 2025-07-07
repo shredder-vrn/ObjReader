@@ -30,6 +30,6 @@ bool parseTokens(
 bool parseObj(
         const QString &filePath,
         Model &model);
-
 }
+
 #endif // OBJREADER_H
