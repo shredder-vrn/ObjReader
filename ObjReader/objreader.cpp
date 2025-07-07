@@ -225,10 +225,75 @@ bool parseObj(const QString &filePath, Model &model)
     return parseTokens(in, model);
 }
 
+bool parseTokens(QTextStream &in, ModelData &model)
+{
+    QVector<QVector3D> vertices;
+    QVector<QVector2D> textureVertices;
+    QVector<QVector3D> normals;
 
+    QVector<int> faceVertexIndices;
+    QVector<int> faceTextureVertexIndices;
+    QVector<int> faceNormalIndices;
+    QVector<int> polygonStarts;
 
+    int lineNum = 0;
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        ++lineNum;
 
+        if (line.isEmpty()) {
+            continue;
+        }
 
+        QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+        if (tokens.isEmpty()) {
+            continue;
+        }
+
+        const QString type = tokens[0];
+
+        if (type == "#")
+            continue;
+
+        if (type == "v" && !parseVertex(tokens, vertices))
+            return false;
+
+        if (type == "vt" && !parseTexCoord(tokens, textureVertices))
+            return false;
+
+        if (type == "vn" && !parseNormal(tokens, normals))
+            return false;
+
+        if (type == "f" && !parseFace(line,
+                                      faceVertexIndices,
+                                      faceTextureVertexIndices,
+                                      faceNormalIndices,
+                                      polygonStarts))
+            return false;
+    }
+
+    model.setVertices(vertices);
+    model.setTextureVertices(textureVertices);
+    model.setNormals(normals);
+
+    model.setFaceVertexIndices(faceVertexIndices);
+    model.setFaceTextureVertexIndices(faceTextureVertexIndices);
+    model.setFaceNormalIndices(faceNormalIndices);
+    model.setPolygonStarts(polygonStarts);
+
+    return true;
+}
+
+bool parseObj(const QString &filePath, ModelData &model)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    QTextStream in(&file);
+    return parseTokens(in, model);
+}
 
 bool checkVertices(const QVector<QVector3D> &vertices)
 {
