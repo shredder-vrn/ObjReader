@@ -2,6 +2,7 @@
 #define MODELGL_H
 
 #include <QVector>
+#include <QDebug>
 #include <QVector2D>
 #include <QVector3D>
 #include <QOpenGLFunctions>
@@ -16,30 +17,30 @@ public:
     ~ModelGL() = default;
 
     void setModelData(const ModelData *modelData);
-    const ModelData *getModelData() const {return m_modelData;};
+    const ModelData *getModelData() const;
 
-    GLuint vao() const { return m_vao; };
-    GLuint vertexCount() const { return m_vertexCount; };
-    GLuint textureId() const { return m_textureId; };
+    GLuint vao() const;
+    GLuint vertexCount() const;
+    GLuint textureId() const;
 
-    void setVao(GLuint vao) {m_vao = vao;};
-    void setVertexCount(GLuint count) {m_vertexCount = count;};
+    void setVao(GLuint vao);
+    void setVertexCount(GLuint count);
 
-    bool hasTexture() const {return m_hasTexture;};
-    bool useNormals() const {return m_useNormals;};
+    bool hasTexture() const;
+    bool useNormals() const;
     bool isValid() const;
     bool hasNormals() const;
 
-    void setHasTexture(bool enabled) {m_hasTexture = enabled;};
-    void setUseNormals(bool enabled) {m_useNormals = enabled;};
-    void setTextureId(GLuint id) {m_textureId = id;};
+    void setHasTexture(bool enabled);
+    void setUseNormals(bool enabled);
+    void setTextureId(GLuint id);
 
     void clear();
 
-    bool operator!=(const ModelGL& other) const;
+    bool operator!=(const ModelGL &other) const;
 
 private:
-    const ModelData *m_modelData = nullptr;
+    ModelData m_modelData;
 
     GLuint m_vao = 0;
     GLuint m_vertexCount = 0;

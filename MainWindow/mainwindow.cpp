@@ -24,8 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 MainWindow::~MainWindow()
 {
-    for (auto *model : m_models) {delete model;}
-    m_models.clear();
+
 }
 
 void MainWindow::setupUserInterface()
@@ -157,6 +156,9 @@ QGroupBox *MainWindow::createTransformControls()
     return group;
 }
 
+
+
+//!**********************************************
 void MainWindow::openModelFile()
 {
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
@@ -166,71 +168,97 @@ void MainWindow::openModelFile()
     }
 
     ModelController controller;
-    if (!controller.loadModel(filePath)) {
+    if (!controller.loadModel(filePath, 1)) {
         QString errorMsg = controller.getErrorString();
         QMessageBox::critical(this, "Ошибка загрузки", QString("Не удалось загрузить модель:\n%1").arg(errorMsg));
         return;
     }
 
-    Model *model = new Model();
-    *model = controller.getModel();
+    const ModelData *data = controller.getModelGL().getModelData();
+    if (!data) {
+        QMessageBox::critical(this, "Ошибка", "ModelData == nullptr");
+        return;
+    }
 
-    m_models.append(model);
+    qDebug() << "Vertices count:" << data->vertices().size();
+    qDebug() << "Face indices count:" << data->faceVertexIndices().size();
+    qDebug() << "Polygon starts count:" << data->polygonStarts().size();
+    qDebug() << "Has texture coords?" << !data->textureVertices().isEmpty();
+    qDebug() << "Has normals?" << !data->normals().isEmpty();
+
+    ModelData* persistentData = new ModelData(*data);
+
+    ModelGL* modelGL = new ModelGL();
+    modelGL->setModelData(persistentData);
+
+
+    m_modelsGL.append(modelGL);
     m_modelTransforms.append(QMatrix4x4());
 
+    qDebug() << "[INFO] Количество моделей после добавления:" << m_modelsGL.size();
+
+    m_viewport->setModels(m_modelsGL, m_modelTransforms);
+
     updateModelList();
-    m_viewport->setModels(m_models, m_modelTransforms);
 
     m_viewport->fitToView();
 }
+//!**********************************************
+
+
 
 void MainWindow::updateModelList()
 {
     m_explorerModel->removeRows(0, m_explorerModel->rowCount());
-    for (int i = 0; i < m_models.size(); ++i) {
+    for (int i = 0; i < m_modelsGL.size(); ++i) {
         QStandardItem* item = new QStandardItem(QString("Model %1").arg(i + 1));
         m_explorerModel->appendRow(item);
     }
 }
 
+
+
+//!**********************************************
 void MainWindow::onExplorerModelSelected(const QModelIndex &index)
 {
     m_currentModelIndex = index.row();
 
-    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_models.size()) {
-        const Model *model = m_models[m_currentModelIndex];
+    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
+        const ModelGL *modelGL = m_modelsGL[m_currentModelIndex];
 
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));
-        m_verticesLabel->setText(QString::number(model->vertices().size()));
-        m_facesLabel->setText(QString::number(model->faceVertexIndices().size() / 3));
+        m_verticesLabel->setText(QString::number(modelGL->getModelData()->vertices().size()));
+        m_facesLabel->setText(QString::number(modelGL->getModelData()->faceVertexIndices().size() / 3));
 
-        m_textureCheck->setChecked(model->hasTexture());
+        m_textureCheck->setChecked(modelGL->hasTexture());
 
-        if (!model->isValid()) {
+        if (!modelGL->isValid()) {
             QMessageBox::warning(this, "Предупреждение", "Модель повреждена или не содержит полигонов");
         }
     }
 }
-
+//!**********************************************
 void MainWindow::UpdateSceneLightingState(bool checked)
 {
-    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_models.size()) {
-        m_models[m_currentModelIndex]->setUseNormals(checked);
-        m_viewport->setModels(m_models, m_modelTransforms);
+    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
+        m_modelsGL[m_currentModelIndex]->setUseNormals(checked);
+        m_viewport->setModels(m_modelsGL, m_modelTransforms);
     }
 }
 
 void MainWindow::updateSelectedModelTextureState(bool checked)
 {
-    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_models.size()) {
-        m_models[m_currentModelIndex]->setHasTexture(checked);
-        m_viewport->setModels(m_models, m_modelTransforms);
+    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
+        m_modelsGL[m_currentModelIndex]->setHasTexture(checked);
+        m_viewport->setModels(m_modelsGL, m_modelTransforms);
     }
 }
+//**********************************************
+
 
 void MainWindow::updateTransformFromUI()
 {
-    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_models.size())
+    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
         return;
 
     float px = m_positionSpinboxX->value();
@@ -253,32 +281,32 @@ void MainWindow::updateTransformFromUI()
     transform.scale(sx, sy, sz);
 
     m_modelTransforms[m_currentModelIndex] = transform;
-    m_viewport->setModels(m_models, m_modelTransforms);
+    m_viewport->setModels(m_modelsGL, m_modelTransforms);
 }
 
+
+//**********************************************
 void MainWindow::loadTextureForSelectedModel()
 {
-    if (m_currentModelIndex < 0) {
+    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size()) {
         QMessageBox::warning(this, "Ошибка", "Не выбрана модель для загрузки текстуры.");
         return;
     }
-    if (m_currentModelIndex >= m_models.size()) {
-        QMessageBox::warning(this, "Ошибка", "Не выбрана модель для загрузки текстуры.");
-        return;
-    }
+
     QString texturePath = QFileDialog::getOpenFileName(this, tr("Open Texture"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
     if (texturePath.isEmpty()) {
         QMessageBox::information(this, "Отмена", "Загрузка текстуры отменена.");
         return;
     }
+
     if (!m_viewport->loadTextureForModel(texturePath, m_currentModelIndex)) {
         QMessageBox::critical(this, "Ошибка", QString("Не удалось загрузить текстуру:\n%1").arg(texturePath));
         return;
     }
 
-    m_models[m_currentModelIndex]->setHasTexture(true);
+    m_modelsGL[m_currentModelIndex]->setHasTexture(true);
     m_textureCheck->setChecked(true);
-    m_viewport->setModels(m_models, m_modelTransforms);
+    m_viewport->setModels(m_modelsGL, m_modelTransforms);
 }
-
+//**********************************************
 }

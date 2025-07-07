@@ -20,14 +20,40 @@ public:
     const QVector<int> &faceNormalIndices() const {return m_faceNormalIndices;};
     const QVector<int> &polygonStarts() const {return m_polygonStarts;};
 
-    void setVertices(const QVector<QVector3D> &vertices) {m_vertices = vertices;};
-    void setTextureVertices(const QVector<QVector2D> &textureVertices) {m_textureVertices = textureVertices;};
-    void setNormals(const QVector<QVector3D> &normals) {m_normals = normals;};
+    ModelData &setVertices(const QVector<QVector3D> &v) {
+            m_vertices = v;
+            return *this;
+        }
 
-    void setFaceVertexIndices(const QVector<int> &faceVertexIndices) {m_faceVertexIndices = faceVertexIndices;};
-    void setFaceTextureVertexIndices(const QVector<int> &faceTextureVertexIndices) {m_faceTextureVertexIndices = faceTextureVertexIndices;};
-    void setFaceNormalIndices(const QVector<int> &faceNormalIndices) {m_faceNormalIndices = faceNormalIndices;};
-    void setPolygonStarts(const QVector<int> &polygonStarts) {m_polygonStarts = polygonStarts;};
+    ModelData &setTextureVertices(const QVector<QVector2D> &v) {
+        m_textureVertices = v;
+        return *this;
+    }
+
+    ModelData &setNormals(const QVector<QVector3D> &n) {
+        m_normals = n;
+        return *this;
+    }
+
+    ModelData &setFaceVertexIndices(const QVector<int> &f) {
+        m_faceVertexIndices = f;
+        return *this;
+    }
+
+    ModelData &setFaceTextureVertexIndices(const QVector<int> &f) {
+        m_faceTextureVertexIndices = f;
+        return *this;
+    }
+
+    ModelData &setFaceNormalIndices(const QVector<int> &f) {
+        m_faceNormalIndices = f;
+        return *this;
+    }
+
+    ModelData &setPolygonStarts(const QVector<int> &p) {
+        m_polygonStarts = p;
+        return *this;
+    }
 
     bool isValid() const {
             return !m_vertices.isEmpty() &&

@@ -49,7 +49,7 @@ private:
     int m_currentModelIndex = -1;
 
     ViewportWidget *m_viewport = nullptr;
-    QVector<Model*> m_models;
+    QVector<QMatrix4x4> m_modelTransforms;
 
 
 
@@ -58,8 +58,6 @@ private:
 //*************************************
 
 
-
-    QVector<QMatrix4x4> m_modelTransforms;
 
     QDockWidget *m_propertiesDock = nullptr;
     QDockWidget *m_explorerDock = nullptr;

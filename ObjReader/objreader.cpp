@@ -236,25 +236,13 @@ bool parseTokens(QTextStream &in, ModelData &model)
     QVector<int> faceNormalIndices;
     QVector<int> polygonStarts;
 
-    int lineNum = 0;
     while (!in.atEnd()) {
         QString line = in.readLine().trimmed();
-        ++lineNum;
-
-        if (line.isEmpty()) {
-            continue;
-        }
-
         QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-        if (tokens.isEmpty()) {
+        if (tokens.isEmpty())
             continue;
-        }
 
         const QString type = tokens[0];
-
-        if (type == "#")
-            continue;
-
         if (type == "v" && !parseVertex(tokens, vertices))
             return false;
 
@@ -264,22 +252,18 @@ bool parseTokens(QTextStream &in, ModelData &model)
         if (type == "vn" && !parseNormal(tokens, normals))
             return false;
 
-        if (type == "f" && !parseFace(line,
-                                      faceVertexIndices,
-                                      faceTextureVertexIndices,
-                                      faceNormalIndices,
-                                      polygonStarts))
+        if (type == "f" && !parseFace(line, faceVertexIndices, faceTextureVertexIndices, faceNormalIndices, polygonStarts))
             return false;
     }
 
-    model.setVertices(vertices);
-    model.setTextureVertices(textureVertices);
-    model.setNormals(normals);
-
-    model.setFaceVertexIndices(faceVertexIndices);
-    model.setFaceTextureVertexIndices(faceTextureVertexIndices);
-    model.setFaceNormalIndices(faceNormalIndices);
-    model.setPolygonStarts(polygonStarts);
+    model
+        .setVertices(vertices)
+        .setTextureVertices(textureVertices)
+        .setNormals(normals)
+        .setFaceVertexIndices(faceVertexIndices)
+        .setFaceTextureVertexIndices(faceTextureVertexIndices)
+        .setFaceNormalIndices(faceNormalIndices)
+        .setPolygonStarts(polygonStarts);
 
     return true;
 }

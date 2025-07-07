@@ -232,6 +232,8 @@ void ViewportWidget::setModels(const QVector<ModelGL*>& models, const QVector<QM
     m_modelsGL = models;
     m_modelTransforms = transforms;
 
+    qDebug() << "[DEBUG] setModels: количество моделей =" << models.size();
+
     update();
 }
 //*************************************
