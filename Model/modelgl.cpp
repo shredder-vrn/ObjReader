@@ -1,5 +1,6 @@
 #include "modelgl.h"
 
+
 void ModelGL::setModelData(const ModelData *modelData)
 {
     m_modelData = modelData;
@@ -8,71 +9,60 @@ void ModelGL::setModelData(const ModelData *modelData)
     }
 }
 
-const ModelData *ModelGL::modelData() const
+const ModelData *ModelGL::getModelData() const
 {
     return m_modelData;
 }
 
-const QVector<QVector3D> &ModelGL::vertices() const
-{
-    static QVector<QVector3D> empty;
-    return m_modelData ? m_modelData->vertices() : empty;
+void ModelGL::setVao(GLuint vao) {
+    m_vao = vao;
 }
 
-const QVector<QVector2D> &ModelGL::textureVertices() const
-{
-    static QVector<QVector2D> empty;
-    return m_modelData ? m_modelData->textureVertices() : empty;
+void ModelGL::setVertexCount(GLuint count) {
+    m_vertexCount = count;
 }
 
-const QVector<QVector3D> &ModelGL::normals() const
-{
-    static QVector<QVector3D> empty;
-    return m_modelData ? m_modelData->normals() : empty;
+bool ModelGL::hasTexture() const {
+    return m_hasTexture;
 }
 
-const QVector<int> &ModelGL::faceVertexIndices() const
-{
-    static QVector<int> empty;
-    return m_modelData ? m_modelData->faceVertexIndices() : empty;
+bool ModelGL::useNormals() const {
+    return m_useNormals;
 }
 
-const QVector<int> &ModelGL::faceTextureVertexIndices() const
-{
-    static QVector<int> empty;
-    return m_modelData ? m_modelData->faceTextureVertexIndices() : empty;
+bool ModelGL::isValid() const {
+    return m_vao != 0 && m_vertexCount > 0 && m_modelData && m_modelData->isValid();
 }
 
-const QVector<int> &ModelGL::faceNormalIndices() const
-{
-    static QVector<int> empty;
-    return m_modelData ? m_modelData->faceNormalIndices() : empty;
+bool ModelGL::hasNormals() const {
+    return m_modelData && !m_modelData->normals().isEmpty();
 }
 
-const QVector<int> &ModelGL::polygonStarts() const
-{
-    static QVector<int> empty;
-    return m_modelData ? m_modelData->polygonStarts() : empty;
+void ModelGL::setHasTexture(bool enabled) {
+    m_hasTexture = enabled;
 }
 
-void ModelGL::setVao(GLuint vao) { m_vao = vao; }
-
-void ModelGL::setVertexCount(GLuint count) { m_vertexCount = count; }
-
-void ModelGL::setTextureId(GLuint id) { m_textureId = id; }
-
-bool ModelGL::hasTexture() const
-{
+void ModelGL::setUseNormals(bool enabled) {
+    m_useNormals = enabled;
 }
 
-void ModelGL::setHasTexture(bool enabled) { m_hasTexture = enabled; }
-
-void ModelGL::setUseNormals(bool enabled) { m_useNormals = enabled; }
-
-void ModelGL::clear()
-{
+void ModelGL::setTextureId(GLuint id) {
+    m_textureId = id;
 }
 
-bool ModelGL::operator!=(const ModelGL &other) const
-{
+void ModelGL::clear() {
+    m_vao = 0;
+    m_vertexCount = 0;
+    m_textureId = 0;
+    m_hasTexture = false;
+    m_useNormals = false;
+    m_modelData = nullptr;
+}
+
+bool ModelGL::operator!=(const ModelGL &other) const {
+    return m_vao != other.m_vao ||
+           m_vertexCount != other.m_vertexCount ||
+           m_textureId != other.m_textureId ||
+           m_hasTexture != other.m_hasTexture ||
+           m_useNormals != other.m_useNormals;
 }

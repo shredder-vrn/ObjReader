@@ -16,16 +16,7 @@ public:
     ~ModelGL() = default;
 
     void setModelData(const ModelData *modelData);
-    const ModelData *modelData() const;
-
-    const QVector<QVector3D> &vertices() const;
-    const QVector<QVector2D> &textureVertices() const;
-    const QVector<QVector3D> &normals() const;
-
-    const QVector<int> &faceVertexIndices() const;
-    const QVector<int> &faceTextureVertexIndices() const;
-    const QVector<int> &faceNormalIndices() const;
-    const QVector<int> &polygonStarts() const;
+    const ModelData *getModelData() const;
 
     GLuint vao() const { return m_vao; };
     GLuint vertexCount() const { return m_vertexCount; };
@@ -35,8 +26,9 @@ public:
     void setVertexCount(GLuint count);
 
     bool hasTexture() const;
-    bool useNormals() const { return m_useNormals; };
-    bool hasNormals() const { return !normals().isEmpty(); };
+    bool useNormals() const;
+    bool isValid() const;
+    bool hasNormals() const;
 
     void setHasTexture(bool enabled);
     void setUseNormals(bool enabled);
