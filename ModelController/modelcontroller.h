@@ -10,6 +10,7 @@
 namespace Viewer{
 class ModelController {
 
+
 public:
     ModelController() = default;
     ~ModelController() = default;
@@ -30,7 +31,7 @@ public:
     //*************************************
     bool loadModel(const QString &filePath, const int a);
     void calculateNormals(ModelData &model);
-    const ModelData &getModel(const int a) const;
+    const ModelGL &getModelGL() const {return m_modelGL;};
     const QVector<ModelGL> &getModelGLs() const { return m_modelGLs; }
     //*************************************
 
