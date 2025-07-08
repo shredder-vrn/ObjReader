@@ -18,17 +18,18 @@
 #include <QGroupBox>
 #include <QPushButton>
 
-
+#include "Viewport/logger.h"
 #include "Viewport/viewport.h"
 #include "ModelController/modelcontroller.h"
 
 namespace Viewer{
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:
