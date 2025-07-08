@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     connect(openAction, &QAction::triggered, this, &MainWindow::openModelFile);
 
-    logFields();
     LogDebug("MainWindow::MainWindow - конструктор отработал");
 }
 
@@ -33,82 +32,7 @@ MainWindow::~MainWindow()
     LogDebug("MainWindow::~MainWindow - деструктор отработал");
 }
 
-void MainWindow::logFields() const
-{
-    LogDebug("MainWindow fields:");
-    LogDebug(QString("m_currentModelIndex = %1").arg(m_currentModelIndex));
-    LogDebug(QString("m_viewport = %1").arg(m_viewport ? "not null" : "null"));
-    LogDebug(QString("m_modelTransforms.size() = %1").arg(m_modelTransforms.size()));
-    LogDebug(QString("m_modelsGL.size() = %1").arg(m_modelsGL.size()));
-}
-
-
-
-
-
-void MainWindow::translate(const QVector3D &translation)
-{
-    m_modelControllerModelMatrix.translate(translation);
-
-}
-
-void MainWindow::rotate(float angle, const QVector3D &axis)
-{
-    m_modelControllerModelMatrix.rotate(angle, axis);
-
-}
-
-void MainWindow::scale(const QVector3D &scalingFactors)
-{
-    m_modelControllerModelMatrix.scale(scalingFactors);
-
-}
-
-void MainWindow::resetTransformations()
-{
-    m_modelControllerModelMatrix.setToIdentity();
-
-}
-
-void MainWindow::calculateNormals(ModelData &model)
-{
-    if (model.vertices().isEmpty() || model.faceVertexIndices().size() % 3 != 0) {
-        return;
-    }
-
-    QVector<QVector3D> normals;
-    normals.fill(QVector3D(0.0f, 0.0f, 0.0f), model.vertices().size());
-
-    for (int i = 0; i < model.faceVertexIndices().size(); i += 3) {
-        int idx0 = model.faceVertexIndices()[i];
-        int idx1 = model.faceVertexIndices()[i + 1];
-        int idx2 = model.faceVertexIndices()[i + 2];
-
-        if (idx0 < 0 || idx1 < 0 || idx2 < 0 ||
-            idx0 >= model.vertices().size() ||
-            idx1 >= model.vertices().size() ||
-            idx2 >= model.vertices().size()) {
-            continue;
-        }
-
-        QVector3D v1 = model.vertices()[idx1] - model.vertices()[idx0];
-        QVector3D v2 = model.vertices()[idx2] - model.vertices()[idx0];
-
-        QVector3D normal = QVector3D::crossProduct(v2, v1).normalized();
-
-        normals[idx0] += normal;
-        normals[idx1] += normal;
-        normals[idx2] += normal;
-    }
-
-    for (auto& n : normals) {
-        n = n.normalized();
-    }
-
-    model.setNormals(normals);
-}
-
-bool MainWindow::loadModel(const QString &filePath)
+bool MainWindow::loadModel(const QString &filePath, ModelData &outData)
 {
     QFile file(filePath);
     if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -116,38 +40,34 @@ bool MainWindow::loadModel(const QString &filePath)
     }
 
     QTextStream in(&file);
-    if (!parseTokens(in, m_modelData)) {
+    if (!parseTokens(in, outData)) {
         return false;
     }
 
-    if (m_modelData.vertices().isEmpty()) {
+    if (outData.vertices().isEmpty()) {
         return false;
     }
 
-    QVector<int> faceVertexIndices = m_modelData.faceVertexIndices();
-    QVector<int> faceTextureVertexIndices = m_modelData.faceTextureVertexIndices();
-    QVector<int> faceNormalIndices = m_modelData.faceNormalIndices();
-    QVector<int> polygonStarts = m_modelData.polygonStarts();
+    QVector<int> faceVertexIndices = outData.faceVertexIndices();
+    QVector<int> faceTextureVertexIndices = outData.faceTextureVertexIndices();
+    QVector<int> faceNormalIndices = outData.faceNormalIndices();
+    QVector<int> polygonStarts = outData.polygonStarts();
 
     simpleTriangulateModel(
-        m_modelData.vertices(),
+        outData.vertices(),
         faceVertexIndices,
         faceTextureVertexIndices,
         faceNormalIndices,
         polygonStarts
     );
 
-    m_modelData
+    outData
         .setFaceVertexIndices(faceVertexIndices)
         .setFaceTextureVertexIndices(faceTextureVertexIndices)
         .setFaceNormalIndices(faceNormalIndices)
         .setPolygonStarts(polygonStarts);
 
-    calculateNormals(m_modelData);
-
-    m_modelGL.setModelData(&m_modelData);
-    m_modelGLs.append(m_modelGL);
-    m_modelMatrices.append(QMatrix4x4());
+    calculateNormals(outData);
 
     return true;
 }
@@ -159,46 +79,40 @@ void MainWindow::openModelFile()
     if (filePath.isEmpty())
         return;
 
-    if (!loadModel(filePath))
+    ModelData modelData;
+    if (!loadModel(filePath, modelData))
         return;
 
-    const ModelData *data = getModelGL().getModelData();
-    if (!data)
-        return;
-
-    ModelData *persistentData = new ModelData(*data);
-
-    ModelGL *modelGL = new ModelGL();
-    modelGL->setModelData(persistentData);
-
+    ModelGL* modelGL = new ModelGL();
+    modelGL->setModelData(new ModelData(modelData));
 
     m_modelsGL.append(modelGL);
     m_modelTransforms.append(QMatrix4x4());
 
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
-
     updateModelList();
-
     m_viewport->fitToView();
 
-    logFields();
     LogDebug("MainWindow::openModelFile - openModelFile отработал");
 }
 
 void MainWindow::updateModelList()
 {
     LogDebug("MainWindow::updateModelList - запустили updateModelList");
+
     m_explorerModel->removeRows(0, m_explorerModel->rowCount());
     for (int i = 0; i < m_modelsGL.size(); ++i) {
         QStandardItem* item = new QStandardItem(QString("Model %1").arg(i + 1));
         m_explorerModel->appendRow(item);
     }
+
     LogDebug("MainWindow::updateModelList - updateModelList отработал");
 }
 
 void MainWindow::onExplorerModelSelected(const QModelIndex &index)
 {
     LogDebug("MainWindow::onExplorerModelSelected - запустили onExplorerModelSelected");
+
     m_currentModelIndex = index.row();
 
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
@@ -207,39 +121,44 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));
         m_verticesLabel->setText(QString::number(modelGL->getModelData()->vertices().size()));
         m_facesLabel->setText(QString::number(modelGL->getModelData()->faceVertexIndices().size() / 3));
-
         m_textureCheck->setChecked(modelGL->hasTexture());
 
         if (!modelGL->isValid()) {
             QMessageBox::warning(this, "Предупреждение", "Модель повреждена или не содержит полигонов");
         }
     }
+
     LogDebug("MainWindow::onExplorerModelSelected - onExplorerModelSelected отработал");
 }
 
 void MainWindow::UpdateSceneLightingState(bool checked)
 {
     LogDebug("MainWindow::UpdateSceneLightingState - запустили UpdateSceneLightingState");
+
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setUseNormals(checked);
         m_viewport->setModels(m_modelsGL, m_modelTransforms);
     }
+
     LogDebug("MainWindow::UpdateSceneLightingState - UpdateSceneLightingState отработал");
 }
 
 void MainWindow::updateSelectedModelTextureState(bool checked)
 {
     LogDebug("MainWindow::updateSelectedModelTextureState - запустили updateSelectedModelTextureState");
+
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setHasTexture(checked);
         m_viewport->setModels(m_modelsGL, m_modelTransforms);
     }
+
     LogDebug("MainWindow::updateSelectedModelTextureState - updateSelectedModelTextureState отработал");
 }
 
 void MainWindow::updateTransformFromUI()
 {
     LogDebug("MainWindow::updateTransformFromUI - запустили updateTransformFromUI");
+
     if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
         return;
 
@@ -264,27 +183,29 @@ void MainWindow::updateTransformFromUI()
 
     m_modelTransforms[m_currentModelIndex] = transform;
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
+
     LogDebug("MainWindow::updateTransformFromUI - updateTransformFromUI отработал");
 }
 
 void MainWindow::loadTextureForSelectedModel()
 {
     LogDebug("MainWindow::loadTextureForSelectedModel - запустили loadTextureForSelectedModel");
-    if (m_currentModelIndex < 0)
-        return;
-    if (m_currentModelIndex >= m_modelsGL.size())
+
+    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
         return;
 
     QString texturePath = QFileDialog::getOpenFileName(this, tr("Open Texture"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
 
     if (texturePath.isEmpty())
         return;
+
     if (!m_viewport->loadTextureForModel(texturePath, m_currentModelIndex))
         return;
 
     m_modelsGL[m_currentModelIndex]->setHasTexture(true);
     m_textureCheck->setChecked(true);
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
+
     LogDebug("MainWindow::loadTextureForSelectedModel - loadTextureForSelectedModel отработал");
 }
 
@@ -325,6 +246,46 @@ void MainWindow::setupUserInterface()
     connect(orthoAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToOrthographic);
     LogDebug("MainWindow::setupUserInterface - setupUserInterface отработал");
 }
+
+void MainWindow::calculateNormals(ModelData &model)
+{
+    if (model.vertices().isEmpty() || model.faceVertexIndices().size() % 3 != 0) {
+        return;
+    }
+
+    QVector<QVector3D> normals;
+    normals.fill(QVector3D(0.0f, 0.0f, 0.0f), model.vertices().size());
+
+    for (int i = 0; i < model.faceVertexIndices().size(); i += 3) {
+        int idx0 = model.faceVertexIndices()[i];
+        int idx1 = model.faceVertexIndices()[i + 1];
+        int idx2 = model.faceVertexIndices()[i + 2];
+
+        if (idx0 < 0 || idx1 < 0 || idx2 < 0 ||
+            idx0 >= model.vertices().size() ||
+            idx1 >= model.vertices().size() ||
+            idx2 >= model.vertices().size()) {
+            continue;
+        }
+
+        QVector3D v1 = model.vertices()[idx1] - model.vertices()[idx0];
+        QVector3D v2 = model.vertices()[idx2] - model.vertices()[idx0];
+
+        QVector3D normal = QVector3D::crossProduct(v2, v1).normalized();
+
+        normals[idx0] += normal;
+        normals[idx1] += normal;
+        normals[idx2] += normal;
+    }
+
+    for (auto& n : normals) {
+        n = n.normalized();
+    }
+
+    model.setNormals(normals);
+}
+
+
 
 QGroupBox *MainWindow::createModelInfoSection()
 {

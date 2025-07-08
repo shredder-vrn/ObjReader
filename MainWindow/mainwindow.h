@@ -42,41 +42,22 @@ private slots:
     void updateSelectedModelTextureState(bool checked);
     void updateTransformFromUI();
     void updateModelList();
-    void logFields() const;
-    void translate(const QVector3D &translation);
-    void rotate(float angle, const QVector3D &axis);
-    void scale(const QVector3D &scalingFactors);
-    void resetTransformations();
-    void calculateNormals(ModelData &model);
-
-
-    const ModelGL &getModelGL() const {return m_modelGL;};
-    const QVector<ModelGL> &getModelGLs() const { return m_modelGLs; }
-
-    bool loadModel(const QString &filePath);
-
 
 private:
     void setupUserInterface();
-
     QGroupBox *createModelInfoSection();
     QGroupBox *createRenderSettingsSection();
     QGroupBox *createTransformControls();
 
+    bool loadModel(const QString &filePath, ModelData &outData);
+    void calculateNormals(ModelData &model);
+
     int m_currentModelIndex = -1;
+
     ViewportWidget *m_viewport = nullptr;
-    QVector<QMatrix4x4> m_modelTransforms;
     QVector<ModelGL*> m_modelsGL;
+    QVector<QMatrix4x4> m_modelTransforms;
 
-    QString errorString;
-    QVector<QMatrix4x4> m_modelMatrices;
-    QMatrix4x4 m_modelControllerModelMatrix;
-    QVector<ModelGL> m_modelGLs;
-    ModelGL m_modelGL;
-    ModelData m_modelData;
-
-
-private:
     QDockWidget *m_propertiesDock = nullptr;
     QDockWidget *m_explorerDock = nullptr;
     QTreeView *m_explorerView = nullptr;
