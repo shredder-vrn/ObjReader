@@ -48,11 +48,21 @@ void CameraOrthographic::zoom(const float delta)
     updateProjectionMatrix();
 }
 
+QVector3D CameraOrthographic::position() const { return m_position; }
+
+QVector3D CameraOrthographic::target() const { return m_target; }
+
+QVector3D CameraOrthographic::up() const { return m_up; }
+
 void CameraOrthographic::setPosition(const QVector3D &pos)
 {
     m_position = pos;
     updateViewMatrix();
 }
+
+void CameraOrthographic::setTarget(const QVector3D &target) { m_target = target; }
+
+void CameraOrthographic::setUp(const QVector3D &up) { m_up = up; }
 
 void CameraOrthographic::updateViewMatrix()
 {

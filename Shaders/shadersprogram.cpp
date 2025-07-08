@@ -7,12 +7,12 @@ namespace Viewer {
 
 ShaderProgram::ShaderProgram(QObject *parent) : QObject(parent)
 {
-    myShaderProgram = new QOpenGLShaderProgram(this);
+    myShaderProgram = std::make_unique<QOpenGLShaderProgram>(this);
 }
 
 ShaderProgram::~ShaderProgram()
 {
-    delete myShaderProgram;
+    qDebug() << "ShaderProgram ~ ";
 }
 
 bool ShaderProgram::compileFromString(const QString &vertexSrc, const QString &fragmentSrc)
@@ -68,6 +68,6 @@ bool ShaderProgram::compileFromFile(const QString &vertexPath, const QString &fr
 
 QOpenGLShaderProgram *ShaderProgram::get() const
 {
-    return myShaderProgram;
+    return myShaderProgram.get();
 }
 }

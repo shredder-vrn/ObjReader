@@ -6,7 +6,7 @@
 #include <QVector>
 #include <QVector3D>
 
-#include "Camera/сamera.h"
+#include "Camera/camera.h"
 
 namespace Viewer{
 
@@ -19,7 +19,6 @@ public:
     QMatrix4x4 viewMatrix() const override;
     QMatrix4x4 projectionMatrix() const override;
 
-    //! REVIEW: setAspectRatio, не хранить размеры а только соотношение сторон
     void setViewportSize(const int width, const int height) override;
     void rotateAroundTarget(const float deltaX, const float deltaY) override;
     void zoom(const float delta) override;

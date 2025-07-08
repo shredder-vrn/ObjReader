@@ -10,7 +10,7 @@
 #include <QtMath>
 #include <limits>
 
-#include "Camera/сamera.h"
+#include "Camera/camera.h"
 #include "Camera/cameraperspective.h"
 #include "Camera/cameraorthographic.h"
 #include "Renderer/renderer.h"

@@ -4,7 +4,7 @@
 #include <QMatrix4x4>
 #include <QVector3D>
 
-#include "Camera/сamera.h"
+#include "Camera/camera.h"
 
 namespace Viewer {
 
@@ -12,23 +12,22 @@ class CameraOrthographic : public Camera
 {
 public:
     CameraOrthographic();
-    ~CameraOrthographic() override = default;
+    virtual ~CameraOrthographic() override = default;
 
     QMatrix4x4 viewMatrix() const override;
     QMatrix4x4 projectionMatrix() const override;
 
-    //! REVIEW: setAspectRatio
     void setViewportSize(const int width, const int height) override;
     void rotateAroundTarget(const float deltaX, const float deltaY) override;
     void zoom(const float delta) override;
 
-    QVector3D position() const override { return m_position; }
-    QVector3D target() const override { return m_target; }
-    QVector3D up() const override { return m_up; }
+    QVector3D position() const override;
+    QVector3D target() const override;
+    QVector3D up() const override;
 
     void setPosition(const QVector3D& pos) override;
-    void setTarget(const QVector3D& target) override { m_target = target; }
-    void setUp(const QVector3D& up) override { m_up = up; }
+    void setTarget(const QVector3D& target) override;
+    void setUp(const QVector3D& up) override;
 
     CameraType type() const override { return CameraType::Orthographic; }
 

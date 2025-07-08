@@ -21,7 +21,7 @@ public:
 
 private:
     //! REVIEW: правило 5 или 0
-    QOpenGLShaderProgram *myShaderProgram = nullptr;
+    std::unique_ptr<QOpenGLShaderProgram> myShaderProgram = nullptr;
 };
 }
 

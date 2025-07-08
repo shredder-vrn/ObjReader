@@ -5,12 +5,11 @@ CONFIG += CAMERA_PRI
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
 HEADERS += \
+    $$PWD/camera.h \
     $$PWD/cameraorthographic.h \
-    $$PWD/cameraperspective.h \
-    $$PWD/сamera.h
+    $$PWD/cameraperspective.h
 
 SOURCES += \
-    $$PWD/camera.cpp\
     $$PWD/cameraorthographic.cpp \
     $$PWD/cameraperspective.cpp
 
