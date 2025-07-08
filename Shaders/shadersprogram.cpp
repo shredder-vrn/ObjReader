@@ -4,6 +4,7 @@
 #include <QDebug>
 
 namespace Viewer {
+
 ShaderProgram::ShaderProgram(QObject *parent) : QObject(parent)
 {
     myShaderProgram = new QOpenGLShaderProgram(this);

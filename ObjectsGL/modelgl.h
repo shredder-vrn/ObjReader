@@ -13,7 +13,6 @@
 
 namespace Viewer {
 
-
 class ModelGL : public ObjectGL
 {
 public:

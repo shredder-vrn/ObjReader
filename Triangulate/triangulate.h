@@ -1,8 +1,10 @@
-#ifndef TRIANGULATE_H
-#define TRIANGULATE_H
+#ifndef VIEWER_TRIANGULATE_H
+#define VIEWER_TRIANGULATE_H
 
 #include <QVector3D>
 #include <QVector>
+
+namespace Viewer {
 
 void simpleTriangulateModel(
     const QVector<QVector3D> &vertices,
@@ -18,4 +20,6 @@ void triangulateModel(
     QVector<int> &faceNormalIndices,
     QVector<int> &polygonStarts);
 
-#endif // TRIANGULATE_H
+}
+
+#endif // VIEWER_TRIANGULATE_H

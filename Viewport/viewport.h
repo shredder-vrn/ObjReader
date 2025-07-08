@@ -10,9 +10,9 @@
 #include <QtMath>
 #include <limits>
 
-#include "Camera/сamerainterface.h"
-#include "Camera/cameraper.h"
-#include "Camera/cameraort.h"
+#include "Camera/сamera.h"
+#include "Camera/cameraperspective.h"
+#include "Camera/cameraorthographic.h"
 #include "Renderer/renderer.h"
 #include "ObjReader/objreader.h"
 
@@ -53,7 +53,7 @@ private:
     int m_viewportWidth = 600;
     int m_viewportHeight = 800;
     OpenGLRenderer m_renderer;
-    std::unique_ptr<CameraInterface> m_camera;
+    std::unique_ptr<Camera> m_camera;
 
     QVector<QMatrix4x4> m_modelTransforms;
 

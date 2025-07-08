@@ -1,5 +1,5 @@
-#ifndef СAMERAINTERFACE_H
-#define СAMERAINTERFACE_H
+#ifndef СAMERA_H
+#define СAMERA_H
 
 #include <QMatrix4x4>
 #include <QVector3D>
@@ -12,10 +12,10 @@ enum class CameraType
     Orthographic
 };
 
-class CameraInterface
+class Camera
 {
 public:
-    virtual ~CameraInterface() = default;
+    virtual ~Camera() = default;
 
     virtual QMatrix4x4 viewMatrix() const = 0;
     virtual QMatrix4x4 projectionMatrix() const = 0;
@@ -35,4 +35,4 @@ public:
 };
 
 }
-#endif // СAMERAINTERFACE_H
+#endif // СAMERA_H

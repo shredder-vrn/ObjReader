@@ -1,6 +1,8 @@
 #include "modeldata.h"
 #include "Viewport/logger.h"
 
+namespace Viewer {
+
 ModelData::ModelData()
 {
     LogDebug("ModelData::ModelData - запустили конструктор");
@@ -51,3 +53,5 @@ ModelData &ModelData::setPolygonStarts(const QVector<int> &p) {
 
 bool ModelData::isValid() const {
     return !m_vertices.isEmpty() && !m_faceVertexIndices.isEmpty() && m_faceVertexIndices.size() % 3 == 0;}
+
+}

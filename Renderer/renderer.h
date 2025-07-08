@@ -1,5 +1,5 @@
-#ifndef RENDER_H
-#define RENDER_H
+#ifndef VIEWER_RENDER_H
+#define VIEWER_RENDER_H
 
 #pragma once
 
@@ -43,4 +43,4 @@ private:
 
 };
 }
-#endif // RENDER_H
+#endif // VIEWER_RENDER_H

@@ -1,12 +1,9 @@
-#include "cameraper.h"
-#include "Viewport/logger.h"
+#include "cameraperspective.h"
 
 namespace Viewer{
 CameraPerspective::CameraPerspective()
 {
-    LogDebug("CameraPer::CameraPer - запустили конструктор");
     updateViewMatrix();
-    LogDebug("CameraPer::CameraPer - запустили конструктор");
 }
 
 QMatrix4x4 CameraPerspective::viewMatrix() const

@@ -1,14 +1,14 @@
-#ifndef CAMERAORT_H
-#define CAMERAORT_H
+#ifndef VIEWER_CAMERAORTHOGRAPHIC_H
+#define VIEWER_CAMERAORTHOGRAPHIC_H
 
 #include <QMatrix4x4>
 #include <QVector3D>
 
-#include "Camera/сamerainterface.h"
+#include "Camera/сamera.h"
 
 namespace Viewer {
 
-class CameraOrthographic : public CameraInterface
+class CameraOrthographic : public Camera
 {
 public:
     CameraOrthographic();
@@ -44,7 +44,7 @@ private:
     float m_right = 10.0f;
     float m_bottom = -10.0f;
     float m_top = 10.0f;
-    //! REVIEW: 0.01
+
     float m_nearPlane = -100.0f;
     float m_farPlane = 100.0f;
 
@@ -57,4 +57,4 @@ private:
     QMatrix4x4 m_projectionMatrix;
 };
 }
-#endif // CAMERAORT_H
+#endif // VIEWER_CAMERAORTHOGRAPHIC_H

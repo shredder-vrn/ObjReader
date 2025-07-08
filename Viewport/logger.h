@@ -1,7 +1,9 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef VIEWER_LOGGER_H
+#define VIEWER_LOGGER_H
 
 #include <QDebug>
+
+namespace Viewer {
 
 inline void LogDebug(const QString& msg) {
     qDebug() << "[DEBUG]" << msg;
@@ -18,4 +20,6 @@ inline void LogWarning(const QString& msg) {
 inline void LogError(const QString& msg) {
     qCritical() << "[ERROR]" << msg;
 }
-#endif // LOGGER_H
+
+}
+#endif // VIEWER_LOGGER_H

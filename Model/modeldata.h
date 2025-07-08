@@ -1,9 +1,12 @@
-#ifndef MODELDATA_H
-#define MODELDATA_H
+#ifndef VIEWER_MODELDATA_H
+#define VIEWER_MODELDATA_H
 
 #include <QVector>
 #include <QVector2D>
 #include <QVector3D>
+
+namespace Viewer {
+
 
 class ModelData
 {
@@ -48,4 +51,6 @@ private:
     QVector<int> m_polygonStarts;
 };
 
-#endif // MODELDATA_H
+}
+
+#endif // VIEWER_MODELDATA_H

@@ -1,15 +1,16 @@
-#ifndef CAMERAPER_H
-#define CAMERAPER_H
+#ifndef VIEWER_CAMERAPERSPECTIVE_H
+#define VIEWER_CAMERAPERSPECTIVE_H
 
 #include <QMatrix4x4>
 #include <QQuaternion>
 #include <QVector>
 #include <QVector3D>
 
-#include "Camera/сamerainterface.h"
+#include "Camera/сamera.h"
 
 namespace Viewer{
-class CameraPerspective : public CameraInterface
+
+class CameraPerspective : public Camera
 {
 public:
     CameraPerspective();
@@ -59,4 +60,4 @@ private:
     QMatrix4x4 m_projectionMatrix;
 };
 }
-#endif // CAMERAPER_H
+#endif // VIEWER_CAMERAPERSPECTIVE_H

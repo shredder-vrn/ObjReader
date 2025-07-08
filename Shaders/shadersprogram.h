@@ -1,10 +1,11 @@
-#ifndef SHADERSPROGRAM_H
-#define SHADERSPROGRAM_H
+#ifndef VIEWER_SHADERSPROGRAM_H
+#define VIEWER_SHADERSPROGRAM_H
 
 #include <QObject>
 #include <QOpenGLShaderProgram>
 
 namespace Viewer {
+
 class ShaderProgram : public QObject {
     Q_OBJECT
 
@@ -24,4 +25,4 @@ private:
 };
 }
 
-#endif // SHADERSPROGRAM_H
+#endif // VIEWER_SHADERSPROGRAM_H

@@ -1,14 +1,11 @@
-#include "cameraort.h"
-#include "Viewport/logger.h"
+#include "cameraorthographic.h"
 
 namespace Viewer{
 
 CameraOrthographic::CameraOrthographic()
 {
-    LogDebug("CameraPer::CameraPer - запустили конструктор");
     updateViewMatrix();
     updateProjectionMatrix();
-    LogDebug("CameraPer::CameraPer - запустили конструктор");
 }
 
 QMatrix4x4 CameraOrthographic::viewMatrix() const

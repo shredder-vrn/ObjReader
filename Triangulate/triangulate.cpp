@@ -1,8 +1,12 @@
+#include "triangulate.h"
+
 #include <QVector>
 #include <QVector3D>
 #include <QList>
 #include <QDebug>
 #include <cmath>
+
+namespace Viewer{
 
 void simpleTriangulateModel(
     const QVector<QVector3D> &vertices,
@@ -235,4 +239,6 @@ void triangulateModel(
     faceTextureVertexIndices = newFaceTextureVertexIndices;
     faceNormalIndices = newFaceNormalIndices;
     polygonStarts = newPolygonStarts;
+}
+
 }

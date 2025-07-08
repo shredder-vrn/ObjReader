@@ -1,5 +1,5 @@
-#ifndef OBJREADER_H
-#define OBJREADER_H
+#ifndef VIEWER_OBJREADER_H
+#define VIEWER_OBJREADER_H
 
 #include "Model/modeldata.h"
 
@@ -29,4 +29,4 @@ bool parseObj(const QString &filePath, ModelData &modelData);
 
 }
 
-#endif // OBJREADER_H
+#endif // VIEWER_OBJREADER_H
