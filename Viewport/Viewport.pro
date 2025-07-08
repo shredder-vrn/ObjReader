@@ -12,7 +12,7 @@ CONFIG -= app_bundle
 
 include($$PWD/../MainWindow/MainWindow.pri)
 
-HEADERS += \
+HEADERS +=
 
 SOURCES += \
-        $$PWD/main.cpp \
+        $$PWD/main.cpp

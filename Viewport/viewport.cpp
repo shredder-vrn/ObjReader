@@ -17,8 +17,6 @@ ViewportWidget::ViewportWidget(QWidget *parent) : QOpenGLWidget(parent)
     m_camera = std::make_unique<CameraPer>();
 }
 
-
-
 bool ViewportWidget::loadTextureForModel(const QString &texturePath, int modelIndex)
 {
     if (modelIndex < 0 || modelIndex >= m_modelsGL.size())
@@ -127,7 +125,7 @@ void ViewportWidget::createWorldAxes(float size)
 //        m_worldAxes.setFaceVertexIndices().append(i + 1);
 //        m_worldAxes.setPolygonStarts().append(i);
 //    }
-//    m_renderer.initializeModel(m_worldAxes);
+//    m_renderer.initializeModel(m_worldAxes);jj0
 }
 
 void ViewportWidget::createLocalAxes(float size)
@@ -214,8 +212,9 @@ void ViewportWidget::fitToView()
     update();
 }
 
-void ViewportWidget::setModels(const QVector<ModelGL*>& models, const QVector<QMatrix4x4>& transforms)
+void ViewportWidget::setModels(const QVector<ModelGL*> &models, const QVector<QMatrix4x4>& transforms)
 {
+    //! REVIEW: delete
     m_modelsGL = models;
     m_modelTransforms = transforms;
 

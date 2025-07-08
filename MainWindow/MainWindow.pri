@@ -5,6 +5,7 @@ INCLUDEPATH *= $$clean_path($$PWD/../)
 
 include($$PWD/../ModelController/ModelController.pri)
 include($$PWD/../Model/Model.pri)
+include($$PWD/../ObjectsGL/ObjectsGL.pri)
 include($$PWD/../Viewport/Viewport.pri)
 
 HEADERS += \

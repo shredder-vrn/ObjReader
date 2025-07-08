@@ -6,17 +6,19 @@
 
 #include "Camera/сamerainterface.h"
 
-namespace Viewer{
+namespace Viewer {
 
+//! REVIEW: full name
 class CameraOrt : public CameraInterface
 {
 public:
     CameraOrt();
-    virtual ~CameraOrt() override {};
+    ~CameraOrt() override = default;
 
     QMatrix4x4 viewMatrix() const override;
     QMatrix4x4 projectionMatrix() const override;
 
+    //! REVIEW: setAspectRatio
     void setViewportSize(const int width, const int height) override;
     void rotateAroundTarget(const float deltaX, const float deltaY) override;
     void zoom(const float delta) override;
@@ -25,10 +27,7 @@ public:
     QVector3D target() const override { return m_target; }
     QVector3D up() const override { return m_up; }
 
-    void setPosition(const QVector3D& pos) override {
-        m_position = pos;
-        updateViewMatrix();
-    }
+    void setPosition(const QVector3D& pos) override;
     void setTarget(const QVector3D& target) override { m_target = target; }
     void setUp(const QVector3D& up) override { m_up = up; }
 
@@ -46,6 +45,7 @@ private:
     float m_right = 10.0f;
     float m_bottom = -10.0f;
     float m_top = 10.0f;
+    //! REVIEW: 0.01
     float m_nearPlane = -100.0f;
     float m_farPlane = 100.0f;
 

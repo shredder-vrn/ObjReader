@@ -5,7 +5,9 @@
 #include <QVector3D>
 
 namespace Viewer {
-enum class CameraType {
+
+enum class CameraType
+{
     Perspective,
     Orthographic
 };
@@ -27,10 +29,10 @@ public:
     virtual QVector3D target() const = 0;
     virtual QVector3D up() const = 0;
 
-    virtual void setPosition(const QVector3D& pos) = 0;
-    virtual void setTarget(const QVector3D& target) = 0;
-    virtual void setUp(const QVector3D& up) = 0;
-
+    virtual void setPosition(const QVector3D &pos) = 0;
+    virtual void setTarget(const QVector3D &target) = 0;
+    virtual void setUp(const QVector3D &up) = 0;
 };
+
 }
 #endif // СAMERAINTERFACE_H

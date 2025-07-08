@@ -48,6 +48,12 @@ void CameraOrt::zoom(const float delta)
     updateProjectionMatrix();
 }
 
+void CameraOrt::setPosition(const QVector3D &pos)
+{
+    m_position = pos;
+    updateViewMatrix();
+}
+
 void CameraOrt::updateViewMatrix()
 {
     m_viewMatrix.setToIdentity();
