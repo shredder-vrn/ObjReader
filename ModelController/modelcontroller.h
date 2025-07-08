@@ -14,23 +14,21 @@ class ModelController {
 public:
     ModelController() = default;
     ~ModelController() = default;
+
     QMatrix4x4 getModelMatrix() const;
     QVector<QMatrix4x4> const getModelMatrices(){return m_modelMatrices;}
+    QString getErrorString() const { return errorString; }
+
     void translate(const QVector3D &translation);
     void rotate(float angle, const QVector3D &axis);
     void scale(const QVector3D &scalingFactors);
     void resetTransformations();
-    QString getErrorString() const { return errorString; }
-
-
-
-    //*************************************
-    bool loadModel(const QString &filePath, const int a);
     void calculateNormals(ModelData &model);
+
     const ModelGL &getModelGL() const {return m_modelGL;};
     const QVector<ModelGL> &getModelGLs() const { return m_modelGLs; }
-    //*************************************
 
+    bool loadModel(const QString &filePath, const int a);
 
 private:
     QString errorString;

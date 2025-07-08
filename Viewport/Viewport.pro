@@ -12,7 +12,8 @@ CONFIG -= app_bundle
 
 include($$PWD/../MainWindow/MainWindow.pri)
 
-HEADERS +=
+HEADERS += \
+    logger.h\
 
 SOURCES += \
-        $$PWD/main.cpp
+        $$PWD/main.cpp\

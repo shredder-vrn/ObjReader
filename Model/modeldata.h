@@ -11,59 +11,31 @@ public:
     ModelData() = default;
     ~ModelData() = default;
 
-    //! REVIEW: ';' в конце строк явно лишнее
-    const QVector<QVector3D> &vertices() const {return m_vertices;};
-    const QVector<QVector2D> &textureVertices() const {return m_textureVertices;};
-    const QVector<QVector3D> &normals() const {return m_normals;};
+    const QVector<QVector3D> &vertices() const {return m_vertices;}
+    const QVector<QVector2D> &textureVertices() const {return m_textureVertices;}
+    const QVector<QVector3D> &normals() const {return m_normals;}
 
-    const QVector<int> &faceVertexIndices() const {return m_faceVertexIndices;};
-    const QVector<int> &faceTextureVertexIndices() const {return m_faceTextureVertexIndices;};
-    const QVector<int> &faceNormalIndices() const {return m_faceNormalIndices;};
-    const QVector<int> &polygonStarts() const {return m_polygonStarts;};
+    const QVector<int> &faceVertexIndices() const {return m_faceVertexIndices;}
+    const QVector<int> &faceTextureVertexIndices() const {return m_faceTextureVertexIndices;}
+    const QVector<int> &faceNormalIndices() const {return m_faceNormalIndices;}
+    const QVector<int> &polygonStarts() const {return m_polygonStarts;}
 
-    //! REVIEW: переносы похерены + это надо в сурс перенести
-    ModelData &setVertices(const QVector<QVector3D> &v) {
-            m_vertices = v;
-            return *this;
-        }
-
+    ModelData& setVertices(const QVector<QVector3D>& vertices);
 
     //! REVIEW: тут явно не хватает ассертов на isValid. вот мы говорили, что не стоит инкапсулировать просто так. нужно, чтобы констрейнты не нарушались. щас все геттеры и сеттеры абсолютно прозрачные. их могло бы и не быть и ничего бы не изменгилось
-    ModelData &setTextureVertices(const QVector<QVector2D> &v) {
-        m_textureVertices = v;
-        return *this;
-    }
+    ModelData &setTextureVertices(const QVector<QVector2D> &v);
 
-    ModelData &setNormals(const QVector<QVector3D> &n) {
-        m_normals = n;
-        return *this;
-    }
+    ModelData &setNormals(const QVector<QVector3D> &n);
 
-    ModelData &setFaceVertexIndices(const QVector<int> &f) {
-        m_faceVertexIndices = f;
-        return *this;
-    }
+    ModelData &setFaceVertexIndices(const QVector<int> &f);
 
-    ModelData &setFaceTextureVertexIndices(const QVector<int> &f) {
-        m_faceTextureVertexIndices = f;
-        return *this;
-    }
+    ModelData &setFaceTextureVertexIndices(const QVector<int> &f);
 
-    ModelData &setFaceNormalIndices(const QVector<int> &f) {
-        m_faceNormalIndices = f;
-        return *this;
-    }
+    ModelData &setFaceNormalIndices(const QVector<int> &f);
 
-    ModelData &setPolygonStarts(const QVector<int> &p) {
-        m_polygonStarts = p;
-        return *this;
-    }
+    ModelData &setPolygonStarts(const QVector<int> &p);
 
-    //! REVIEW: кодстайл
-    bool isValid() const {
-            return !m_vertices.isEmpty() &&
-                   !m_faceVertexIndices.isEmpty() &&
-                   m_faceVertexIndices.size() % 3 == 0;};
+    bool isValid() const;
 
 private:
     QVector<QVector3D> m_vertices;
