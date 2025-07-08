@@ -14,35 +14,34 @@
 namespace Viewer {
 
 
-class ModelGL
+class ModelGL : public ObjectGL
 {
 public:
     ModelGL();
     ~ModelGL();
 
+    GLuint vao() const override;
+    GLuint vertexCount() const override;
+    GLuint textureId() const override;
+
+    void setVao(GLuint vao) override;
+    void setVertexCount(GLuint count) override;
+
+    bool hasTexture() const override;
+    bool useNormals() const override;
+    bool isValid() const override;
+    bool hasNormals() const override;
+
+
+    void setHasTexture(bool enabled) override;
+    void setUseNormals(bool enabled) override;
+    void setTextureId(GLuint id) override;
+
+    void clear() override;
+    bool operator!=(const ObjectGL &other) const override;
+
     void setModelData(const ModelData *modelData);
     const ModelData *getModelData() const;
-
-    GLuint vao() const;
-    GLuint vertexCount() const;
-    GLuint textureId() const;
-
-    void setVao(GLuint vao);
-    void setVertexCount(GLuint count);
-
-    bool hasTexture() const;
-    bool useNormals() const;
-    bool isValid() const;
-    bool hasNormals() const;
-
-
-    void setHasTexture(bool enabled);
-    void setUseNormals(bool enabled);
-    void setTextureId(GLuint id);
-
-    void clear();
-
-    bool operator!=(const ModelGL &other) const;
 
 private:
     ModelData m_modelData;
