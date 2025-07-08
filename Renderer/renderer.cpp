@@ -3,6 +3,7 @@
 #include "Viewport/logger.h"
 
 namespace Viewer {
+
 OpenGLRenderer::OpenGLRenderer()
 {
     LogDebug("OpenGLRenderer::OpenGLRenderer - запустили конструктор");
@@ -39,15 +40,11 @@ bool OpenGLRenderer::initialize()
     return true;
 }
 
-
 void OpenGLRenderer::setMVPmatrix(const QMatrix4x4 &mvp)
 {
     openGLcurrentMvp = mvp;
 }
 
-
-
-//*************************************
 void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
 {
     if (!openGLisInitialized || !shaderProgram || !modelGL.isValid()) {
@@ -206,11 +203,54 @@ bool OpenGLRenderer::loadTexture(ModelGL &modelGL, const QString &texturePath)
     return true;
 }
 
+bool OpenGLRenderer::loadTextureFromImage(ModelGL &modelGL, const QImage &image)
+{
+    if (image.isNull()) {
+        return false;
+    }
+
+    GLuint textureId;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    QImage flippedImage = image.convertToFormat(QImage::Format_RGBA8888).mirrored();
+    const uchar* data = flippedImage.constBits();
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, flippedImage.width(), flippedImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+    modelGL.setHasTexture(true);
+    modelGL.setTextureId(textureId);
+
+    return true;
+}
+
+bool OpenGLRenderer::loadTextureFromData(ModelGL &modelGL, const unsigned char *data, int width, int height, GLenum format)
+{
+    GLuint textureId;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+    modelGL.setHasTexture(true);
+    modelGL.setTextureId(textureId);
+
+    return true;
+}
+
 void OpenGLRenderer::setModelGL(const ModelGL &modelGL)
 {
     openGLcurrentModelGL = modelGL;
     initializeModel(openGLcurrentModelGL);
 }
 
-//*************************************
 }

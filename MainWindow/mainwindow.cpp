@@ -183,12 +183,46 @@ void MainWindow::loadTextureForSelectedModel()
         return;
     }
 
-    if (!m_viewport->loadTextureForModel(texturePath, m_currentModelIndex)){
+    if (!m_viewport->loadTextureForModel(m_currentModelIndex, texturePath)){
         QMessageBox::critical(this, "Ошибка", "Не удалось загрузить текстуру.");
         return;
     }
 
     m_modelsGL[m_currentModelIndex]->setHasTexture(true);
+    m_textureCheck->setChecked(true);
+    m_viewport->setModels(m_modelsGL, m_modelTransforms);
+}
+
+void MainWindow::loadTestTextureForSelectedModel()
+{
+    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size()) {
+        QMessageBox::warning(this, "Ошибка", "Модель не выбрана.");
+        return;
+    }
+
+    const int size = 64;
+    QImage image(size, size, QImage::Format_RGBA8888);
+
+    for (int y = 0; y < size; ++y) {
+        for (int x = 0; x < size; ++x) {
+            bool isBlack = ((x / 16) % 2 + (y / 16) % 2) % 2 == 0;
+            image.setPixelColor(x, y, isBlack ? Qt::black : Qt::white);
+        }
+    }
+
+    ModelGL* modelGL = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
+    if (!modelGL) {
+        QMessageBox::critical(this, "Ошибка", "Выбранный объект не поддерживает текстуры");
+        return;
+    }
+
+    bool success = m_viewport->loadTextureForModel(m_currentModelIndex, image);
+    if (!success) {
+        QMessageBox::critical(this, "Ошибка", "Не удалось создать текстуру");
+        return;
+    }
+
+    modelGL->setHasTexture(true);
     m_textureCheck->setChecked(true);
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
 }
@@ -325,8 +359,12 @@ QGroupBox *MainWindow::createTransformControls()
 
     QPushButton *m_loadTextureButton = new QPushButton("Load Texture", this);
     layout->addRow(m_loadTextureButton);
-
     connect(m_loadTextureButton, &QPushButton::clicked, this, &MainWindow::loadTextureForSelectedModel);
+
+    QPushButton *m_testTextureButton = new QPushButton("Load Test Texture", this);
+    layout->addRow(m_testTextureButton);
+    connect(m_testTextureButton, &QPushButton::clicked, this, &MainWindow::loadTestTextureForSelectedModel);
+
 
     QPushButton *m_fitToViewButton = new QPushButton("Fit to View", this);
     layout->addRow(m_fitToViewButton);

@@ -31,8 +31,9 @@ public:
     void switchToPerspective();
     void switchToOrthographic();
     void fitToView();
-    //! REVIEW: все ещё текстура только через диск. пу-пу-пу
-    bool loadTextureForModel(const QString& texturePath, int modelIndex);
+    bool loadTextureForModel(int modelIndex, const QString& texturePath);
+    bool loadTextureForModel(int modelIndex, const QImage& image);
+    bool loadTextureForModel(int modelIndex, const unsigned char *data, int width, int height, GLenum format = GL_RGBA);
     void setModels(const QVector<ObjectGL*>& models, const QVector<QMatrix4x4>& transforms);
 
 protected:

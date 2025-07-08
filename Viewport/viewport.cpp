@@ -2,23 +2,50 @@
 #include "Viewport/logger.h"
 
 namespace Viewer{
+
 ViewportWidget::ViewportWidget(QWidget *parent) : QOpenGLWidget(parent)
 {
-    LogDebug("ViewportWidget::ViewportWidget - запустили конструктор");
     QSurfaceFormat format;
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat :: CoreProfile);
     setFormat(format);
     m_camera = std::make_unique<CameraPerspective>();
-    LogDebug("ViewportWidget::ViewportWidget - конструктор отработал");
 }
 
-bool ViewportWidget::loadTextureForModel(const QString &texturePath, int modelIndex)
+bool ViewportWidget::loadTextureForModel(int modelIndex, const QString &texturePath)
 {
     if (modelIndex < 0 || modelIndex >= m_modelsGL.size())
         return false;
 
-    return m_renderer.loadTexture(*m_modelsGL[modelIndex], texturePath);
+    ModelGL* modelGL = dynamic_cast<ModelGL*>(m_modelsGL[modelIndex]);
+    if (!modelGL)
+        return false;
+
+    return m_renderer.loadTexture(*modelGL, texturePath);
+}
+
+bool ViewportWidget::loadTextureForModel(int modelIndex, const QImage &image)
+{
+    if (modelIndex < 0 || modelIndex >= m_modelsGL.size())
+        return false;
+
+    ModelGL* modelGL = dynamic_cast<ModelGL*>(m_modelsGL[modelIndex]);
+    if (!modelGL)
+        return false;
+
+    return m_renderer.loadTextureFromImage(*modelGL, image);
+}
+
+bool ViewportWidget::loadTextureForModel(int modelIndex, const unsigned char *data, int width, int height, GLenum format)
+{
+    if (modelIndex < 0 || modelIndex >= m_modelsGL.size())
+        return false;
+
+    ModelGL* modelGL = dynamic_cast<ModelGL*>(m_modelsGL[modelIndex]);
+    if (!modelGL)
+        return false;
+
+    return m_renderer.loadTextureFromData(*modelGL, data, width, height, format);
 }
 
 void ViewportWidget::resizeEvent(QResizeEvent *event)
@@ -44,10 +71,8 @@ void ViewportWidget::paintGL()
     QMatrix4x4 proj = m_camera->projectionMatrix();
 
     for (int i = 0; i < m_modelsGL.size(); ++i) {
-        if (!m_modelsGL[i] || !m_modelsGL[i]->isValid()) {
+        if (!m_modelsGL[i] || !m_modelsGL[i]->isValid())
             continue;
-        }
-
         QMatrix4x4 mvp = proj * view * m_modelTransforms[i];
         m_renderer.render(*m_modelsGL[i], mvp);
     }
@@ -76,8 +101,6 @@ void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
     update();
 }
 
-
-
 void ViewportWidget::switchToPerspective()
 {
     if (m_camera->type() == CameraType::Perspective)
@@ -100,9 +123,10 @@ void ViewportWidget::switchToOrthographic()
 
 void ViewportWidget::fitToView()
 {
-    if (m_modelsGL.isEmpty() || m_modelTransforms.isEmpty()) {
+    if (m_modelsGL.isEmpty())
         return;
-    }
+    if (m_modelTransforms.isEmpty())
+        return;
 
     QVector3D minBound(std::numeric_limits<float>::max(),
                        std::numeric_limits<float>::max(),
@@ -151,13 +175,10 @@ void ViewportWidget::setModels(const QVector<ObjectGL*>& models, const QVector<Q
     m_modelsGL.clear();
     for (ObjectGL* obj : models) {
         ModelGL* modelGL = dynamic_cast<ModelGL*>(obj);
-        if (modelGL) {
+        if (modelGL)
             m_modelsGL.append(modelGL);
-        }
     }
-
     m_modelTransforms = transforms;
-
     update();
 }
 

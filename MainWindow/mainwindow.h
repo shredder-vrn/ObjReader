@@ -43,6 +43,7 @@ private slots:
     void updateSelectedModelTextureState(bool checked);
     void updateTransformFromUI();
     void updateModelList();
+    void loadTestTextureForSelectedModel();
 
 private:
     void setupUserInterface();
