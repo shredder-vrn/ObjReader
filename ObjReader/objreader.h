@@ -23,7 +23,7 @@ bool parseFace(
         QVector<int> &polygonStarts);
 
 
-bool parseTokens(QTextStream &in, ModelData &modelData);
+bool parseTokens(QTextStream &in, ModelData &model, QString *errorLine = nullptr, int *errorLineNum = nullptr);
 
 bool parseObj(const QString &filePath, ModelData &modelData);
 

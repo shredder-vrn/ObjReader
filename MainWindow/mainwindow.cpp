@@ -4,7 +4,6 @@ namespace Viewer{
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    LogDebug("MainWindow::MainWindow - запустили конструктор");
     setWindowTitle("OBJ Viewer");
     resize(1400, 900);    
 
@@ -21,30 +20,37 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QAction* openAction = fileMenu->addAction("Open");
 
     connect(openAction, &QAction::triggered, this, &MainWindow::openModelFile);
-
-    LogDebug("MainWindow::MainWindow - конструктор отработал");
 }
 
 MainWindow::~MainWindow()
 {
-    LogDebug("MainWindow::~MainWindow - запустили деструктор");
-
-    LogDebug("MainWindow::~MainWindow - деструктор отработал");
 }
 
 bool MainWindow::loadModel(const QString &filePath, ModelData &outData)
 {
     QFile file(filePath);
     if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(nullptr, "Ошибка", QString("Не удалось открыть файл:\n%1").arg(filePath));
         return false;
     }
 
     QTextStream in(&file);
-    if (!parseTokens(in, outData)) {
+    QString errorLine;
+    int errorLineNum = 0;
+
+    if (!parseTokens(in, outData, &errorLine, &errorLineNum)) {
+        LogError(QString("loadModel - ошибка парсинга на строке %1: %2").arg(errorLineNum).arg(errorLine));
+        QMessageBox::critical(
+            this,
+            "Ошибка формата",
+            QString("Ошибка в файле на строке %1:\n\"%2\"")
+                .arg(errorLineNum).arg(errorLine)
+        );
         return false;
     }
 
     if (outData.vertices().isEmpty()) {
+        QMessageBox::warning(nullptr, "Предупреждение", "Модель не содержит вершин.");
         return false;
     }
 
@@ -74,14 +80,17 @@ bool MainWindow::loadModel(const QString &filePath, ModelData &outData)
 
 void MainWindow::openModelFile()
 {
-    LogDebug("MainWindow::openModelFile - запустили openModelFile");
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
-    if (filePath.isEmpty())
+    if (filePath.isEmpty()){
+        QMessageBox::warning(this, "Файл не выбран", "Пользователь отменил выбор файла.");
         return;
+    }
 
     ModelData modelData;
-    if (!loadModel(filePath, modelData))
+    if (!loadModel(filePath, modelData)){
+        QMessageBox::critical(this, "Ошибка загрузки", "Не удалось загрузить модель из файла.");
         return;
+    }
 
     ModelGL* modelGL = new ModelGL();
     modelGL->setModelData(new ModelData(modelData));
@@ -92,27 +101,19 @@ void MainWindow::openModelFile()
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
     updateModelList();
     m_viewport->fitToView();
-
-    LogDebug("MainWindow::openModelFile - openModelFile отработал");
 }
 
 void MainWindow::updateModelList()
 {
-    LogDebug("MainWindow::updateModelList - запустили updateModelList");
-
     m_explorerModel->removeRows(0, m_explorerModel->rowCount());
     for (int i = 0; i < m_modelsGL.size(); ++i) {
         QStandardItem* item = new QStandardItem(QString("Model %1").arg(i + 1));
         m_explorerModel->appendRow(item);
     }
-
-    LogDebug("MainWindow::updateModelList - updateModelList отработал");
 }
 
 void MainWindow::onExplorerModelSelected(const QModelIndex &index)
 {
-    LogDebug("MainWindow::onExplorerModelSelected - запустили onExplorerModelSelected");
-
     m_currentModelIndex = index.row();
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         const ObjectGL *objectGL = m_modelsGL[m_currentModelIndex];
@@ -124,38 +125,26 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
         m_facesLabel->setText(QString::number(modelGL->getModelData()->faceVertexIndices().size() / 3));
         m_textureCheck->setChecked(modelGL->hasTexture());
     }
-
-    LogDebug("MainWindow::onExplorerModelSelected - onExplorerModelSelected отработал");
 }
 
 void MainWindow::UpdateSceneLightingState(bool checked)
 {
-    LogDebug("MainWindow::UpdateSceneLightingState - запустили UpdateSceneLightingState");
-
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setUseNormals(checked);
         m_viewport->setModels(m_modelsGL, m_modelTransforms);
     }
-
-    LogDebug("MainWindow::UpdateSceneLightingState - UpdateSceneLightingState отработал");
 }
 
 void MainWindow::updateSelectedModelTextureState(bool checked)
 {
-    LogDebug("MainWindow::updateSelectedModelTextureState - запустили updateSelectedModelTextureState");
-
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setHasTexture(checked);
         m_viewport->setModels(m_modelsGL, m_modelTransforms);
     }
-
-    LogDebug("MainWindow::updateSelectedModelTextureState - updateSelectedModelTextureState отработал");
 }
 
 void MainWindow::updateTransformFromUI()
 {
-    LogDebug("MainWindow::updateTransformFromUI - запустили updateTransformFromUI");
-
     if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
         return;
 
@@ -180,35 +169,32 @@ void MainWindow::updateTransformFromUI()
 
     m_modelTransforms[m_currentModelIndex] = transform;
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
-
-    LogDebug("MainWindow::updateTransformFromUI - updateTransformFromUI отработал");
 }
 
 void MainWindow::loadTextureForSelectedModel()
 {
-    LogDebug("MainWindow::loadTextureForSelectedModel - запустили loadTextureForSelectedModel");
-
     if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
         return;
 
     QString texturePath = QFileDialog::getOpenFileName(this, tr("Open Texture"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
 
-    if (texturePath.isEmpty())
+    if (texturePath.isEmpty()){
+        QMessageBox::information(this, "Нет файла", "Пользователь не выбрал текстуру.");
         return;
+    }
 
-    if (!m_viewport->loadTextureForModel(texturePath, m_currentModelIndex))
+    if (!m_viewport->loadTextureForModel(texturePath, m_currentModelIndex)){
+        QMessageBox::critical(this, "Ошибка", "Не удалось загрузить текстуру.");
         return;
+    }
 
     m_modelsGL[m_currentModelIndex]->setHasTexture(true);
     m_textureCheck->setChecked(true);
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
-
-    LogDebug("MainWindow::loadTextureForSelectedModel - loadTextureForSelectedModel отработал");
 }
 
 void MainWindow::setupUserInterface()
 {
-    LogDebug("MainWindow::setupUserInterface - запустили setupUserInterface");
     m_explorerDock = new QDockWidget("Explorer", this);
     m_explorerView = new QTreeView(m_explorerDock);
     m_explorerModel = new QStandardItemModel(this);
@@ -241,7 +227,6 @@ void MainWindow::setupUserInterface()
 
     connect(perspAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToPerspective);
     connect(orthoAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToOrthographic);
-    LogDebug("MainWindow::setupUserInterface - setupUserInterface отработал");
 }
 
 void MainWindow::calculateNormals(ModelData &model)
@@ -284,7 +269,6 @@ void MainWindow::calculateNormals(ModelData &model)
 
 QGroupBox *MainWindow::createModelInfoSection()
 {
-    LogDebug("MainWindow::createModelInfoSection - запустили createModelInfoSection");
     QGroupBox *group = new QGroupBox("Properties");
     QFormLayout *layout = new QFormLayout();
 
@@ -297,14 +281,11 @@ QGroupBox *MainWindow::createModelInfoSection()
     layout->addRow("Faces:", m_facesLabel);
 
     group->setLayout(layout);
-    LogDebug("MainWindow::createModelInfoSection - createModelInfoSection отработал");
     return group;
 }
 
 QGroupBox *MainWindow::createTransformControls()
 {
-    LogDebug("MainWindow::createTransformControls - запустили createTransformControls");
-
     QGroupBox *group = new QGroupBox("Transform");
     QFormLayout *layout = new QFormLayout();
 
@@ -353,13 +334,11 @@ QGroupBox *MainWindow::createTransformControls()
     connect(m_fitToViewButton, &QPushButton::clicked, m_viewport, &ViewportWidget::fitToView);
 
     group->setLayout(layout);
-    LogDebug("MainWindow::createTransformControls - createTransformControls отработал");
     return group;
 }
 
 QGroupBox *MainWindow::createRenderSettingsSection()
 {
-    LogDebug("MainWindow::createRenderSettingsSection - запустили createRenderSettingsSection");
     QGroupBox *group = new QGroupBox("Render Options");
     QVBoxLayout *layout = new QVBoxLayout();
 
@@ -377,7 +356,6 @@ QGroupBox *MainWindow::createRenderSettingsSection()
     connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::UpdateSceneLightingState);
 
     group->setLayout(layout);
-    LogDebug("MainWindow::createRenderSettingsSection - createRenderSettingsSection отработал");
     return group;
 }
 

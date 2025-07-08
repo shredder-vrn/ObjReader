@@ -182,7 +182,7 @@ bool parseFace(
     return true;
 }
 
-bool parseTokens(QTextStream &in, ModelData &model)
+bool parseTokens(QTextStream &in, ModelData &model, QString *errorLine, int *errorLineNum)
 {
     QVector<QVector3D> vertices;
     QVector<QVector2D> textureVertices;
@@ -193,24 +193,41 @@ bool parseTokens(QTextStream &in, ModelData &model)
     QVector<int> faceNormalIndices;
     QVector<int> polygonStarts;
 
+    int lineNum = 0;
+
     while (!in.atEnd()) {
         QString line = in.readLine().trimmed();
+        lineNum++;
+
         QStringList tokens = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
         if (tokens.isEmpty())
             continue;
 
         const QString type = tokens[0];
-        if (type == "v" && !parseVertex(tokens, vertices))
-            return false;
 
-        if (type == "vt" && !parseTexCoord(tokens, textureVertices))
+        if (type == "v" && !parseVertex(tokens, vertices)) {
+            if (errorLine) *errorLine = line;
+            if (errorLineNum) *errorLineNum = lineNum;
             return false;
+        }
 
-        if (type == "vn" && !parseNormal(tokens, normals))
+        if (type == "vt" && !parseTexCoord(tokens, textureVertices)) {
+            if (errorLine) *errorLine = line;
+            if (errorLineNum) *errorLineNum = lineNum;
             return false;
+        }
 
-        if (type == "f" && !parseFace(line, faceVertexIndices, faceTextureVertexIndices, faceNormalIndices, polygonStarts))
+        if (type == "vn" && !parseNormal(tokens, normals)) {
+            if (errorLine) *errorLine = line;
+            if (errorLineNum) *errorLineNum = lineNum;
             return false;
+        }
+
+        if (type == "f" && !parseFace(line, faceVertexIndices, faceTextureVertexIndices, faceNormalIndices, polygonStarts)) {
+            if (errorLine) *errorLine = line;
+            if (errorLineNum) *errorLineNum = lineNum;
+            return false;
+        }
     }
 
     model
