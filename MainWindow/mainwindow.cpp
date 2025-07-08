@@ -42,15 +42,9 @@ void MainWindow::logFields() const
     LogDebug(QString("m_modelsGL.size() = %1").arg(m_modelsGL.size()));
 }
 
-QMatrix4x4 MainWindow::getModelMatrix() const
-{
-    return m_modelControllerModelMatrix;
-}
 
-const QVector<QMatrix4x4> MainWindow::getModelMatrices()
-{
-    return m_modelMatrices;
-}
+
+
 
 void MainWindow::translate(const QVector3D &translation)
 {
@@ -114,6 +108,50 @@ void MainWindow::calculateNormals(ModelData &model)
     model.setNormals(normals);
 }
 
+bool MainWindow::loadModel(const QString &filePath)
+{
+    QFile file(filePath);
+    if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    QTextStream in(&file);
+    if (!parseTokens(in, m_modelData)) {
+        return false;
+    }
+
+    if (m_modelData.vertices().isEmpty()) {
+        return false;
+    }
+
+    QVector<int> faceVertexIndices = m_modelData.faceVertexIndices();
+    QVector<int> faceTextureVertexIndices = m_modelData.faceTextureVertexIndices();
+    QVector<int> faceNormalIndices = m_modelData.faceNormalIndices();
+    QVector<int> polygonStarts = m_modelData.polygonStarts();
+
+    simpleTriangulateModel(
+        m_modelData.vertices(),
+        faceVertexIndices,
+        faceTextureVertexIndices,
+        faceNormalIndices,
+        polygonStarts
+    );
+
+    m_modelData
+        .setFaceVertexIndices(faceVertexIndices)
+        .setFaceTextureVertexIndices(faceTextureVertexIndices)
+        .setFaceNormalIndices(faceNormalIndices)
+        .setPolygonStarts(polygonStarts);
+
+    calculateNormals(m_modelData);
+
+    m_modelGL.setModelData(&m_modelData);
+    m_modelGLs.append(m_modelGL);
+    m_modelMatrices.append(QMatrix4x4());
+
+    return true;
+}
+
 void MainWindow::openModelFile()
 {
     LogDebug("MainWindow::openModelFile - запустили openModelFile");
@@ -121,11 +159,10 @@ void MainWindow::openModelFile()
     if (filePath.isEmpty())
         return;
 
-    ModelController controller;
-    if (!controller.loadModel(filePath))
+    if (!loadModel(filePath))
         return;
 
-    const ModelData *data = controller.getModelGL().getModelData();
+    const ModelData *data = getModelGL().getModelData();
     if (!data)
         return;
 

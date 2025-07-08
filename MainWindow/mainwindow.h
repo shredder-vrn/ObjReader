@@ -19,8 +19,10 @@
 #include <QPushButton>
 
 #include "Viewport/logger.h"
+#include "ObjReader/objreader.h"
 #include "Viewport/viewport.h"
-#include "ModelController/modelcontroller.h"
+#include "Triangulate/triangulate.h"
+
 
 namespace Viewer{
 
@@ -41,21 +43,17 @@ private slots:
     void updateTransformFromUI();
     void updateModelList();
     void logFields() const;
-
-
-    QMatrix4x4 getModelMatrix() const;
-    QVector<QMatrix4x4> const getModelMatrices();
-
     void translate(const QVector3D &translation);
     void rotate(float angle, const QVector3D &axis);
     void scale(const QVector3D &scalingFactors);
     void resetTransformations();
     void calculateNormals(ModelData &model);
 
+
     const ModelGL &getModelGL() const {return m_modelGL;};
     const QVector<ModelGL> &getModelGLs() const { return m_modelGLs; }
 
-   // bool loadModel(const QString &filePath);
+    bool loadModel(const QString &filePath);
 
 
 private:
