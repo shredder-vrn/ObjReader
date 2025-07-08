@@ -8,7 +8,7 @@
 #include <QVector>
 #include <QMatrix4x4>
 
-#include "Model/modelgl.h"
+#include "ObjectsGL/modelgl.h"
 #include "Shaders/shadersprogram.h"
 
 namespace Viewer{

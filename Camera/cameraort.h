@@ -8,12 +8,11 @@
 
 namespace Viewer {
 
-//! REVIEW: full name
-class CameraOrt : public CameraInterface
+class CameraOrthographic : public CameraInterface
 {
 public:
-    CameraOrt();
-    ~CameraOrt() override = default;
+    CameraOrthographic();
+    ~CameraOrthographic() override = default;
 
     QMatrix4x4 viewMatrix() const override;
     QMatrix4x4 projectionMatrix() const override;

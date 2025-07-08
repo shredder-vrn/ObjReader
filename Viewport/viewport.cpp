@@ -1,20 +1,16 @@
 #include "viewport.h"
-
-#include <QMouseEvent>
-#include <QDebug>
-#include <QtMath>
-#include <limits>
-
-#include "ObjReader/objreader.h"
+#include "Viewport/logger.h"
 
 namespace Viewer{
 ViewportWidget::ViewportWidget(QWidget *parent) : QOpenGLWidget(parent)
 {
+    LogDebug("ViewportWidget::ViewportWidget - запустили конструктор");
     QSurfaceFormat format;
     format.setVersion(3, 3);
     format.setProfile(QSurfaceFormat :: CoreProfile);
     setFormat(format);
-    m_camera = std::make_unique<CameraPer>();
+    m_camera = std::make_unique<CameraPerspective>();
+    LogDebug("ViewportWidget::ViewportWidget - конструктор отработал");
 }
 
 bool ViewportWidget::loadTextureForModel(const QString &texturePath, int modelIndex)
@@ -148,7 +144,7 @@ void ViewportWidget::switchToPerspective()
 {
     if (m_camera->type() == CameraType::Perspective)
         return;
-    auto newCam = std::make_unique<CameraPer>();
+    auto newCam = std::make_unique<CameraPerspective>();
     newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
     m_camera = std::move(newCam);
     update();
@@ -158,7 +154,7 @@ void ViewportWidget::switchToOrthographic()
 {
     if (m_camera->type() == CameraType::Orthographic)
         return;
-    auto newCam = std::make_unique<CameraOrt>();
+    auto newCam = std::make_unique<CameraOrthographic>();
     newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
     m_camera = std::move(newCam);
     update();

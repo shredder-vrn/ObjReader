@@ -12,6 +12,19 @@
 
 namespace Viewer{
 
+ModelController::ModelController()
+{
+    LogDebug("ModelController::ModelController - запустили конструктор");
+    LogDebug("ModelController::ModelController - конструктор отработал");
+
+}
+
+ModelController::~ModelController()
+{
+    LogDebug("ModelController::ModelController - запустили деструктор");
+    LogDebug("ModelController::~ModelController - деструктор отработал");
+}
+
 QMatrix4x4 ModelController :: getModelMatrix() const
 {
     return m_modelControllerModelMatrix;

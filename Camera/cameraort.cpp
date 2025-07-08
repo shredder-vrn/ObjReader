@@ -1,31 +1,34 @@
 #include "cameraort.h"
+#include "Viewport/logger.h"
 
 namespace Viewer{
 
-CameraOrt::CameraOrt()
+CameraOrthographic::CameraOrthographic()
 {
+    LogDebug("CameraPer::CameraPer - запустили конструктор");
     updateViewMatrix();
     updateProjectionMatrix();
+    LogDebug("CameraPer::CameraPer - запустили конструктор");
 }
 
-QMatrix4x4 CameraOrt::viewMatrix() const
+QMatrix4x4 CameraOrthographic::viewMatrix() const
 {
     return m_viewMatrix;
 }
 
-QMatrix4x4 CameraOrt::projectionMatrix() const
+QMatrix4x4 CameraOrthographic::projectionMatrix() const
 {
     return m_projectionMatrix;
 }
 
-void CameraOrt::setViewportSize(const int width, const int height)
+void CameraOrthographic::setViewportSize(const int width, const int height)
 {
     m_width = width;
     m_height = height;
     updateProjectionMatrix();
 }
 
-void CameraOrt::rotateAroundTarget(const float deltaX, const float deltaY)
+void CameraOrthographic::rotateAroundTarget(const float deltaX, const float deltaY)
 {
     const float sensitivity = 0.5f;
 
@@ -39,7 +42,7 @@ void CameraOrt::rotateAroundTarget(const float deltaX, const float deltaY)
     updateViewMatrix();
 }
 
-void CameraOrt::zoom(const float delta)
+void CameraOrthographic::zoom(const float delta)
 {
     const float zoomSpeed = 0.1f;
     m_zoomFactor -= delta * zoomSpeed;
@@ -48,19 +51,19 @@ void CameraOrt::zoom(const float delta)
     updateProjectionMatrix();
 }
 
-void CameraOrt::setPosition(const QVector3D &pos)
+void CameraOrthographic::setPosition(const QVector3D &pos)
 {
     m_position = pos;
     updateViewMatrix();
 }
 
-void CameraOrt::updateViewMatrix()
+void CameraOrthographic::updateViewMatrix()
 {
     m_viewMatrix.setToIdentity();
     m_viewMatrix.lookAt(m_position, m_target, m_up);
 }
 
-void CameraOrt::updateProjectionMatrix()
+void CameraOrthographic::updateProjectionMatrix()
 {
     float halfWidth = (m_right - m_left) / 2.0f * m_zoomFactor;
     float halfHeight = (m_top - m_bottom) / 2.0f * m_zoomFactor;

@@ -1,21 +1,25 @@
 #include "cameraper.h"
+#include "Viewport/logger.h"
+
 namespace Viewer{
-CameraPer::CameraPer()
+CameraPerspective::CameraPerspective()
 {
+    LogDebug("CameraPer::CameraPer - запустили конструктор");
     updateViewMatrix();
+    LogDebug("CameraPer::CameraPer - запустили конструктор");
 }
 
-QMatrix4x4 CameraPer::viewMatrix() const
+QMatrix4x4 CameraPerspective::viewMatrix() const
 {
     return m_viewMatrix;
 }
 
-QMatrix4x4 CameraPer::projectionMatrix() const
+QMatrix4x4 CameraPerspective::projectionMatrix() const
 {
     return m_projectionMatrix;
 }
 
-void CameraPer::setViewportSize(const int width, const int height)
+void CameraPerspective::setViewportSize(const int width, const int height)
 {
     m_width = width;
     m_height = height;
@@ -24,7 +28,7 @@ void CameraPer::setViewportSize(const int width, const int height)
     m_projectionMatrix.perspective(m_fov, width / (float)height, m_nearPlane, m_farPlane);
 }
 
-void CameraPer::zoom(const float delta)
+void CameraPerspective::zoom(const float delta)
 {
     float speed = 1.0f;
     QVector3D direction = (m_target - m_position).normalized();
@@ -35,7 +39,7 @@ void CameraPer::zoom(const float delta)
     updateViewMatrix();
 }
 
-void CameraPer::rotateAroundTarget(const float deltaX, const float deltaY)
+void CameraPerspective::rotateAroundTarget(const float deltaX, const float deltaY)
 {
     const float speed = 0.5f;
 
@@ -48,7 +52,7 @@ void CameraPer::rotateAroundTarget(const float deltaX, const float deltaY)
     updateViewMatrix();
 }
 
-void CameraPer::updateViewMatrix()
+void CameraPerspective::updateViewMatrix()
 {
     QVector3D rotatedFront = m_orientation.rotatedVector(m_front);
     QVector3D rotatedUp = m_orientation.rotatedVector(m_up);

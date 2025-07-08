@@ -1,18 +1,19 @@
 #ifndef CAMERAPER_H
 #define CAMERAPER_H
 
-#include "Camera/сamerainterface.h"
-
 #include <QMatrix4x4>
 #include <QQuaternion>
 #include <QVector>
 #include <QVector3D>
+
+#include "Camera/сamerainterface.h"
+
 namespace Viewer{
-class CameraPer : public CameraInterface
+class CameraPerspective : public CameraInterface
 {
 public:
-    CameraPer();
-    virtual ~CameraPer() override {};
+    CameraPerspective();
+    virtual ~CameraPerspective() override {};
 
     QMatrix4x4 viewMatrix() const override;
     QMatrix4x4 projectionMatrix() const override;

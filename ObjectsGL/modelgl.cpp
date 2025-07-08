@@ -1,4 +1,17 @@
 #include "modelgl.h"
+#include "Viewport/logger.h"
+
+
+ModelGL::ModelGL(){
+    LogDebug("ModelGL::ModelGL - запустили конструктор");
+    LogDebug("ModelGL::ModelGL - конструктор отработал");
+};
+
+ModelGL::~ModelGL(){
+    LogDebug("ModelGL::ModelGL - запустили деструктор");
+    LogDebug("ModelGL::ModelGL - деструктор отработал");
+};
+
 
 void ModelGL::setModelData(const ModelData *modelData)
 {

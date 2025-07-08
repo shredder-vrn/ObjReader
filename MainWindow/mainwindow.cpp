@@ -292,7 +292,6 @@ void MainWindow::updateTransformFromUI()
 void MainWindow::loadTextureForSelectedModel()
 {
     LogDebug("MainWindow::loadTextureForSelectedModel - запустили loadTextureForSelectedModel");
-
     if (m_currentModelIndex < 0)
         return;
     if (m_currentModelIndex >= m_modelsGL.size())

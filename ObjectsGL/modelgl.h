@@ -13,8 +13,8 @@
 class ModelGL : protected QOpenGLFunctions
 {
 public:
-    ModelGL() = default;
-    ~ModelGL() = default;
+    ModelGL();
+    ~ModelGL();
 
     void setModelData(const ModelData *modelData);
     const ModelData *getModelData() const;

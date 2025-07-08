@@ -1,4 +1,17 @@
 #include "modeldata.h"
+#include "Viewport/logger.h"
+
+ModelData::ModelData()
+{
+    LogDebug("ModelData::ModelData - запустили конструктор");
+    LogDebug("ModelData::ModelData - конструктор отработал");
+}
+
+ModelData::~ModelData()
+{
+    LogDebug("ModelData::ModelData - запустили деструктор");
+    LogDebug("ModelData::ModelData - деструктор отработал");
+}
 
 ModelData &ModelData::setVertices(const QVector<QVector3D>& vertices)
 {

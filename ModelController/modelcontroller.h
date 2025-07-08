@@ -6,14 +6,17 @@
 
 #include "Model/model.h"
 #include "Model/modeldata.h"
-#include "Model/modelgl.h"
+#include "ObjectsGL/modelgl.h"
+#include "Viewport/logger.h"
+
+
 namespace Viewer{
 class ModelController {
 
 
 public:
-    ModelController() = default;
-    ~ModelController() = default;
+    ModelController();
+    ~ModelController();
 
     QMatrix4x4 getModelMatrix() const;
     QVector<QMatrix4x4> const getModelMatrices(){return m_modelMatrices;}

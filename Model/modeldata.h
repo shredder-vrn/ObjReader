@@ -8,8 +8,8 @@
 class ModelData
 {
 public:
-    ModelData() = default;
-    ~ModelData() = default;
+    ModelData();
+    ~ModelData();
 
     const QVector<QVector3D> &vertices() const {return m_vertices;}
     const QVector<QVector2D> &textureVertices() const {return m_textureVertices;}

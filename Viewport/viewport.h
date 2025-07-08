@@ -1,17 +1,22 @@
-//! REVIEW: VIEWPORT_H -> VIEWPORT_VIEWPORT_H
-#ifndef VIEWPORT_H
-#define VIEWPORT_H
+#ifndef VIEWPORT_VIEWPORT_H
+#define VIEWPORT_VIEWPORT_H
 
 #include <QOpenGLWidget>
 #include <QWidget>
 #include <QVector>
 #include <QVector3D>
+#include <QMouseEvent>
+#include <QDebug>
+#include <QtMath>
+#include <limits>
+
 #include "Camera/сamerainterface.h"
 #include "Camera/cameraper.h"
 #include "Camera/cameraort.h"
-
 #include "ModelController/modelcontroller.h"
 #include "Renderer/renderer.h"
+#include "ObjReader/objreader.h"
+
 
 
 namespace Viewer{
