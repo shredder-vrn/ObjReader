@@ -59,10 +59,6 @@ bool ShaderProgram::compileFromFile(const QString &vertexPath, const QString &fr
     QString fragmentSrc = fStream.readAll();
     fFile.close();
 
-    qDebug() << "[INFO] Compiling shaders:";
-    qDebug() << "Vertex shader path:" << vertexPath;
-    qDebug() << "Fragment shader path:" << fragmentPath;
-
     return compileFromString(vertexSrc, fragmentSrc);
 }
 

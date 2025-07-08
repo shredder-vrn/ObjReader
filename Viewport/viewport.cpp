@@ -105,18 +105,23 @@ void ViewportWidget::switchToPerspective()
 {
     if (m_camera->type() == CameraType::Perspective)
         return;
-    auto newCam = std::make_unique<CameraPerspective>();
-    newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
-    m_camera = std::move(newCam);
-    update();
+    switchCamera(std::make_unique<CameraPerspective>());
 }
 
 void ViewportWidget::switchToOrthographic()
 {
     if (m_camera->type() == CameraType::Orthographic)
         return;
-    auto newCam = std::make_unique<CameraOrthographic>();
+    switchCamera(std::make_unique<CameraOrthographic>());
+}
+
+void ViewportWidget::switchCamera(std::unique_ptr<Camera> newCam)
+{
     newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
+    newCam->setPosition(m_camera->position());
+    newCam->setTarget(m_camera->target());
+    newCam->setUp(m_camera->up());
+
     m_camera = std::move(newCam);
     update();
 }

@@ -39,7 +39,7 @@ public:
 private:
     void updateViewMatrix();
 
-    QVector3D m_position = QVector3D(0.0f, 0.0f, 20.0f);
+    QVector3D m_position = QVector3D(0.0f, 0.0f, 10.0f);
     QVector3D m_up = QVector3D(0.0f, 1.0f, 0.0f);
     QVector3D m_target = QVector3D(0.0f, 0.0f, 0.0f);
     QVector3D m_front = QVector3D(0.0f, 0.0f, -1.0f);

@@ -30,6 +30,8 @@ public:
 
     void switchToPerspective();
     void switchToOrthographic();
+    void switchCamera(std::unique_ptr<Camera> newCam);
+
     void fitToView();
     bool loadTextureForModel(int modelIndex, const QString& texturePath);
     bool loadTextureForModel(int modelIndex, const QImage& image);
