@@ -1,12 +1,14 @@
-#ifndef OBJECTSGL_H
-#define OBJECTSGL_H
+#ifndef VIEWER_OBJECTSGL_H
+#define VIEWER_OBJECTSGL_H
 
 #include <QOpenGLFunctions>
 
-class ObjectsGL
+namespace Viewer {
+
+class ObjectGL
 {
 public:
-    virtual ~ObjectsGL() = default;
+    virtual ~ObjectGL() = default;
 
     virtual GLuint vao() const = 0;
     virtual GLuint vertexCount() const = 0;
@@ -25,7 +27,8 @@ public:
 
     virtual void clear() = 0;
 
-    virtual bool operator!=(const ObjectsGL &other) const = 0;
+    virtual bool operator!=(const ObjectGL &other) const = 0;
 };
 
-#endif // OBJECTSGL_H
+}
+#endif // VIEWER_OBJECTSGL_H

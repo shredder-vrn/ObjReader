@@ -14,6 +14,7 @@
 #include "Shaders/shadersprogram.h"
 
 namespace Viewer{
+
 class OpenGLRenderer : protected QOpenGLFunctions_3_3_Core {
 public:
     OpenGLRenderer();

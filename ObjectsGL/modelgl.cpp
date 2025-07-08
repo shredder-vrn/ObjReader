@@ -1,6 +1,7 @@
 #include "modelgl.h"
 #include "Viewport/logger.h"
 
+namespace Viewer {
 
 ModelGL::ModelGL(){
     LogDebug("ModelGL::ModelGL - запустили конструктор");
@@ -134,4 +135,6 @@ bool ModelGL::operator!=(const ModelGL &other) const
     qDebug() << "[DEBUG] ModelGL::operator!=: результат сравнения моделей" << (result ? "true (разные)" : "false (одинаковые)");
 
     return result;
+}
+
 }

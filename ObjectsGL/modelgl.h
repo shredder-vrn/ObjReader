@@ -1,5 +1,5 @@
-#ifndef MODELGL_H
-#define MODELGL_H
+#ifndef VIEWER_MODELGL_H
+#define VIEWER_MODELGL_H
 
 #include <QVector>
 #include <QDebug>
@@ -9,8 +9,12 @@
 #include <QOpenGLFunctions_3_3_Core>
 
 #include "Model/modeldata.h"
+#include "ObjectsGL/objectsgl.h"
 
-class ModelGL : protected QOpenGLFunctions
+namespace Viewer {
+
+
+class ModelGL
 {
 public:
     ModelGL();
@@ -50,5 +54,6 @@ private:
     bool m_hasTexture = false;
     bool m_useNormals = false;
 };
+}
 
-#endif // MODELGL_H
+#endif // VIEWER_MODELGL_H
