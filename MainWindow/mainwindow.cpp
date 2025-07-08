@@ -44,36 +44,74 @@ void MainWindow::logFields() const
 
 QMatrix4x4 MainWindow::getModelMatrix() const
 {
-
+    return m_modelControllerModelMatrix;
 }
 
 const QVector<QMatrix4x4> MainWindow::getModelMatrices()
 {
-
+    return m_modelMatrices;
 }
 
 void MainWindow::translate(const QVector3D &translation)
 {
+    m_modelControllerModelMatrix.translate(translation);
 
 }
 
 void MainWindow::rotate(float angle, const QVector3D &axis)
 {
+    m_modelControllerModelMatrix.rotate(angle, axis);
 
 }
 
 void MainWindow::scale(const QVector3D &scalingFactors)
 {
+    m_modelControllerModelMatrix.scale(scalingFactors);
 
 }
 
 void MainWindow::resetTransformations()
 {
+    m_modelControllerModelMatrix.setToIdentity();
 
 }
 
 void MainWindow::calculateNormals(ModelData &model)
 {
+    if (model.vertices().isEmpty() || model.faceVertexIndices().size() % 3 != 0) {
+        return;
+    }
+
+    QVector<QVector3D> normals;
+    normals.fill(QVector3D(0.0f, 0.0f, 0.0f), model.vertices().size());
+
+    for (int i = 0; i < model.faceVertexIndices().size(); i += 3) {
+        int idx0 = model.faceVertexIndices()[i];
+        int idx1 = model.faceVertexIndices()[i + 1];
+        int idx2 = model.faceVertexIndices()[i + 2];
+
+        if (idx0 < 0 || idx1 < 0 || idx2 < 0 ||
+            idx0 >= model.vertices().size() ||
+            idx1 >= model.vertices().size() ||
+            idx2 >= model.vertices().size()) {
+            continue;
+        }
+
+        QVector3D v1 = model.vertices()[idx1] - model.vertices()[idx0];
+        QVector3D v2 = model.vertices()[idx2] - model.vertices()[idx0];
+
+        QVector3D normal = QVector3D::crossProduct(v2, v1).normalized();
+
+        normals[idx0] += normal;
+        normals[idx1] += normal;
+        normals[idx2] += normal;
+    }
+
+    for (auto& n : normals) {
+        n = n.normalized();
+    }
+
+    model.setNormals(normals);
 }
 
 void MainWindow::openModelFile()
