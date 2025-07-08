@@ -114,18 +114,15 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
     LogDebug("MainWindow::onExplorerModelSelected - запустили onExplorerModelSelected");
 
     m_currentModelIndex = index.row();
-
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
-        const ModelGL *modelGL = m_modelsGL[m_currentModelIndex];
-
+        const ObjectGL *objectGL = m_modelsGL[m_currentModelIndex];
+        const ModelGL *modelGL = dynamic_cast<const ModelGL*>(objectGL);
+        if (!modelGL)
+            return;
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));
         m_verticesLabel->setText(QString::number(modelGL->getModelData()->vertices().size()));
         m_facesLabel->setText(QString::number(modelGL->getModelData()->faceVertexIndices().size() / 3));
         m_textureCheck->setChecked(modelGL->hasTexture());
-
-        if (!modelGL->isValid()) {
-            QMessageBox::warning(this, "Предупреждение", "Модель повреждена или не содержит полигонов");
-        }
     }
 
     LogDebug("MainWindow::onExplorerModelSelected - onExplorerModelSelected отработал");
@@ -284,8 +281,6 @@ void MainWindow::calculateNormals(ModelData &model)
 
     model.setNormals(normals);
 }
-
-
 
 QGroupBox *MainWindow::createModelInfoSection()
 {

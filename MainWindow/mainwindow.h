@@ -21,6 +21,7 @@
 #include "Viewport/logger.h"
 #include "ObjReader/objreader.h"
 #include "Viewport/viewport.h"
+#include "ObjectsGL/objectsgl.h"
 #include "Triangulate/triangulate.h"
 
 
@@ -55,7 +56,7 @@ private:
     int m_currentModelIndex = -1;
 
     ViewportWidget *m_viewport = nullptr;
-    QVector<ModelGL*> m_modelsGL;
+    QVector<ObjectGL*> m_modelsGL;
     QVector<QMatrix4x4> m_modelTransforms;
 
     QDockWidget *m_propertiesDock = nullptr;
