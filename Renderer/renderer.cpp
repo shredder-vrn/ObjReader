@@ -1,9 +1,20 @@
 #include "renderer.h"
 
-#include <QDebug>
-#include <QImage>
+#include "Viewport/logger.h"
 
 namespace Viewer {
+OpenGLRenderer::OpenGLRenderer()
+{
+    LogDebug("OpenGLRenderer::OpenGLRenderer - запустили конструктор");
+    LogDebug("OpenGLRenderer::OpenGLRenderer - конструктор отработал");
+}
+
+OpenGLRenderer::~OpenGLRenderer()
+{
+    LogDebug("OpenGLRenderer::~OpenGLRenderer - запустили деструктор");
+    LogDebug("OpenGLRenderer::~OpenGLRenderer - деструктор отработал");
+}
+
 bool OpenGLRenderer::initialize()
 {
     initializeOpenGLFunctions();

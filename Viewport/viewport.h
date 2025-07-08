@@ -13,7 +13,6 @@
 #include "Camera/сamerainterface.h"
 #include "Camera/cameraper.h"
 #include "Camera/cameraort.h"
-#include "ModelController/modelcontroller.h"
 #include "Renderer/renderer.h"
 #include "ObjReader/objreader.h"
 
@@ -52,7 +51,6 @@ private:
     QPoint m_lastMousePos;
     int m_viewportWidth = 600;
     int m_viewportHeight = 800;
-    ModelController m_modelController;
     OpenGLRenderer m_renderer;
     std::unique_ptr<CameraInterface> m_camera;
 

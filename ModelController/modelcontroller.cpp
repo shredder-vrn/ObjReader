@@ -1,29 +1,10 @@
 #include "modelcontroller.h"
 
-#include <QMatrix4x4>
-#include <QtMath>
-#include <QDebug>
-#include <QFile>
+#include "Viewport/logger.h"
 
-#include <cmath>
-
-#include "ObjReader/objreader.h"
-#include "Triangulate/triangulate.h"
 
 namespace Viewer{
 
-ModelController::ModelController()
-{
-    LogDebug("ModelController::ModelController - запустили конструктор");
-    LogDebug("ModelController::ModelController - конструктор отработал");
-
-}
-
-ModelController::~ModelController()
-{
-    LogDebug("ModelController::ModelController - запустили деструктор");
-    LogDebug("ModelController::~ModelController - деструктор отработал");
-}
 
 QMatrix4x4 ModelController :: getModelMatrix() const
 {
@@ -50,8 +31,7 @@ void ModelController::resetTransformations()
     m_modelControllerModelMatrix.setToIdentity();
 }
 
-//*************************************
-bool ModelController::loadModel(const QString &filePath, const int a)
+bool ModelController::loadModel(const QString &filePath)
 {
     QFile file(filePath);
     if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -91,9 +71,6 @@ bool ModelController::loadModel(const QString &filePath, const int a)
     m_modelGL.setModelData(&m_modelData);
     m_modelGLs.append(m_modelGL);
     m_modelMatrices.append(QMatrix4x4());
-
-    qDebug() << "[INFO] Загружено вершин:" << m_modelData.vertices().size();
-    qDebug() << "[INFO] Загружено граней:" << m_modelData.faceVertexIndices().size() / 3;
 
     return true;
 }
@@ -135,7 +112,6 @@ void ModelController::calculateNormals(ModelData &model)
 
     model.setNormals(normals);
 }
-//*************************************
 
 }
 

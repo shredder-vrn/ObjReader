@@ -6,6 +6,8 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLShaderProgram>
 #include <QVector>
+#include <QDebug>
+#include <QImage>
 #include <QMatrix4x4>
 
 #include "ObjectsGL/modelgl.h"
@@ -14,8 +16,8 @@
 namespace Viewer{
 class OpenGLRenderer : protected QOpenGLFunctions_3_3_Core {
 public:
-    OpenGLRenderer() = default;
-    ~OpenGLRenderer() = default;
+    OpenGLRenderer();
+    ~OpenGLRenderer();
 
     bool initialize();
     void setMVPmatrix(const QMatrix4x4 &mvp);

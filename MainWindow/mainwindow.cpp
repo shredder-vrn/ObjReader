@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 
-namespace Viewer
-{
+namespace Viewer{
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     LogDebug("MainWindow::MainWindow - запустили конструктор");
@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QAction* openAction = fileMenu->addAction("Open");
 
     connect(openAction, &QAction::triggered, this, &MainWindow::openModelFile);
+
+    logFields();
     LogDebug("MainWindow::MainWindow - конструктор отработал");
 }
 
@@ -31,164 +33,63 @@ MainWindow::~MainWindow()
     LogDebug("MainWindow::~MainWindow - деструктор отработал");
 }
 
-void MainWindow::setupUserInterface()
+void MainWindow::logFields() const
 {
-    LogDebug("MainWindow::setupUserInterface - запустили setupUserInterface");
-    m_explorerDock = new QDockWidget("Explorer", this);
-    m_explorerView = new QTreeView(m_explorerDock);
-    m_explorerModel = new QStandardItemModel(this);
-
-    m_explorerModel->setHorizontalHeaderLabels({"Models"});
-    m_explorerView->setModel(m_explorerModel);
-    m_explorerDock->setWidget(m_explorerView);
-
-    addDockWidget(Qt::LeftDockWidgetArea, m_explorerDock);
-
-    connect(m_explorerView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::onExplorerModelSelected);
-
-    m_propertiesDock = new QDockWidget("Properties", this);
-    QWidget *propertiesPanel = new QWidget(m_propertiesDock);
-    QVBoxLayout *mainLayout = new QVBoxLayout(propertiesPanel);
-
-    mainLayout->addWidget(createModelInfoSection());
-    mainLayout->addWidget(createRenderSettingsSection());
-    mainLayout->addWidget(createTransformControls());
-    mainLayout->addStretch();
-
-    propertiesPanel->setLayout(mainLayout);
-    m_propertiesDock->setWidget(propertiesPanel);
-    m_propertiesDock->setMinimumWidth(350);
-    addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
-
-    QMenu *cameraMenu = menuBar()->addMenu("Camera");
-    QAction *perspAct = cameraMenu->addAction("Perspective");
-    QAction *orthoAct = cameraMenu->addAction("Orthographic");
-
-    connect(perspAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToPerspective);
-    connect(orthoAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToOrthographic);
-    LogDebug("MainWindow::setupUserInterface - setupUserInterface отработал");
+    LogDebug("MainWindow fields:");
+    LogDebug(QString("m_currentModelIndex = %1").arg(m_currentModelIndex));
+    LogDebug(QString("m_viewport = %1").arg(m_viewport ? "not null" : "null"));
+    LogDebug(QString("m_modelTransforms.size() = %1").arg(m_modelTransforms.size()));
+    LogDebug(QString("m_modelsGL.size() = %1").arg(m_modelsGL.size()));
 }
 
-QGroupBox *MainWindow::createModelInfoSection()
+QMatrix4x4 MainWindow::getModelMatrix() const
 {
-    LogDebug("MainWindow::createModelInfoSection - запустили createModelInfoSection");
-    QGroupBox *group = new QGroupBox("Properties");
-    QFormLayout *layout = new QFormLayout();
 
-    m_modelNameLabel = new QLabel("None");
-    m_verticesLabel = new QLabel("0");
-    m_facesLabel = new QLabel("0");
-
-    layout->addRow("Name:", m_modelNameLabel);
-    layout->addRow("Vertices:", m_verticesLabel);
-    layout->addRow("Faces:", m_facesLabel);
-
-    group->setLayout(layout);
-    LogDebug("MainWindow::createModelInfoSection - createModelInfoSection отработал");
-    return group;
 }
 
-QGroupBox *MainWindow::createRenderSettingsSection()
+const QVector<QMatrix4x4> MainWindow::getModelMatrices()
 {
-    LogDebug("MainWindow::createRenderSettingsSection - запустили createRenderSettingsSection");
-    QGroupBox *group = new QGroupBox("Render Options");
-    QVBoxLayout *layout = new QVBoxLayout();
 
-    m_wireframeCheck = new QCheckBox("Wireframe");
-    m_textureCheck = new QCheckBox("Use Texture");
-    m_lightingCheck = new QCheckBox("Lighting");
-    m_normalsCheck = new QCheckBox("Show Normals");
-
-    layout->addWidget(m_wireframeCheck);
-    layout->addWidget(m_textureCheck);
-    layout->addWidget(m_lightingCheck);
-    layout->addWidget(m_normalsCheck);
-
-    connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
-    connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::UpdateSceneLightingState);
-
-    group->setLayout(layout);
-    LogDebug("MainWindow::createRenderSettingsSection - createRenderSettingsSection отработал");
-    return group;
 }
 
-QGroupBox *MainWindow::createTransformControls()
+void MainWindow::translate(const QVector3D &translation)
 {
-    LogDebug("MainWindow::createTransformControls - запустили createTransformControls");
-    QGroupBox *group = new QGroupBox("Transform");
-    QFormLayout *layout = new QFormLayout();
 
-    auto initSpinBox = [this](double min, double max, double value) {
-        QDoubleSpinBox *spin = new QDoubleSpinBox(this);
-        spin->setRange(min, max);
-        spin->setValue(value);
-        spin->setSingleStep(0.1);
-        spin->setDecimals(3);
-        connect(spin, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-                this, &MainWindow::updateTransformFromUI);
-        return spin;
-    };
+}
 
-    m_positionSpinboxX = initSpinBox(-1000, 1000, 0);
-    m_positionSpinboxY = initSpinBox(-1000, 1000, 0);
-    m_positionSpinboxZ = initSpinBox(-1000, 1000, 0);
+void MainWindow::rotate(float angle, const QVector3D &axis)
+{
 
-    m_rotationSpinboxX = initSpinBox(-360, 360, 0);
-    m_rotationSpinboxY = initSpinBox(-360, 360, 0);
-    m_rotationSpinboxZ = initSpinBox(-360, 360, 0);
+}
 
-    m_scalingSpinboxX = initSpinBox(0.01, 10, 1);
-    m_scalingSpinboxY = initSpinBox(0.01, 10, 1);
-    m_scalingSpinboxZ = initSpinBox(0.01, 10, 1);
+void MainWindow::scale(const QVector3D &scalingFactors)
+{
 
-    layout->addRow("Position X:", m_positionSpinboxX);
-    layout->addRow("Position Y:", m_positionSpinboxY);
-    layout->addRow("Position Z:", m_positionSpinboxZ);
+}
 
-    layout->addRow("Rotation X:", m_rotationSpinboxX);
-    layout->addRow("Rotation Y:", m_rotationSpinboxY);
-    layout->addRow("Rotation Z:", m_rotationSpinboxZ);
+void MainWindow::resetTransformations()
+{
 
-    layout->addRow("Scale X:", m_scalingSpinboxX);
-    layout->addRow("Scale Y:", m_scalingSpinboxY);
-    layout->addRow("Scale Z:", m_scalingSpinboxZ);
+}
 
-    QPushButton *m_loadTextureButton = new QPushButton("Load Texture", this);
-    layout->addRow(m_loadTextureButton);
-
-    connect(m_loadTextureButton, &QPushButton::clicked, this, &MainWindow::loadTextureForSelectedModel);
-
-    QPushButton *m_fitToViewButton = new QPushButton("Fit to View", this);
-    layout->addRow(m_fitToViewButton);
-
-    connect(m_fitToViewButton, &QPushButton::clicked, m_viewport, &ViewportWidget::fitToView);
-
-    group->setLayout(layout);
-    LogDebug("MainWindow::createTransformControls - createTransformControls отработал");
-    return group;
+void MainWindow::calculateNormals(ModelData &model)
+{
 }
 
 void MainWindow::openModelFile()
 {
     LogDebug("MainWindow::openModelFile - запустили openModelFile");
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open OBJ File"), "", tr("Wavefront OBJ (*.obj)"));
-    if (filePath.isEmpty()) {
-        QMessageBox::warning(this, tr("Ошибка"), tr("Файл не выбран."));
+    if (filePath.isEmpty())
         return;
-    }
 
     ModelController controller;
-    if (!controller.loadModel(filePath, 1)) {
-        QString errorMsg = controller.getErrorString();
-        QMessageBox::critical(this, "Ошибка загрузки", QString("Не удалось загрузить модель:\n%1").arg(errorMsg));
+    if (!controller.loadModel(filePath))
         return;
-    }
 
     const ModelData *data = controller.getModelGL().getModelData();
-    if (!data) {
-        QMessageBox::critical(this, "Ошибка", "ModelData == nullptr");
+    if (!data)
         return;
-    }
 
     ModelData *persistentData = new ModelData(*data);
 
@@ -204,6 +105,8 @@ void MainWindow::openModelFile()
     updateModelList();
 
     m_viewport->fitToView();
+
+    logFields();
     LogDebug("MainWindow::openModelFile - openModelFile отработал");
 }
 
@@ -309,4 +212,142 @@ void MainWindow::loadTextureForSelectedModel()
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
     LogDebug("MainWindow::loadTextureForSelectedModel - loadTextureForSelectedModel отработал");
 }
+
+void MainWindow::setupUserInterface()
+{
+    LogDebug("MainWindow::setupUserInterface - запустили setupUserInterface");
+    m_explorerDock = new QDockWidget("Explorer", this);
+    m_explorerView = new QTreeView(m_explorerDock);
+    m_explorerModel = new QStandardItemModel(this);
+
+    m_explorerModel->setHorizontalHeaderLabels({"Models"});
+    m_explorerView->setModel(m_explorerModel);
+    m_explorerDock->setWidget(m_explorerView);
+
+    addDockWidget(Qt::LeftDockWidgetArea, m_explorerDock);
+
+    connect(m_explorerView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::onExplorerModelSelected);
+
+    m_propertiesDock = new QDockWidget("Properties", this);
+    QWidget *propertiesPanel = new QWidget(m_propertiesDock);
+    QVBoxLayout *mainLayout = new QVBoxLayout(propertiesPanel);
+
+    mainLayout->addWidget(createModelInfoSection());
+    mainLayout->addWidget(createRenderSettingsSection());
+    mainLayout->addWidget(createTransformControls());
+    mainLayout->addStretch();
+
+    propertiesPanel->setLayout(mainLayout);
+    m_propertiesDock->setWidget(propertiesPanel);
+    m_propertiesDock->setMinimumWidth(350);
+    addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
+
+    QMenu *cameraMenu = menuBar()->addMenu("Camera");
+    QAction *perspAct = cameraMenu->addAction("Perspective");
+    QAction *orthoAct = cameraMenu->addAction("Orthographic");
+
+    connect(perspAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToPerspective);
+    connect(orthoAct, &QAction::triggered, m_viewport, &ViewportWidget::switchToOrthographic);
+    LogDebug("MainWindow::setupUserInterface - setupUserInterface отработал");
+}
+
+QGroupBox *MainWindow::createModelInfoSection()
+{
+    LogDebug("MainWindow::createModelInfoSection - запустили createModelInfoSection");
+    QGroupBox *group = new QGroupBox("Properties");
+    QFormLayout *layout = new QFormLayout();
+
+    m_modelNameLabel = new QLabel("None");
+    m_verticesLabel = new QLabel("0");
+    m_facesLabel = new QLabel("0");
+
+    layout->addRow("Name:", m_modelNameLabel);
+    layout->addRow("Vertices:", m_verticesLabel);
+    layout->addRow("Faces:", m_facesLabel);
+
+    group->setLayout(layout);
+    LogDebug("MainWindow::createModelInfoSection - createModelInfoSection отработал");
+    return group;
+}
+
+QGroupBox *MainWindow::createTransformControls()
+{
+    LogDebug("MainWindow::createTransformControls - запустили createTransformControls");
+
+    QGroupBox *group = new QGroupBox("Transform");
+    QFormLayout *layout = new QFormLayout();
+
+    auto initSpinBox = [this](double min, double max, double value) {
+        QDoubleSpinBox *spin = new QDoubleSpinBox(this);
+        spin->setRange(min, max);
+        spin->setValue(value);
+        spin->setSingleStep(0.1);
+        spin->setDecimals(3);
+        connect(spin, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &MainWindow::updateTransformFromUI);
+        return spin;
+    };
+
+    m_positionSpinboxX = initSpinBox(-1000, 1000, 0);
+    m_positionSpinboxY = initSpinBox(-1000, 1000, 0);
+    m_positionSpinboxZ = initSpinBox(-1000, 1000, 0);
+
+    m_rotationSpinboxX = initSpinBox(-360, 360, 0);
+    m_rotationSpinboxY = initSpinBox(-360, 360, 0);
+    m_rotationSpinboxZ = initSpinBox(-360, 360, 0);
+
+    m_scalingSpinboxX = initSpinBox(0.01, 10, 1);
+    m_scalingSpinboxY = initSpinBox(0.01, 10, 1);
+    m_scalingSpinboxZ = initSpinBox(0.01, 10, 1);
+
+    layout->addRow("Position X:", m_positionSpinboxX);
+    layout->addRow("Position Y:", m_positionSpinboxY);
+    layout->addRow("Position Z:", m_positionSpinboxZ);
+
+    layout->addRow("Rotation X:", m_rotationSpinboxX);
+    layout->addRow("Rotation Y:", m_rotationSpinboxY);
+    layout->addRow("Rotation Z:", m_rotationSpinboxZ);
+
+    layout->addRow("Scale X:", m_scalingSpinboxX);
+    layout->addRow("Scale Y:", m_scalingSpinboxY);
+    layout->addRow("Scale Z:", m_scalingSpinboxZ);
+
+    QPushButton *m_loadTextureButton = new QPushButton("Load Texture", this);
+    layout->addRow(m_loadTextureButton);
+
+    connect(m_loadTextureButton, &QPushButton::clicked, this, &MainWindow::loadTextureForSelectedModel);
+
+    QPushButton *m_fitToViewButton = new QPushButton("Fit to View", this);
+    layout->addRow(m_fitToViewButton);
+
+    connect(m_fitToViewButton, &QPushButton::clicked, m_viewport, &ViewportWidget::fitToView);
+
+    group->setLayout(layout);
+    LogDebug("MainWindow::createTransformControls - createTransformControls отработал");
+    return group;
+}
+
+QGroupBox *MainWindow::createRenderSettingsSection()
+{
+    LogDebug("MainWindow::createRenderSettingsSection - запустили createRenderSettingsSection");
+    QGroupBox *group = new QGroupBox("Render Options");
+    QVBoxLayout *layout = new QVBoxLayout();
+
+    m_wireframeCheck = new QCheckBox("Wireframe");
+    m_textureCheck = new QCheckBox("Use Texture");
+    m_lightingCheck = new QCheckBox("Lighting");
+    m_normalsCheck = new QCheckBox("Show Normals");
+
+    layout->addWidget(m_wireframeCheck);
+    layout->addWidget(m_textureCheck);
+    layout->addWidget(m_lightingCheck);
+    layout->addWidget(m_normalsCheck);
+
+    connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
+    connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::UpdateSceneLightingState);
+
+    group->setLayout(layout);
+    LogDebug("MainWindow::createRenderSettingsSection - createRenderSettingsSection отработал");
+    return group;
+}
+
 }

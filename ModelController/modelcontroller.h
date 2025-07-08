@@ -3,11 +3,19 @@
 
 #include <QString>
 #include <QMatrix4x4>
+#include <QtMath>
+#include <QDebug>
+#include <QFile>
+
+#include <cmath>
 
 #include "Model/model.h"
 #include "Model/modeldata.h"
+#include "ObjReader/objreader.h"
 #include "ObjectsGL/modelgl.h"
 #include "Viewport/logger.h"
+#include "Triangulate/triangulate.h"
+
 
 
 namespace Viewer{
@@ -15,8 +23,6 @@ class ModelController {
 
 
 public:
-    ModelController();
-    ~ModelController();
 
     QMatrix4x4 getModelMatrix() const;
     QVector<QMatrix4x4> const getModelMatrices(){return m_modelMatrices;}
@@ -31,7 +37,7 @@ public:
     const ModelGL &getModelGL() const {return m_modelGL;};
     const QVector<ModelGL> &getModelGLs() const { return m_modelGLs; }
 
-    bool loadModel(const QString &filePath, const int a);
+    bool loadModel(const QString &filePath);
 
 private:
     QString errorString;
