@@ -64,6 +64,8 @@ void CameraOrthographic::setTarget(const QVector3D &target) { m_target = target;
 
 void CameraOrthographic::setUp(const QVector3D &up) { m_up = up; }
 
+CameraType CameraOrthographic::type() const { return CameraType::Orthographic; }
+
 void CameraOrthographic::updateViewMatrix()
 {
     m_viewMatrix.setToIdentity();
@@ -83,4 +85,5 @@ void CameraOrthographic::updateProjectionMatrix()
     m_projectionMatrix.setToIdentity();
     m_projectionMatrix.ortho(left, right, bottom, top, m_nearPlane, m_farPlane);
 }
+
 }

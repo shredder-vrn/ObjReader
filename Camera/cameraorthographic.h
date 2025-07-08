@@ -29,7 +29,7 @@ public:
     void setTarget(const QVector3D& target) override;
     void setUp(const QVector3D& up) override;
 
-    CameraType type() const override { return CameraType::Orthographic; }
+    CameraType type() const override;
 
 private:
     void updateViewMatrix();

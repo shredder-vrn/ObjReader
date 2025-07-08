@@ -55,6 +55,7 @@ private:
     int m_viewportWidth = 600;
     int m_viewportHeight = 800;
     OpenGLRenderer m_renderer;
+
     std::unique_ptr<Camera> m_camera;
 
     QVector<QMatrix4x4> m_modelTransforms;
