@@ -29,12 +29,12 @@ public:
     void setTarget(const QVector3D& target) override;
     void setUp(const QVector3D& up) override;
 
-
-
     CameraType type() const override;
 
     void updateViewMatrix();
 
+    void updateBoundsFromDistance(float distance);
+    void setProjectionBounds(float left, float right, float bottom, float top);
 
 private:
     void updateProjectionMatrix();

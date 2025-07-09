@@ -80,6 +80,24 @@ void CameraOrthographic::updateViewMatrix()
     m_viewMatrix.lookAt(m_position, m_target, m_up);
 }
 
+void CameraOrthographic::updateBoundsFromDistance(float distance)
+{
+    float baseSize = 5.0f;
+    float scale = distance / 10.0f;
+
+    setProjectionBounds(-baseSize * scale, baseSize * scale, -baseSize * scale, baseSize * scale);
+}
+
+void CameraOrthographic::setProjectionBounds(float left, float right, float bottom, float top)
+{
+    m_left = left;
+    m_right = right;
+    m_bottom = bottom;
+    m_top = top;
+
+    updateProjectionMatrix();
+}
+
 void CameraOrthographic::updateProjectionMatrix()
 {
     float halfWidth = (m_right - m_left) / 2.0f * m_zoomFactor;
@@ -93,5 +111,6 @@ void CameraOrthographic::updateProjectionMatrix()
     m_projectionMatrix.setToIdentity();
     m_projectionMatrix.ortho(left, right, bottom, top, m_nearPlane, m_farPlane);
 }
+
 
 }

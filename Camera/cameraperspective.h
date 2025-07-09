@@ -52,8 +52,8 @@ private:
     int m_height = 600;
     float m_fov = 45.0f;
     float m_nearPlane = 0.1f;
-    float m_farPlane = 100.0f;
-    float m_distance = 10.0f;
+    float m_farPlane = 1000.0f;
+    float m_distance = 15.0f;
     float m_cameraYaw = 0.0f;
     float m_cameraPitch = 0.0f;
 

@@ -149,6 +149,8 @@ void ViewportWidget::switchCamera(std::unique_ptr<Camera> newCam) {
     } else {
         auto* orthoCam = static_cast<CameraOrthographic*>(newCam.get());
         orthoCam->setPosition(oldPos);
+        float distance = (oldPos - oldTarget).length();
+        orthoCam->updateBoundsFromDistance(distance);
     }
 
     m_camera = std::move(newCam);
@@ -197,7 +199,7 @@ void ViewportWidget::fitToView()
 
     QVector3D cameraPos(center.x(), center.y(), center.z() + zDistance);
 
-    m_camera->setPosition(cameraPos);
+   // m_camera->setPosition(cameraPos);
     m_camera->setTarget(center);
     m_camera->setUp(QVector3D(0.0f, 1.0f, 0.0f));
 
@@ -216,6 +218,7 @@ void ViewportWidget::setModels(const QVector<ObjectGL*>& models, const QVector<Q
     m_modelTransforms = transforms;
     update();
 }
+
 }
 
 

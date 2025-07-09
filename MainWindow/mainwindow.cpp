@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QVBoxLayout *layout = new QVBoxLayout(centralWidget);
 
     m_viewport = new ViewportWidget(this);
+    m_viewport->fitToView();
+
     layout->addWidget(m_viewport);
 
     setCentralWidget(centralWidget);
@@ -100,7 +102,6 @@ void MainWindow::openModelFile()
 
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
     updateModelList();
-    m_viewport->fitToView();
 }
 
 void MainWindow::updateModelList()
