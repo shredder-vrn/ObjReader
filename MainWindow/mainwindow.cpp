@@ -121,43 +121,6 @@ void MainWindow::updateSelectedModelTextureState(bool checked)
     }
 }
 
-void MainWindow::updateTransformFromUI()
-{
-    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelTransforms.size())
-        return;
-
-    float px = m_positionSpinboxX->value();
-    float py = m_positionSpinboxY->value();
-    float pz = m_positionSpinboxZ->value();
-    QVector3D position(px, py, pz);
-
-    float rx = m_rotationSpinboxX->value();
-    float ry = m_rotationSpinboxY->value();
-    float rz = m_rotationSpinboxZ->value();
-    QQuaternion rotation = QQuaternion::fromEulerAngles(rx, ry, rz);
-
-    float sx = m_scalingSpinboxX->value();
-    float sy = m_scalingSpinboxY->value();
-    float sz = m_scalingSpinboxZ->value();
-    QVector3D scale(sx, sy, sz);
-
-    ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
-    if (model) {
-        model->setPosition(position);
-        model->setRotation(rotation);
-        model->setScale(scale);
-    }
-
-    QMatrix4x4 transform;
-    transform.translate(position);
-    transform.rotate(rotation);
-    transform.scale(scale);
-
-    m_modelTransforms[m_currentModelIndex] = transform;
-    m_viewport->setModels(m_modelsGL, m_modelTransforms);
-    m_viewport->update();
-}
-
 void MainWindow::loadTestTextureForSelectedModel()
 {
     if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size()) {
@@ -224,11 +187,14 @@ void MainWindow::setupUserInterface()
     m_explorerView->setModel(m_explorerModel);
     m_explorerDock->setWidget(m_explorerView);
 
+    m_explorerDock->setFeatures(m_explorerDock->features() & ~QDockWidget::DockWidgetClosable);
+
     addDockWidget(Qt::LeftDockWidgetArea, m_explorerDock);
 
     connect(m_explorerView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::onExplorerModelSelected);
 
     m_propertiesDock = new QDockWidget("Properties", this);
+    m_propertiesDock->setEnabled(false);
     QWidget *propertiesPanel = new QWidget(m_propertiesDock);
     QVBoxLayout *mainLayout = new QVBoxLayout(propertiesPanel);
 
@@ -240,6 +206,9 @@ void MainWindow::setupUserInterface()
     propertiesPanel->setLayout(mainLayout);
     m_propertiesDock->setWidget(propertiesPanel);
     m_propertiesDock->setMinimumWidth(350);
+
+    m_propertiesDock->setFeatures(m_propertiesDock->features() & ~QDockWidget::DockWidgetClosable);
+
     addDockWidget(Qt::RightDockWidgetArea, m_propertiesDock);
 
     QMenu *cameraMenu = menuBar()->addMenu("Camera");
@@ -286,6 +255,12 @@ void MainWindow::calculateNormals(ModelData &model)
     }
 
     model.setNormals(normals);
+}
+
+void MainWindow::updatePropertiesEnabledState()
+{
+    bool modelSelected = (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size());
+    m_propertiesDock->setEnabled(modelSelected);
 }
 
 QGroupBox *MainWindow::createModelInfoSection()
@@ -362,9 +337,48 @@ QGroupBox *MainWindow::createTransformControls()
     return group;
 }
 
+void MainWindow::updateTransformFromUI()
+{
+    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelTransforms.size())
+        return;
+
+    float px = m_positionSpinboxX->value();
+    float py = m_positionSpinboxY->value();
+    float pz = m_positionSpinboxZ->value();
+    QVector3D position(px, py, pz);
+
+    float rx = m_rotationSpinboxX->value();
+    float ry = m_rotationSpinboxY->value();
+    float rz = m_rotationSpinboxZ->value();
+    QQuaternion rotation = QQuaternion::fromEulerAngles(rx, ry, rz);
+
+    float sx = m_scalingSpinboxX->value();
+    float sy = m_scalingSpinboxY->value();
+    float sz = m_scalingSpinboxZ->value();
+    QVector3D scale(sx, sy, sz);
+
+    ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
+    if (model) {
+        model->setPosition(position);
+        model->setRotation(rotation);
+        model->setScale(scale);
+    }
+
+    QMatrix4x4 transform;
+    transform.translate(position);
+    transform.rotate(rotation);
+    transform.scale(scale);
+
+    m_modelTransforms[m_currentModelIndex] = transform;
+    m_viewport->setModels(m_modelsGL, m_modelTransforms);
+    m_viewport->update();
+}
+
 void MainWindow::onExplorerModelSelected(const QModelIndex &index)
 {
     m_currentModelIndex = index.row();
+
+    updatePropertiesEnabledState();
 
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
@@ -389,7 +403,7 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
         m_scalingSpinboxY->setValue(scale.y());
         m_scalingSpinboxZ->setValue(scale.z());
         m_wireframeCheck->setChecked(model->wireframeMode());
-        m_textureCheck->setChecked(model->hasTexture());
+        m_textureCheck->setChecked(model->useTexture());
         m_lightingCheck->setChecked(model->useNormals());
 
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));

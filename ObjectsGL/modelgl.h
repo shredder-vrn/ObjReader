@@ -27,7 +27,7 @@ public:
     void setVao(GLuint vao) override;
     void setVertexCount(GLuint count) override;
 
-    bool hasTexture() const override;
+    bool useTexture() const override;
     bool isValid() const override;
     bool hasNormals() const override;
 

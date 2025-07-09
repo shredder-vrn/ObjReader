@@ -48,7 +48,7 @@ void ModelGL::setVertexCount(GLuint count)
     m_vertexCount = count;
 }
 
-bool ModelGL::hasTexture() const
+bool ModelGL::useTexture() const
 {
     return m_hasTexture;
 }
@@ -109,7 +109,7 @@ bool ModelGL::operator!=(const ObjectGL &other) const
     bool result = vao() != other.vao() ||
             vertexCount() != other.vertexCount() ||
             textureId() != other.textureId() ||
-            hasTexture() != other.hasTexture() ||
+            useTexture() != other.useTexture() ||
             useNormals() != other.useNormals();
     return result;
 }

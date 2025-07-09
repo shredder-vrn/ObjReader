@@ -52,7 +52,7 @@ void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
     shaderProgram->get()->bind();
     shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
     shaderProgram->get()->setUniformValue("useNormal", modelGL.useNormals());
-    shaderProgram->get()->setUniformValue("useTexture", modelGL.hasTexture());
+    shaderProgram->get()->setUniformValue("useTexture", modelGL.useTexture());
 
     if (modelGL.vao() == 0) {
         if (!initializeModel(const_cast<ModelGL&>(modelGL))) {
@@ -69,7 +69,7 @@ void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
 
     glBindVertexArray(modelGL.vao());
 
-    if (modelGL.hasTexture()) {
+    if (modelGL.useTexture()) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, modelGL.textureId());
         shaderProgram->get()->setUniformValue("modelTexture", 0);

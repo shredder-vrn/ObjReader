@@ -54,6 +54,7 @@ private:
 
     bool loadModel(const QString &filePath, ModelData &outData);
     void calculateNormals(ModelData &model);
+    void updatePropertiesEnabledState();
 
     int m_currentModelIndex = -1;
 

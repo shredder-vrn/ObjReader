@@ -17,7 +17,7 @@ public:
     virtual void setVao(GLuint vao) = 0;
     virtual void setVertexCount(GLuint count) = 0;
 
-    virtual bool hasTexture() const = 0;
+    virtual bool useTexture() const = 0;
     virtual bool useNormals() const = 0;
     virtual bool isValid() const = 0;
     virtual bool hasNormals() const = 0;
