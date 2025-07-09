@@ -205,10 +205,11 @@ void ViewportWidget::fitToView()
 void ViewportWidget::setModels(const QVector<ObjectGL*>& models, const QVector<QMatrix4x4>& transforms)
 {
     m_modelsGL.clear();
-    for (ObjectGL* obj : models) {
+    for (auto obj : models) {
         ModelGL* modelGL = dynamic_cast<ModelGL*>(obj);
-        if (modelGL)
+        if (modelGL) {
             m_modelsGL.append(modelGL);
+        }
     }
     m_modelTransforms = transforms;
     update();
