@@ -113,7 +113,7 @@ void MainWindow::updateModelList()
     }
 }
 
-void MainWindow::UpdateSceneLightingState(bool checked)
+void MainWindow::updateSceneLightingState(bool checked)
 {
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
         m_modelsGL[m_currentModelIndex]->setUseNormals(checked);
@@ -408,12 +408,14 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
         m_scalingSpinboxX->setValue(scale.x());
         m_scalingSpinboxY->setValue(scale.y());
         m_scalingSpinboxZ->setValue(scale.z());
+        m_wireframeCheck->setChecked(model->wireframeMode());
+        m_textureCheck->setChecked(model->hasTexture());
+        m_normalsCheck->setChecked(model->useNormals());
 
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));
         m_verticesLabel->setText(QString::number(model->getModelData()->vertices().size()));
         m_facesLabel->setText(QString::number(model->getModelData()->faceVertexIndices().size() / 3));
-        m_textureCheck->setChecked(model->hasTexture());
-        m_wireframeCheck->setChecked(model->wireframeMode());
+
     }
 }
 
@@ -433,12 +435,32 @@ QGroupBox *MainWindow::createRenderSettingsSection()
     //layout->addWidget(m_normalsCheck);
 
     connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
-    connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::UpdateSceneLightingState);
+    connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::updateSceneLightingState);
     connect(m_wireframeCheck, &QCheckBox::toggled, this, &MainWindow::toggleWireframe);
 
     group->setLayout(layout);
 
     return group;
+}
+
+void MainWindow::updateTransformControlsEnabledState()
+{
+    bool enable = m_currentModelIndex >= 0 && m_currentModelIndex < m_modelTransforms.size();
+
+    m_positionSpinboxX->setEnabled(enable);
+    m_positionSpinboxY->setEnabled(enable);
+    m_positionSpinboxZ->setEnabled(enable);
+
+    m_rotationSpinboxX->setEnabled(enable);
+    m_rotationSpinboxY->setEnabled(enable);
+    m_rotationSpinboxZ->setEnabled(enable);
+
+    m_scalingSpinboxX->setEnabled(enable);
+    m_scalingSpinboxY->setEnabled(enable);
+    m_scalingSpinboxZ->setEnabled(enable);
+
+    m_wireframeCheck->setEnabled(enable);
+    m_textureCheck->setEnabled(enable);
 }
 
 }

@@ -40,7 +40,7 @@ private slots:
     void openModelFile();
     void loadTextureForSelectedModel();
     void onExplorerModelSelected(const QModelIndex &index);
-    void UpdateSceneLightingState(bool checked);
+    void updateSceneLightingState(bool checked);
     void updateSelectedModelTextureState(bool checked);
     void updateTransformFromUI();
     void updateModelList();
@@ -54,6 +54,10 @@ private:
 
     bool loadModel(const QString &filePath, ModelData &outData);
     void calculateNormals(ModelData &model);
+    void updateTransformControlsState();
+
+    void updateTransformControlsEnabledState();
+
 
     int m_currentModelIndex = -1;
 
