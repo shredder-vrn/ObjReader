@@ -143,6 +143,8 @@ void MainWindow::updateSelectedModelTextureState(bool checked)
     }
 }
 
+
+
 void MainWindow::updateTransformFromUI()
 {
     if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
@@ -225,6 +227,12 @@ void MainWindow::loadTestTextureForSelectedModel()
     modelGL->setHasTexture(true);
     m_textureCheck->setChecked(true);
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
+}
+
+void MainWindow::toggleWireframe(bool enabled)
+{
+    m_viewport->setWireframeMode(enabled);
+    m_viewport->update();
 }
 
 void MainWindow::setupUserInterface()
@@ -392,6 +400,7 @@ QGroupBox *MainWindow::createRenderSettingsSection()
 
     connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
     connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::UpdateSceneLightingState);
+    connect(m_wireframeCheck, &QCheckBox::toggled, this, &MainWindow::toggleWireframe);
 
     group->setLayout(layout);
     return group;

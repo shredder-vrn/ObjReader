@@ -44,7 +44,7 @@ private slots:
     void updateTransformFromUI();
     void updateModelList();
     void loadTestTextureForSelectedModel();
-
+    void toggleWireframe(bool enabled);
 private:
     void setupUserInterface();
     QGroupBox *createModelInfoSection();

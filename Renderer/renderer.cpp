@@ -43,6 +43,11 @@ void OpenGLRenderer::setMVPmatrix(const QMatrix4x4 &mvp)
     openGLcurrentMvp = mvp;
 }
 
+void OpenGLRenderer::setWireframeMode(bool enabled)
+{
+    m_wireframeMode = enabled;
+}
+
 void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
 {
     if (!openGLisInitialized || !shaderProgram || !modelGL.isValid()) {
@@ -59,6 +64,12 @@ void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
             shaderProgram->get()->release();
             return;
         }
+    }
+
+    if (m_wireframeMode) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
     glBindVertexArray(modelGL.vao());
