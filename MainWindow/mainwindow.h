@@ -54,10 +54,6 @@ private:
 
     bool loadModel(const QString &filePath, ModelData &outData);
     void calculateNormals(ModelData &model);
-    void updateTransformControlsState();
-
-    void updateTransformControlsEnabledState();
-
 
     int m_currentModelIndex = -1;
 

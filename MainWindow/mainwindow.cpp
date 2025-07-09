@@ -113,30 +113,6 @@ void MainWindow::updateModelList()
     }
 }
 
-void MainWindow::toggleLighting(bool enabled)
-{
-    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
-        ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
-        if (model) {
-            model->setUseNormals(enabled);
-        }
-
-    }
-    m_viewport->update();
-}
-
-void MainWindow::toggleWireframe(bool enabled)
-{
-    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
-        ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
-        if (model) {
-            model->setWireframeMode(enabled);
-        }
-    }
-
-    m_viewport->update();
-}
-
 void MainWindow::updateSelectedModelTextureState(bool checked)
 {
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
@@ -447,24 +423,28 @@ QGroupBox *MainWindow::createRenderSettingsSection()
     return group;
 }
 
-void MainWindow::updateTransformControlsEnabledState()
+void MainWindow::toggleLighting(bool enabled)
 {
-    bool enable = m_currentModelIndex >= 0 && m_currentModelIndex < m_modelTransforms.size();
+    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
+        ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
+        if (model) {
+            model->setUseNormals(enabled);
+        }
 
-    m_positionSpinboxX->setEnabled(enable);
-    m_positionSpinboxY->setEnabled(enable);
-    m_positionSpinboxZ->setEnabled(enable);
+    }
+    m_viewport->update();
+}
 
-    m_rotationSpinboxX->setEnabled(enable);
-    m_rotationSpinboxY->setEnabled(enable);
-    m_rotationSpinboxZ->setEnabled(enable);
+void MainWindow::toggleWireframe(bool enabled)
+{
+    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
+        ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
+        if (model) {
+            model->setWireframeMode(enabled);
+        }
+    }
 
-    m_scalingSpinboxX->setEnabled(enable);
-    m_scalingSpinboxY->setEnabled(enable);
-    m_scalingSpinboxZ->setEnabled(enable);
-
-    m_wireframeCheck->setEnabled(enable);
-    m_textureCheck->setEnabled(enable);
+    m_viewport->update();
 }
 
 }

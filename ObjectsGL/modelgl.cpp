@@ -53,15 +53,15 @@ bool ModelGL::hasTexture() const
     return m_hasTexture;
 }
 
-bool ModelGL::useNormals() const
-{
-    return m_useNormals;
-}
-
 bool ModelGL::isValid() const
 {
     bool valid = !m_modelData.vertices().isEmpty() && !m_modelData.faceVertexIndices().isEmpty();
     return valid;
+}
+
+void ModelGL::setHasTexture(bool enabled)
+{
+    m_hasTexture = enabled;
 }
 
 bool ModelGL::hasNormals() const
@@ -69,9 +69,9 @@ bool ModelGL::hasNormals() const
     return !m_modelData.normals().isEmpty();
 }
 
-void ModelGL::setHasTexture(bool enabled)
+bool ModelGL::useNormals() const
 {
-    m_hasTexture = enabled;
+    return m_useNormals;
 }
 
 void ModelGL::setUseNormals(bool enabled)
@@ -82,6 +82,11 @@ void ModelGL::setUseNormals(bool enabled)
 void ModelGL::setWireframeMode(bool enabled)
 {
     m_wireframeMode = enabled;
+}
+
+bool ModelGL::wireframeMode() const
+{
+    return m_wireframeMode;
 }
 
 void ModelGL::setTextureId(GLuint id)
@@ -107,11 +112,6 @@ bool ModelGL::operator!=(const ObjectGL &other) const
             hasTexture() != other.hasTexture() ||
             useNormals() != other.useNormals();
     return result;
-}
-
-bool ModelGL::wireframeMode() const
-{
-    return m_wireframeMode;
 }
 
 QVector3D ModelGL::position() const { return m_position; }

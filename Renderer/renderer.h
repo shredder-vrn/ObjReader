@@ -35,14 +35,11 @@ private:
     bool openGLisInitialized = false;
 
     ShaderProgram *shaderProgram = nullptr;
-    bool m_lightingCheck = false;
-    bool m_useNormalsMode = false;
 
     GLuint openGLvao = 0;
     GLuint openGLvbo = 0;
     QMatrix4x4 openGLcurrentMvp;
     ModelGL openGLcurrentModelGL;
-
 };
 }
 #endif // VIEWER_RENDER_H
