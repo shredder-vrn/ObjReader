@@ -115,12 +115,26 @@ void ViewportWidget::switchToOrthographic()
     switchCamera(std::make_unique<CameraOrthographic>());
 }
 
-void ViewportWidget::switchCamera(std::unique_ptr<Camera> newCam)
-{
+void ViewportWidget::switchCamera(std::unique_ptr<Camera> newCam) {
+    const QVector3D oldPos = m_camera->position();
+    qDebug() << "oldPos: " << oldPos;
+    const QVector3D oldTarget = m_camera->target();
+    qDebug() << "oldTarget: " << oldTarget;
+
     newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
-    newCam->setPosition(m_camera->position());
-    newCam->setTarget(m_camera->target());
-    newCam->setUp(m_camera->up());
+    ;
+
+    newCam->setTarget(oldTarget);
+
+    if (newCam->type() == CameraType::Perspective) {
+        auto* perspectiveCam = static_cast<CameraPerspective*>(newCam.get());
+        perspectiveCam->setPosition(oldPos);
+        perspectiveCam->updateViewMatrix();
+    } else {
+        auto* orthoCam = static_cast<CameraOrthographic*>(newCam.get());
+        orthoCam->setPosition(oldPos);
+        orthoCam->updateViewMatrix();
+    }
 
     m_camera = std::move(newCam);
     update();

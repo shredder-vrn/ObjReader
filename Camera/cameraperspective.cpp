@@ -5,6 +5,7 @@ namespace Viewer{
 CameraPerspective::CameraPerspective()
 {
     updateViewMatrix();
+    updateOrientationFromPosition();
 }
 
 QMatrix4x4 CameraPerspective::viewMatrix() const
@@ -26,14 +27,8 @@ void CameraPerspective::setViewportSize(const int width, const int height)
     m_projectionMatrix.perspective(m_fov, width / (float)height, m_nearPlane, m_farPlane);
 }
 
-void CameraPerspective::zoom(const float delta)
-{
-    float speed = 1.0f;
-    QVector3D direction = (m_target - m_position).normalized();
-
-    m_distance = qMax(1.0f, m_distance - delta * speed);
-    m_position += direction * delta * speed;
-
+void CameraPerspective::zoom(const float delta) {
+    m_distance = qMax(1.0f, m_distance * (1.0f - delta * 0.1f));
     updateViewMatrix();
 }
 
@@ -51,8 +46,9 @@ QVector3D CameraPerspective::up() const {
 
 void CameraPerspective::setPosition(const QVector3D &pos) {
     m_position = pos;
-    updateOrientationFromPosition();
+    m_distance = (m_position - m_target).length();
     updateViewMatrix();
+    updateOrientationFromPosition();
 }
 
 void CameraPerspective::setTarget(const QVector3D &target) {
@@ -61,6 +57,15 @@ void CameraPerspective::setTarget(const QVector3D &target) {
 
 void CameraPerspective::setUp(const QVector3D &up) {
     m_up = up;
+}
+
+float CameraPerspective::distance() const {
+    return m_distance;
+}
+
+void CameraPerspective::setDistance(float distance) {
+    m_distance = qMax(0.1f, distance);
+    updateViewMatrix();
 }
 
 CameraType CameraPerspective::type() const {

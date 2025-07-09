@@ -29,12 +29,14 @@ public:
     void setTarget(const QVector3D& target) override;
     void setUp(const QVector3D& up) override;
 
-    float zoomFactor() const { return m_zoomFactor; }
+
 
     CameraType type() const override;
 
-private:
     void updateViewMatrix();
+
+
+private:
     void updateProjectionMatrix();
 
     QVector3D m_position = QVector3D(0.0f, 0.0f, 10.0f);

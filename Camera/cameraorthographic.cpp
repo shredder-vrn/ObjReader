@@ -29,22 +29,18 @@ void CameraOrthographic::rotateAroundTarget(const float deltaX, const float delt
 {
     const float sensitivity = 0.5f;
 
-    QQuaternion yawRotation = QQuaternion::fromAxisAndAngle(QVector3D(0.0f, 1.0f, 0.0f), -deltaX * sensitivity);
+    QQuaternion yawRotation = QQuaternion::fromAxisAndAngle(QVector3D(0.0f, 1.0f, 0.0f), deltaX * sensitivity);
     m_position = m_target + yawRotation.rotatedVector(m_position - m_target);
 
     QVector3D horizontalAxis = QVector3D::crossProduct(m_position - m_target, QVector3D(0.0f, 1.0f, 0.0f)).normalized();
-    QQuaternion pitchRotation = QQuaternion::fromAxisAndAngle(horizontalAxis, -deltaY * sensitivity);
+    QQuaternion pitchRotation = QQuaternion::fromAxisAndAngle(horizontalAxis, deltaY * sensitivity);
     m_position = m_target + pitchRotation.rotatedVector(m_position - m_target);
 
     updateViewMatrix();
 }
 
-void CameraOrthographic::zoom(const float delta)
-{
-    const float zoomSpeed = 0.1f;
-    m_zoomFactor -= delta * zoomSpeed;
-    if (m_zoomFactor < 0.1f) m_zoomFactor = 0.1f;
-
+void CameraOrthographic::zoom(const float delta) {
+    m_zoomFactor = qMax(0.1f, m_zoomFactor * (1.0f - delta));
     updateProjectionMatrix();
 }
 
@@ -60,8 +56,7 @@ QVector3D CameraOrthographic::up() const {
     return m_up;
 }
 
-void CameraOrthographic::setPosition(const QVector3D &pos)
-{
+void CameraOrthographic::setPosition(const QVector3D &pos) {
     m_position = pos;
     updateViewMatrix();
 }

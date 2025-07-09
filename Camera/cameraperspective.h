@@ -34,12 +34,16 @@ public:
     void setTarget(const QVector3D& target) override;
     void setUp(const QVector3D& up) override;
 
-    float distance() const { return m_distance; }
+    float distance() const;
+    void setDistance(float distance);
+
 
     CameraType type() const override;
+    void updateViewMatrix();
+
+
 
 private:
-    void updateViewMatrix();
     void updateOrientationFromPosition();
 
 
@@ -53,7 +57,7 @@ private:
     float m_fov = 45.0f;
     float m_nearPlane = 0.1f;
     float m_farPlane = 100.0f;
-    float m_distance = 20.0f;
+    float m_distance = 10.0f;
     float m_cameraYaw = 0.0f;
     float m_cameraPitch = 0.0f;
 
@@ -61,7 +65,6 @@ private:
 
     QMatrix4x4 m_viewMatrix;
     QMatrix4x4 m_projectionMatrix;
-
 
 };
 }

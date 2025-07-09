@@ -59,8 +59,8 @@ private:
     std::unique_ptr<Camera> m_camera;
 
     QVector<QMatrix4x4> m_modelTransforms;
-
     QVector<ModelGL*> m_modelsGL;
+
     ModelGL m_gridGL;
     ModelGL m_worldAxesGL;
     ModelGL m_cameraTargetGL;
