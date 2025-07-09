@@ -50,11 +50,6 @@ bool ViewportWidget::loadTextureForModel(int modelIndex, const unsigned char *da
     return m_renderer.loadTextureFromData(*modelGL, data, width, height, format);
 }
 
-void ViewportWidget::setWireframeMode(bool enabled)
-{
-    m_renderer.setWireframeMode(enabled);
-}
-
 void ViewportWidget::resizeEvent(QResizeEvent *event)
 {
     m_viewportWidth = event->size().width();

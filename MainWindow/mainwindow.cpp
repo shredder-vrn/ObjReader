@@ -125,6 +125,8 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
         m_verticesLabel->setText(QString::number(modelGL->getModelData()->vertices().size()));
         m_facesLabel->setText(QString::number(modelGL->getModelData()->faceVertexIndices().size() / 3));
         m_textureCheck->setChecked(modelGL->hasTexture());
+
+        m_wireframeCheck->setChecked(modelGL->wireframeMode());
     }
 }
 
@@ -172,28 +174,6 @@ void MainWindow::updateTransformFromUI()
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
 }
 
-void MainWindow::loadTextureForSelectedModel()
-{
-    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
-        return;
-
-    QString texturePath = QFileDialog::getOpenFileName(this, tr("Open Texture"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
-
-    if (texturePath.isEmpty()){
-        QMessageBox::information(this, "Нет файла", "Пользователь не выбрал текстуру.");
-        return;
-    }
-
-    if (!m_viewport->loadTextureForModel(m_currentModelIndex, texturePath)){
-        QMessageBox::critical(this, "Ошибка", "Не удалось загрузить текстуру.");
-        return;
-    }
-
-    m_modelsGL[m_currentModelIndex]->setHasTexture(true);
-    m_textureCheck->setChecked(true);
-    m_viewport->setModels(m_modelsGL, m_modelTransforms);
-}
-
 void MainWindow::loadTestTextureForSelectedModel()
 {
     if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size()) {
@@ -228,9 +208,37 @@ void MainWindow::loadTestTextureForSelectedModel()
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
 }
 
+void MainWindow::loadTextureForSelectedModel()
+{
+    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
+        return;
+
+    QString texturePath = QFileDialog::getOpenFileName(this, tr("Open Texture"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
+
+    if (texturePath.isEmpty()){
+        QMessageBox::information(this, "Нет файла", "Пользователь не выбрал текстуру.");
+        return;
+    }
+
+    if (!m_viewport->loadTextureForModel(m_currentModelIndex, texturePath)){
+        QMessageBox::critical(this, "Ошибка", "Не удалось загрузить текстуру.");
+        return;
+    }
+
+    m_modelsGL[m_currentModelIndex]->setHasTexture(true);
+    m_textureCheck->setChecked(true);
+    m_viewport->setModels(m_modelsGL, m_modelTransforms);
+}
+
 void MainWindow::toggleWireframe(bool enabled)
 {
-    m_viewport->setWireframeMode(enabled);
+    if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
+        ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
+        if (model) {
+            model->setWireframeMode(enabled);
+        }
+    }
+
     m_viewport->update();
 }
 

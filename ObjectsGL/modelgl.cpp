@@ -11,7 +11,6 @@ ModelGL::~ModelGL(){
 
 };
 
-
 void ModelGL::setModelData(const ModelData *modelData)
 {
     if (!modelData)
@@ -103,6 +102,16 @@ bool ModelGL::operator!=(const ObjectGL &other) const
             hasTexture() != other.hasTexture() ||
             useNormals() != other.useNormals();
     return result;
+}
+
+void ModelGL::setWireframeMode(bool enabled)
+{
+    m_wireframeMode = enabled;
+}
+
+bool ModelGL::wireframeMode() const
+{
+    return m_wireframeMode;
 }
 
 }

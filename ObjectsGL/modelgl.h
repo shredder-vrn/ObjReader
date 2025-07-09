@@ -42,6 +42,9 @@ public:
     void setModelData(const ModelData *modelData);
     const ModelData *getModelData() const;
 
+    void setWireframeMode(bool enabled);
+    bool wireframeMode() const;
+
 private:
     ModelData m_modelData;
 
@@ -51,6 +54,8 @@ private:
 
     bool m_hasTexture = false;
     bool m_useNormals = false;
+    bool m_wireframeMode = false;
+
 };
 }
 

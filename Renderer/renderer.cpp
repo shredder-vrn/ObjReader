@@ -66,7 +66,7 @@ void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
         }
     }
 
-    if (m_wireframeMode) {
+    if (modelGL.wireframeMode()) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     } else {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
