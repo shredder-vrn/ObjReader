@@ -79,6 +79,11 @@ void ModelGL::setUseNormals(bool enabled)
     m_useNormals = enabled;
 }
 
+void ModelGL::setWireframeMode(bool enabled)
+{
+    m_wireframeMode = enabled;
+}
+
 void ModelGL::setTextureId(GLuint id)
 {
     m_textureId = id;
@@ -102,11 +107,6 @@ bool ModelGL::operator!=(const ObjectGL &other) const
             hasTexture() != other.hasTexture() ||
             useNormals() != other.useNormals();
     return result;
-}
-
-void ModelGL::setWireframeMode(bool enabled)
-{
-    m_wireframeMode = enabled;
 }
 
 bool ModelGL::wireframeMode() const

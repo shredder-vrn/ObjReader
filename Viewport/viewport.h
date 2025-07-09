@@ -37,7 +37,6 @@ public:
     bool loadTextureForModel(int modelIndex, const QImage& image);
     bool loadTextureForModel(int modelIndex, const unsigned char *data, int width, int height, GLenum format = GL_RGBA);
     void setModels(const QVector<ObjectGL*>& models, const QVector<QMatrix4x4>& transforms);
-    void setWireframeMode(bool enabled);
 
 protected:
     void initializeGL() override;

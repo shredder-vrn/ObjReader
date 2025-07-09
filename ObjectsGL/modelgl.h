@@ -28,13 +28,11 @@ public:
     void setVertexCount(GLuint count) override;
 
     bool hasTexture() const override;
-    bool useNormals() const override;
     bool isValid() const override;
     bool hasNormals() const override;
 
 
     void setHasTexture(bool enabled) override;
-    void setUseNormals(bool enabled) override;
     void setTextureId(GLuint id) override;
 
     void clear() override;
@@ -42,6 +40,9 @@ public:
 
     void setModelData(const ModelData *modelData);
     const ModelData *getModelData() const;
+
+    void setUseNormals(bool enabled) override;
+    bool useNormals() const override;
 
     void setWireframeMode(bool enabled);
     bool wireframeMode() const;

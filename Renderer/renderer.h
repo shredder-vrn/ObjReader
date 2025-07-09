@@ -29,14 +29,14 @@ public:
     void render(const ModelGL &modelGL, const QMatrix4x4 &mvp);
     void setModelGL(const ModelGL &modelGL);
     void setMVPmatrix(const QMatrix4x4 &mvp);
-    void setWireframeMode(bool enabled);
+
 
 private:
     bool openGLisInitialized = false;
 
     ShaderProgram *shaderProgram = nullptr;
     bool m_lightingCheck = false;
-    bool m_wireframeMode = false;
+    bool m_useNormalsMode = false;
 
     GLuint openGLvao = 0;
     GLuint openGLvbo = 0;

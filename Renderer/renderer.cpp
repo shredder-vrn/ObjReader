@@ -43,11 +43,6 @@ void OpenGLRenderer::setMVPmatrix(const QMatrix4x4 &mvp)
     openGLcurrentMvp = mvp;
 }
 
-void OpenGLRenderer::setWireframeMode(bool enabled)
-{
-    m_wireframeMode = enabled;
-}
-
 void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
 {
     if (!openGLisInitialized || !shaderProgram || !modelGL.isValid()) {

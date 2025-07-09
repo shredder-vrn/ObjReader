@@ -40,7 +40,7 @@ private slots:
     void openModelFile();
     void loadTextureForSelectedModel();
     void onExplorerModelSelected(const QModelIndex &index);
-    void updateSceneLightingState(bool checked);
+    void toggleLighting(bool checked);
     void updateSelectedModelTextureState(bool checked);
     void updateTransformFromUI();
     void updateModelList();
