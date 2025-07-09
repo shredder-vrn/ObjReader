@@ -55,7 +55,7 @@ private:
     bool loadModel(const QString &filePath, ModelData &outData);
     void calculateNormals(ModelData &model);
     void updatePropertiesEnabledState();
-
+    void deleteSelectedModel();
     int m_currentModelIndex = -1;
 
     ViewportWidget *m_viewport = nullptr;

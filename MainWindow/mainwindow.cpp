@@ -423,6 +423,9 @@ QGroupBox *MainWindow::createRenderSettingsSection()
     m_lightingCheck = new QCheckBox("Lighting");
     m_normalsCheck = new QCheckBox("Show Normals");
 
+    QPushButton *deleteButton = new QPushButton("Delete Model");
+
+    layout->addWidget(deleteButton);
     layout->addWidget(m_wireframeCheck);
     layout->addWidget(m_textureCheck);
     layout->addWidget(m_lightingCheck);
@@ -431,10 +434,27 @@ QGroupBox *MainWindow::createRenderSettingsSection()
     connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
     connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::toggleLighting);
     connect(m_wireframeCheck, &QCheckBox::toggled, this, &MainWindow::toggleWireframe);
+    connect(deleteButton, &QPushButton::clicked, this, &MainWindow::deleteSelectedModel);
 
     group->setLayout(layout);
 
     return group;
+}
+
+void MainWindow::deleteSelectedModel()
+{
+    if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
+        return;
+
+    delete m_modelsGL[m_currentModelIndex];
+    m_modelsGL.removeAt(m_currentModelIndex);
+
+    m_explorerModel->removeRow(m_currentModelIndex);
+    m_currentModelIndex = -1;
+    updatePropertiesEnabledState();
+
+    m_viewport->setModels(m_modelsGL, m_modelTransforms);
+    m_viewport->update();
 }
 
 void MainWindow::toggleLighting(bool enabled)
