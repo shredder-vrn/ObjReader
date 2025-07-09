@@ -390,7 +390,7 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
         m_scalingSpinboxZ->setValue(scale.z());
         m_wireframeCheck->setChecked(model->wireframeMode());
         m_textureCheck->setChecked(model->hasTexture());
-        m_normalsCheck->setChecked(model->useNormals());
+        m_lightingCheck->setChecked(model->useNormals());
 
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));
         m_verticesLabel->setText(QString::number(model->getModelData()->vertices().size()));
