@@ -7,6 +7,7 @@
 #include <QVector3D>
 #include <QOpenGLFunctions>
 #include <QOpenGLFunctions_3_3_Core>
+#include <QQuaternion>
 
 #include "Model/modeldata.h"
 #include "ObjectsGL/objectsgl.h"
@@ -45,6 +46,14 @@ public:
     void setWireframeMode(bool enabled);
     bool wireframeMode() const;
 
+    QVector3D position() const;
+    QQuaternion rotation() const;
+    QVector3D scale() const;
+
+    void setPosition(const QVector3D &pos);
+    void setRotation(const QQuaternion &rot);
+    void setScale(const QVector3D &scale);
+
 private:
     ModelData m_modelData;
 
@@ -55,6 +64,10 @@ private:
     bool m_hasTexture = false;
     bool m_useNormals = false;
     bool m_wireframeMode = false;
+
+    QVector3D m_position = QVector3D(0, 0, 0);
+    QQuaternion m_rotation = QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), 0);
+    QVector3D m_scale = QVector3D(1, 1, 1);
 
 };
 }

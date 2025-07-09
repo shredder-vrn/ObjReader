@@ -149,8 +149,14 @@ void MainWindow::updateTransformFromUI()
     float sz = m_scalingSpinboxZ->value();
     QVector3D scale(sx, sy, sz);
 
+    ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
+    if (model) {
+        model->setPosition(position);
+        model->setRotation(rotation);
+        model->setScale(scale);
+    }
+
     QMatrix4x4 transform;
-    transform.setToIdentity();
     transform.translate(position);
     transform.rotate(rotation);
     transform.scale(scale);
@@ -381,65 +387,34 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
     m_currentModelIndex = index.row();
 
     if (m_currentModelIndex >= 0 && m_currentModelIndex < m_modelsGL.size()) {
-        const ObjectGL *objectGL = m_modelsGL[m_currentModelIndex];
-        const ModelGL *modelGL = dynamic_cast<const ModelGL*>(objectGL);
-
-        if (!modelGL)
+        ModelGL* model = dynamic_cast<ModelGL*>(m_modelsGL[m_currentModelIndex]);
+        if (!model) {
             return;
+        }
 
-        const QMatrix4x4& transform = m_modelTransforms[m_currentModelIndex];
-
-        QVector3D position;
-        QVector3D scale;
-        QQuaternion rotation;
-
-        decomposeMatrix(transform, position, scale, rotation);
+        QVector3D position = model->position();
+        QQuaternion rotation = model->rotation();
+        QVector3D scale = model->scale();
 
         m_positionSpinboxX->setValue(position.x());
         m_positionSpinboxY->setValue(position.y());
         m_positionSpinboxZ->setValue(position.z());
 
-        QVector3D euler = rotation.toEulerAngles();
-        m_rotationSpinboxX->setValue(euler.x());
-        m_rotationSpinboxY->setValue(euler.y());
-        m_rotationSpinboxZ->setValue(euler.z());
+        QVector3D eulerAngles = rotation.toEulerAngles();
+        m_rotationSpinboxX->setValue(eulerAngles.x());
+        m_rotationSpinboxY->setValue(eulerAngles.y());
+        m_rotationSpinboxZ->setValue(eulerAngles.z());
 
         m_scalingSpinboxX->setValue(scale.x());
         m_scalingSpinboxY->setValue(scale.y());
         m_scalingSpinboxZ->setValue(scale.z());
 
         m_modelNameLabel->setText(QString("Model %1").arg(m_currentModelIndex + 1));
-        m_verticesLabel->setText(QString::number(modelGL->getModelData()->vertices().size()));
-        m_facesLabel->setText(QString::number(modelGL->getModelData()->faceVertexIndices().size() / 3));
-        m_textureCheck->setChecked(modelGL->hasTexture());
-        m_wireframeCheck->setChecked(modelGL->wireframeMode());
+        m_verticesLabel->setText(QString::number(model->getModelData()->vertices().size()));
+        m_facesLabel->setText(QString::number(model->getModelData()->faceVertexIndices().size() / 3));
+        m_textureCheck->setChecked(model->hasTexture());
+        m_wireframeCheck->setChecked(model->wireframeMode());
     }
-}
-
-bool MainWindow::decomposeMatrix(const QMatrix4x4 &matrix, QVector3D &position, QVector3D &scale, QQuaternion &rotation)
-{
-    position = matrix.column(3).toVector3DAffine();
-
-    QMatrix4x4 rotScale = matrix;
-    rotScale.setColumn(3, QVector4D(0, 0, 0, 1));
-    rotScale.setRow(3, QVector4D(0, 0, 0, 1));
-
-    scale.setX(QVector3D(rotScale.row(0)).length());
-    scale.setY(QVector3D(rotScale.row(1)).length());
-    scale.setZ(QVector3D(rotScale.row(2)).length());
-
-    if (scale.lengthSquared() < 0.0001f) {
-        return false;
-    }
-
-    QMatrix4x4 normalised = rotScale;
-
-    normalised.row(0) /= scale.x();
-    normalised.row(1) /= scale.y();
-    normalised.row(2) /= scale.z();
-
-    rotation = QQuaternion::fromRotationMatrix(normalised.normalMatrix());
-    return true;
 }
 
 QGroupBox *MainWindow::createRenderSettingsSection()
@@ -467,6 +442,29 @@ QGroupBox *MainWindow::createRenderSettingsSection()
 }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

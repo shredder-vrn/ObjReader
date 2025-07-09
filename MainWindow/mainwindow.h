@@ -54,8 +54,6 @@ private:
 
     bool loadModel(const QString &filePath, ModelData &outData);
     void calculateNormals(ModelData &model);
-    bool decomposeMatrix(const QMatrix4x4 &matrix, QVector3D &position, QVector3D &scale, QQuaternion &rotation);
-
 
     int m_currentModelIndex = -1;
 

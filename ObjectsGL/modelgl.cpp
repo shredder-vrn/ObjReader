@@ -114,4 +114,17 @@ bool ModelGL::wireframeMode() const
     return m_wireframeMode;
 }
 
+QVector3D ModelGL::position() const { return m_position; }
+
+QQuaternion ModelGL::rotation() const { return m_rotation; }
+
+QVector3D ModelGL::scale() const { return m_scale; }
+
+void ModelGL::setPosition(const QVector3D &pos) { m_position = pos; }
+
+void ModelGL::setRotation(const QQuaternion &rot) { m_rotation = rot; }
+
+void ModelGL::setScale(const QVector3D &scale) { m_scale = scale; }
+
+
 }
