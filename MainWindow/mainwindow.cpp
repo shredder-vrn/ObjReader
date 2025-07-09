@@ -448,12 +448,23 @@ void MainWindow::deleteSelectedModel()
 
     delete m_modelsGL[m_currentModelIndex];
     m_modelsGL.removeAt(m_currentModelIndex);
+    m_modelTransforms.removeAt(m_currentModelIndex);
 
-    if (m_currentModelIndex < m_modelTransforms.size()) {
-        m_modelTransforms.removeAt(m_currentModelIndex);
-    }
     m_explorerModel->removeRow(m_currentModelIndex);
-    m_currentModelIndex = -1;
+
+    int newModelIndex = -1;
+    if (!m_modelsGL.isEmpty()) {
+        if (m_currentModelIndex < m_modelsGL.size()) {
+            newModelIndex = m_currentModelIndex;
+        } else {
+            newModelIndex = m_modelsGL.size() - 1;
+        }
+
+        QModelIndex newIndex = m_explorerModel->index(newModelIndex, 0);
+        m_explorerView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+    }
+
+    m_currentModelIndex = newModelIndex;
     updatePropertiesEnabledState();
 
     m_viewport->setModels(m_modelsGL, m_modelTransforms);
