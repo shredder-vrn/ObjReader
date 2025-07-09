@@ -34,6 +34,8 @@ public:
     void setTarget(const QVector3D& target) override;
     void setUp(const QVector3D& up) override;
 
+    float distance() const { return m_distance; }
+
     CameraType type() const override;
 
 private:

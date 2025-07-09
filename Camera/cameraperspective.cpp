@@ -37,11 +37,17 @@ void CameraPerspective::zoom(const float delta)
     updateViewMatrix();
 }
 
-QVector3D CameraPerspective::position() const { return m_position; }
+QVector3D CameraPerspective::position() const {
+    return m_position;
+}
 
-QVector3D CameraPerspective::target() const { return m_target; }
+QVector3D CameraPerspective::target() const {
+    return m_target;
+}
 
-QVector3D CameraPerspective::up() const { return m_up; }
+QVector3D CameraPerspective::up() const {
+    return m_up;
+}
 
 void CameraPerspective::setPosition(const QVector3D &pos) {
     m_position = pos;
@@ -49,11 +55,17 @@ void CameraPerspective::setPosition(const QVector3D &pos) {
     updateViewMatrix();
 }
 
-void CameraPerspective::setTarget(const QVector3D &target) { m_target = target; }
+void CameraPerspective::setTarget(const QVector3D &target) {
+    m_target = target;
+}
 
-void CameraPerspective::setUp(const QVector3D &up) { m_up = up; }
+void CameraPerspective::setUp(const QVector3D &up) {
+    m_up = up;
+}
 
-CameraType CameraPerspective::type() const { return CameraType::Perspective; }
+CameraType CameraPerspective::type() const {
+    return CameraType::Perspective;
+}
 
 void CameraPerspective::rotateAroundTarget(const float deltaX, const float deltaY)
 {

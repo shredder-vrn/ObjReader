@@ -29,6 +29,8 @@ public:
     void setTarget(const QVector3D& target) override;
     void setUp(const QVector3D& up) override;
 
+    float zoomFactor() const { return m_zoomFactor; }
+
     CameraType type() const override;
 
 private:
