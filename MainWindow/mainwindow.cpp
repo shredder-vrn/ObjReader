@@ -449,6 +449,9 @@ void MainWindow::deleteSelectedModel()
     delete m_modelsGL[m_currentModelIndex];
     m_modelsGL.removeAt(m_currentModelIndex);
 
+    if (m_currentModelIndex < m_modelTransforms.size()) {
+        m_modelTransforms.removeAt(m_currentModelIndex);
+    }
     m_explorerModel->removeRow(m_currentModelIndex);
     m_currentModelIndex = -1;
     updatePropertiesEnabledState();
