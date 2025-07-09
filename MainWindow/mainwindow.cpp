@@ -143,8 +143,6 @@ void MainWindow::updateSelectedModelTextureState(bool checked)
     }
 }
 
-
-
 void MainWindow::updateTransformFromUI()
 {
     if (m_currentModelIndex < 0 || m_currentModelIndex >= m_modelsGL.size())
@@ -396,7 +394,7 @@ QGroupBox *MainWindow::createRenderSettingsSection()
     layout->addWidget(m_wireframeCheck);
     layout->addWidget(m_textureCheck);
     layout->addWidget(m_lightingCheck);
-    layout->addWidget(m_normalsCheck);
+    //layout->addWidget(m_normalsCheck);
 
     connect(m_textureCheck, &QCheckBox::toggled, this, &MainWindow::updateSelectedModelTextureState);
     connect(m_lightingCheck, &QCheckBox::toggled, this, &MainWindow::UpdateSceneLightingState);
