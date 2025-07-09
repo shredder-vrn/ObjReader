@@ -89,6 +89,7 @@ void ViewportWidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::RightButton)
         m_lastMousePos = event->pos();
+
 }
 
 void ViewportWidget::mouseMoveEvent(QMouseEvent *event)
@@ -117,23 +118,28 @@ void ViewportWidget::switchToOrthographic()
 
 void ViewportWidget::switchCamera(std::unique_ptr<Camera> newCam) {
     const QVector3D oldPos = m_camera->position();
-    qDebug() << "oldPos: " << oldPos;
     const QVector3D oldTarget = m_camera->target();
-    qDebug() << "oldTarget: " << oldTarget;
+    QQuaternion oldOrientation = QQuaternion();
+
+    if (m_camera->type() == CameraType::Perspective) {
+        auto* oldPerspectiveCam = static_cast<CameraPerspective*>(m_camera.get());
+        oldOrientation = oldPerspectiveCam->orientation();
+    }
 
     newCam->setViewportSize(m_viewportWidth, m_viewportHeight);
-    ;
-
     newCam->setTarget(oldTarget);
 
     if (newCam->type() == CameraType::Perspective) {
         auto* perspectiveCam = static_cast<CameraPerspective*>(newCam.get());
-        perspectiveCam->setPosition(oldPos);
-        perspectiveCam->updateViewMatrix();
+        if (m_camera->type() == CameraType::Perspective) {
+            perspectiveCam->setOrientation(oldOrientation);
+        } else {
+            perspectiveCam->setPosition(oldPos);
+            perspectiveCam->updateOrientationFromPosition();
+        }
     } else {
         auto* orthoCam = static_cast<CameraOrthographic*>(newCam.get());
         orthoCam->setPosition(oldPos);
-        orthoCam->updateViewMatrix();
     }
 
     m_camera = std::move(newCam);
@@ -202,3 +208,43 @@ void ViewportWidget::setModels(const QVector<ObjectGL*>& models, const QVector<Q
 }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

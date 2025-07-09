@@ -30,21 +30,17 @@ public:
     QVector3D target() const override;
     QVector3D up() const override;
 
+    QQuaternion orientation() const;
     void setPosition(const QVector3D& pos) override;
     void setTarget(const QVector3D& target) override;
     void setUp(const QVector3D& up) override;
 
-    float distance() const;
-    void setDistance(float distance);
-
-
     CameraType type() const override;
     void updateViewMatrix();
-
-
+    void updateOrientationFromPosition();
+    void setOrientation(const QQuaternion &orientation);
 
 private:
-    void updateOrientationFromPosition();
 
 
     QVector3D m_position = QVector3D(0.0f, 0.0f, 10.0f);

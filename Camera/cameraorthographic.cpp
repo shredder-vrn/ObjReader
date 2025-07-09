@@ -40,7 +40,7 @@ void CameraOrthographic::rotateAroundTarget(const float deltaX, const float delt
 }
 
 void CameraOrthographic::zoom(const float delta) {
-    m_zoomFactor = qMax(0.1f, m_zoomFactor * (1.0f - delta));
+    m_zoomFactor = qMax(0.1f, m_zoomFactor * (1.0f - delta* 0.1f));
     updateProjectionMatrix();
 }
 
