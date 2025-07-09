@@ -399,10 +399,10 @@ void MainWindow::onExplorerModelSelected(const QModelIndex &index)
         m_positionSpinboxY->setValue(position.y());
         m_positionSpinboxZ->setValue(position.z());
 
-        QVector3D eulerAngles = rotation.toEulerAngles();
-        m_rotationSpinboxX->setValue(eulerAngles.x());
-        m_rotationSpinboxY->setValue(eulerAngles.y());
-        m_rotationSpinboxZ->setValue(eulerAngles.z());
+        QVector3D euler = rotation.toEulerAngles();
+        m_rotationSpinboxX->setValue(euler.x());
+        m_rotationSpinboxY->setValue(euler.y());
+        m_rotationSpinboxZ->setValue(euler.z());
 
         m_scalingSpinboxX->setValue(scale.x());
         m_scalingSpinboxY->setValue(scale.y());
