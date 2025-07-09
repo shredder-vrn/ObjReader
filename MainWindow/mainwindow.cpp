@@ -401,6 +401,7 @@ QGroupBox *MainWindow::createRenderSettingsSection()
     connect(m_wireframeCheck, &QCheckBox::toggled, this, &MainWindow::toggleWireframe);
 
     group->setLayout(layout);
+
     return group;
 }
 

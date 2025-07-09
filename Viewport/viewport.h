@@ -65,6 +65,8 @@ private:
     ModelGL m_worldAxesGL;
     ModelGL m_cameraTargetGL;
     ModelGL m_localAxesGL;
+
+    bool m_glInitialized = false;
 };
 }
 

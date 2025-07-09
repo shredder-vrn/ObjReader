@@ -54,6 +54,7 @@ void CameraPerspective::setOrientation(const QQuaternion &orientation) {
 
 void CameraPerspective::setTarget(const QVector3D &target) {
     m_target = target;
+    updateViewMatrix();
 }
 
 void CameraPerspective::setPosition(const QVector3D &pos) {
@@ -100,7 +101,7 @@ void CameraPerspective::updateOrientationFromPosition()
     QVector3D dir = (m_position - m_target).normalized();
 
     float yaw = qAtan2(dir.x(), dir.z()) * 180.0f / M_PI;
-    float pitch = qAsin(dir.y()) * 180.0f / M_PI;
+    float pitch = qAtan2(-dir.y(), qSqrt(dir.x() * dir.x() + dir.z() * dir.z())) * 180.0f / M_PI;
 
     m_orientation = QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), yaw) *
                      QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), pitch);

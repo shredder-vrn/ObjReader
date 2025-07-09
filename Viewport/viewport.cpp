@@ -1,6 +1,8 @@
 #include "viewport.h"
 #include "Viewport/logger.h"
 
+#include <QApplication>
+
 namespace Viewer{
 
 ViewportWidget::ViewportWidget(QWidget *parent) : QOpenGLWidget(parent)
@@ -65,6 +67,8 @@ void ViewportWidget::initializeGL()
 {
     m_renderer.initialize();
     m_camera->setViewportSize(width(), height());
+    m_glInitialized = true;
+
 }
 
 void ViewportWidget::paintGL()
@@ -198,6 +202,7 @@ void ViewportWidget::fitToView()
     m_camera->setUp(QVector3D(0.0f, 1.0f, 0.0f));
 
     update();
+    QApplication::processEvents();
 }
 
 void ViewportWidget::setModels(const QVector<ObjectGL*>& models, const QVector<QMatrix4x4>& transforms)

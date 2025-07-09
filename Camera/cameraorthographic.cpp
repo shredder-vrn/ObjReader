@@ -63,6 +63,7 @@ void CameraOrthographic::setPosition(const QVector3D &pos) {
 
 void CameraOrthographic::setTarget(const QVector3D &target) {
     m_target = target;
+    updateViewMatrix();
 }
 
 void CameraOrthographic::setUp(const QVector3D &up) {
