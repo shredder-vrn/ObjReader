@@ -60,9 +60,14 @@ void ViewportWidget::resizeEvent(QResizeEvent *event)
 
 void ViewportWidget::initializeGL()
 {
+    makeCurrent();
+
     m_renderer.initialize();
     m_camera->setViewportSize(width(), height());
     m_glInitialized = true;
+
+    m_grid = new GridGL(20, 1.0f);
+    doneCurrent();
 
 }
 
@@ -73,13 +78,19 @@ void ViewportWidget::paintGL()
 
     QMatrix4x4 view = m_camera->viewMatrix();
     QMatrix4x4 proj = m_camera->projectionMatrix();
+    QMatrix4x4 mvp = proj * view;
+
+    if (m_grid && m_grid->isValid()) {
+        m_renderer.renderGrid(*m_grid, mvp);
+    }
 
     for (int i = 0; i < m_modelsGL.size(); ++i) {
         if (!m_modelsGL[i] || !m_modelsGL[i]->isValid())
             continue;
-        QMatrix4x4 mvp = proj * view * m_modelTransforms[i];
-        m_renderer.render(*m_modelsGL[i], mvp);
+        QMatrix4x4 modelMVP = proj * view * m_modelTransforms[i];
+        m_renderer.render(*m_modelsGL[i], modelMVP);
     }
+
 }
 
 void ViewportWidget::wheelEvent(QWheelEvent *event)

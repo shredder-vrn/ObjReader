@@ -15,6 +15,7 @@
 #include "Camera/cameraorthographic.h"
 #include "Renderer/renderer.h"
 #include "ObjReader/objreader.h"
+#include "ObjectsGL/gridgl.h"
 
 
 
@@ -58,9 +59,13 @@ private:
 
     std::unique_ptr<Camera> m_camera;
 
+    GridGL* m_grid = nullptr;
+
     QVector<QMatrix4x4> m_modelTransforms;
     QVector<ModelGL*> m_modelsGL;
+
     ModelGL m_gridGL;
+
     ModelGL m_worldAxesGL;
     ModelGL m_cameraTargetGL;
     ModelGL m_localAxesGL;

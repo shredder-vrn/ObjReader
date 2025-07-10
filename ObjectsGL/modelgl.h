@@ -69,8 +69,8 @@ private:
     QVector3D m_position = QVector3D(0, 0, 0);
     QQuaternion m_rotation = QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), 0);
     QVector3D m_scale = QVector3D(1, 1, 1);
-
 };
+
 }
 
 #endif // VIEWER_MODELGL_H

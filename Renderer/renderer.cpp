@@ -38,65 +38,6 @@ bool OpenGLRenderer::initialize()
     return true;
 }
 
-void OpenGLRenderer::setMVPmatrix(const QMatrix4x4 &mvp)
-{
-    openGLcurrentMvp = mvp;
-}
-
-void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
-{
-    if (!openGLisInitialized || !shaderProgram || !modelGL.isValid()) {
-        return;
-    }
-
-    shaderProgram->get()->bind();
-    shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
-    shaderProgram->get()->setUniformValue("useNormal", modelGL.useNormals());
-    shaderProgram->get()->setUniformValue("useTexture", modelGL.useTexture());
-
-    if (modelGL.vao() == 0) {
-        if (!initializeModel(const_cast<ModelGL&>(modelGL))) {
-            shaderProgram->get()->release();
-            return;
-        }
-    }
-
-    if (modelGL.wireframeMode()) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
-
-    glBindVertexArray(modelGL.vao());
-
-    if (modelGL.useTexture()) {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, modelGL.textureId());
-        shaderProgram->get()->setUniformValue("modelTexture", 0);
-    }
-
-    const ModelData *data = modelGL.getModelData();
-    if (!data) {
-        glBindVertexArray(0);
-        shaderProgram->get()->release();
-        return;
-    }
-
-    const auto &polygonStarts = data->polygonStarts();
-    for (int i = 0; i < polygonStarts.size(); ++i) {
-        int start = polygonStarts[i];
-        int count = (i < polygonStarts.size() - 1)
-                        ? polygonStarts[i + 1] - start
-                        : data->faceVertexIndices().size() - start;
-
-        glDrawArrays(GL_TRIANGLES, start, count);
-    }
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindVertexArray(0);
-    shaderProgram->get()->release();
-}
-
 bool OpenGLRenderer::initializeModel(ModelGL &modelGL)
 {
     if (!openGLisInitialized || !modelGL.getModelData() || modelGL.getModelData()->vertices().isEmpty()) {
@@ -166,6 +107,83 @@ bool OpenGLRenderer::initializeModel(ModelGL &modelGL)
     glBindVertexArray(0);
 
     return true;
+}
+
+void OpenGLRenderer::setMVPmatrix(const QMatrix4x4 &mvp)
+{
+    openGLcurrentMvp = mvp;
+}
+
+void OpenGLRenderer::render(const ModelGL &modelGL, const QMatrix4x4 &mvp)
+{
+    if (!openGLisInitialized || !shaderProgram || !modelGL.isValid()) {
+        return;
+    }
+
+    shaderProgram->get()->bind();
+    shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
+    shaderProgram->get()->setUniformValue("useNormal", modelGL.useNormals());
+    shaderProgram->get()->setUniformValue("useTexture", modelGL.useTexture());
+
+    if (modelGL.vao() == 0) {
+        if (!initializeModel(const_cast<ModelGL&>(modelGL))) {
+            shaderProgram->get()->release();
+            return;
+        }
+    }
+
+    if (modelGL.wireframeMode()) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    glBindVertexArray(modelGL.vao());
+
+    if (modelGL.useTexture()) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, modelGL.textureId());
+        shaderProgram->get()->setUniformValue("modelTexture", 0);
+    }
+
+    const ModelData *data = modelGL.getModelData();
+    if (!data) {
+        glBindVertexArray(0);
+        shaderProgram->get()->release();
+        return;
+    }
+
+    const auto &polygonStarts = data->polygonStarts();
+    for (int i = 0; i < polygonStarts.size(); ++i) {
+        int start = polygonStarts[i];
+        int count = (i < polygonStarts.size() - 1)
+                        ? polygonStarts[i + 1] - start
+                        : data->faceVertexIndices().size() - start;
+
+        glDrawArrays(GL_TRIANGLES, start, count);
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArray(0);
+    shaderProgram->get()->release();
+}
+
+void OpenGLRenderer::renderGrid(const GridGL &gridGL, const QMatrix4x4 &mvp)
+{
+    if (!openGLisInitialized || !shaderProgram || !gridGL.isValid()) {
+        return;
+    }
+
+    shaderProgram->get()->bind();
+    shaderProgram->get()->setUniformValue("openGLcurrentMvp", mvp);
+    shaderProgram->get()->setUniformValue("useTexture", false);
+    shaderProgram->get()->setUniformValue("useNormal", false);
+
+    glBindVertexArray(gridGL.vao());
+    glDrawArrays(GL_LINES, 0, gridGL.vertexCount());
+    glBindVertexArray(0);
+
+    shaderProgram->get()->release();
 }
 
 bool OpenGLRenderer::loadTexture(ModelGL &modelGL, const QString &texturePath)
