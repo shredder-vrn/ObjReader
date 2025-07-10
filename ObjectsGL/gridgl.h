@@ -14,7 +14,8 @@ namespace Viewer{
 class GridGL : public ObjectGL, protected QOpenGLFunctions_3_3_Core
 {
 public:
-    GridGL(int size = 10, float spacing = 1.0f);
+    GridGL(float size);
+
     ~GridGL() override;
 
     GLuint vao() const override;

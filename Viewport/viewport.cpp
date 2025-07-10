@@ -66,7 +66,7 @@ void ViewportWidget::initializeGL()
     m_camera->setViewportSize(width(), height());
     m_glInitialized = true;
 
-    m_grid = new GridGL(20, 1.0f);
+    m_grid = new GridGL(10);
     doneCurrent();
 
 }

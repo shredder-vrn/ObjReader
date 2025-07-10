@@ -2,36 +2,35 @@
 
 namespace Viewer {
 
-GridGL::GridGL(int size, float spacing) : m_size(size), m_spacing(spacing)
+GridGL::GridGL(float size)
 {
     initializeOpenGLFunctions();
-    QVector<QVector3D> vertices;
 
-    float halfSize = size * spacing / 2.0f;
-
-    for (int i = 0; i <= size; ++i) {
-        float x = -halfSize + i * spacing;
-        vertices.append(QVector3D(x, 0, -halfSize));
-        vertices.append(QVector3D(x, 0,  halfSize));
-
-        float z = -halfSize + i * spacing;
-        vertices.append(QVector3D(-halfSize, 0, z));
-        vertices.append(QVector3D( halfSize, 0, z));
-    }
+    std::vector<QVector3D> vertices = {
+        { -size, 0, -size },
+        {  size, 0, -size },
+        {  size, 0,  size },
+        { -size, 0, -size },
+        {  size, 0,  size },
+        { -size, 0,  size }
+    };
 
     m_vertexCount = static_cast<GLuint>(vertices.size());
 
     glGenVertexArrays(1, &m_vao);
     GLuint vbo;
     glGenBuffers(1, &vbo);
+
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(QVector3D), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,
+                 static_cast<GLsizeiptr>(vertices.size() * sizeof(QVector3D)),
+                 vertices.data(),
+                 GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QVector3D), nullptr);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
