@@ -88,7 +88,7 @@ bool pointsEqual(const QVector3D &a, const QVector3D &b, float epsilon = 1e-5f) 
     Q_UNUSED(epsilon);
     return qFuzzyCompare(a, b);
 }
-
+//! REIVIEW: эти функции тоже бы вытащить в хедер, чтобы протестировать отдельно
 bool isConvex(
     const QVector3D &prev,
     const QVector3D &curr,

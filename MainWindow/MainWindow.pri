@@ -3,7 +3,7 @@ CONFIG += MAIN_WINDOW_PRI
 
 INCLUDEPATH *= $$clean_path($$PWD/../)
 
-include($$PWD/../Model/Model.pri)
+include($$PWD/../Model/Model.pri) #! REIVIEW: вроде бы подключается с ObjReader
 include($$PWD/../ObjectsGL/ObjectsGL.pri)
 include($$PWD/../Viewport/Viewport.pri)
 include($$PWD/../Triangulate/Triangulate.pri)

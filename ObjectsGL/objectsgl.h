@@ -5,7 +5,7 @@
 
 namespace Viewer {
 
-class ObjectGL
+class ObjectGL//! REIVIEW: а в чём суть этого интерфейса? можем ли мы нарисовать что-то без точек
 {
 public:
     virtual ~ObjectGL() = default;
@@ -28,7 +28,7 @@ public:
     virtual void setUseNormals(bool enabled) = 0;
 
     virtual void clear() = 0;
-    virtual bool operator!=(const ObjectGL &other) const = 0;
+    virtual bool operator!=(const ObjectGL &other) const = 0;//! REIVIEW: а это я боюсь спросить зачем?
 };
 
 }

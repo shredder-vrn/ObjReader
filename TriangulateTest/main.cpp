@@ -39,9 +39,12 @@ void launchReader(const QString &filename){
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+    //! REIVIEW: захардкоженные пути. в main.cpp нет запуска тестов непосредственно
     QString filename = "/home/r3ds/Internship/resources/cube.obj";
     const bool launchOk = true;
     if (launchOk)
         launchReader(filename);
     return 0;
 }
+
+//! REIVIEW: ожидал тут QTEST_APPLESS_MAIN(Viewrt::Triangulation::Tests::TriangulateionTests)

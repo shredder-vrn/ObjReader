@@ -171,6 +171,7 @@ void ViewportWidget::fitToView()
         const ModelGL* model = m_modelsGL[i];
         const QMatrix4x4& transform = m_modelTransforms[i];
 
+        //! REIVIEW: склорее интерфейсу ObjectGL нужен метод, возвращающий бьаундинг бокс
         for (const QVector3D& v : model->getModelData()->vertices()) {
             QVector4D transformed = transform * QVector4D(v, 1.0f);
             QVector3D tv = transformed.toVector3DAffine();
@@ -199,13 +200,14 @@ void ViewportWidget::fitToView()
     m_camera->setUp(QVector3D(0.0f, 1.0f, 0.0f));
 
     update();
-    QApplication::processEvents();
+    QApplication::processEvents(); //! REIVIEW: ого, а это зачем?
 }
 
 void ViewportWidget::setModels(const QVector<ObjectGL*>& models, const QVector<QMatrix4x4>& transforms)
 {
     m_modelsGL.clear();
     for (auto obj : models) {
+        //! REIVIEW: бро, а в чём суть полиморфизма? если мы сюда по указателю ModelGL всеравно добавляем?
         ModelGL* modelGL = dynamic_cast<ModelGL*>(obj);
         if (modelGL) {
             m_modelsGL.append(modelGL);

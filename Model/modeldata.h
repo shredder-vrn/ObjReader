@@ -11,7 +11,7 @@ namespace Viewer {
 class ModelData
 {
 public:
-    ModelData();
+    ModelData(); //! REIVIEW: пустые к-р д-р можно не писать
     ~ModelData();
 
     const QVector<QVector3D> &vertices() const {return m_vertices;}
