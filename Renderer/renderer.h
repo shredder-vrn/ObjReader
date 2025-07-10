@@ -11,6 +11,7 @@
 #include <QMatrix4x4>
 
 #include "ObjectsGL/modelgl.h"
+#include "ObjectsGL/gridgl.h"
 #include "Shaders/shadersprogram.h"
 
 namespace Viewer{
@@ -27,6 +28,8 @@ public:
     bool loadTextureFromData(ModelGL &modelGL, const unsigned char *data, int width, int height, GLenum format = GL_RGBA);
 
     void render(const ModelGL &modelGL, const QMatrix4x4 &mvp);
+    void renderGrid(const GridGL &gridGL, const QMatrix4x4 &mvp);
+
     void setModelGL(const ModelGL &modelGL);
     void setMVPmatrix(const QMatrix4x4 &mvp);
 
