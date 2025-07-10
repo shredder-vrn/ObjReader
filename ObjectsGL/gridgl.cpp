@@ -34,6 +34,8 @@ GridGL::GridGL(float size)
     glBindVertexArray(0);
 }
 
+
+
 GridGL::~GridGL()
 {
     if (m_vao != 0) {
