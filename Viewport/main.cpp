@@ -2,6 +2,7 @@
 
 #include "MainWindow/mainwindow.h"
 
+//! REIVIEW: тоже какой-то тестовый клсс. мб убрать?
 class IntList
 {
 public:

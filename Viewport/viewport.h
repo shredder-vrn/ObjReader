@@ -31,9 +31,12 @@ public:
 
     void switchToPerspective();
     void switchToOrthographic();
-    void switchCamera(std::unique_ptr<Camera> newCam);
+    void switchCamera(std::unique_ptr<Camera> newCam); //! REIVIEW: а что если я хочу передать вьюпорту камеру, которой владеет кто-то другой? он же её потом удалит
 
     void fitToView();
+    //! REIVIEW: не хочешь ввесит класс Texture чтобы абстрагировать там все эти варианты создания?
+    //! без него совсем не понятно как переиспользовать текстуры. придётся 2 текстуры грузить, если
+    //! хочешь 1 картинку отображать на разных моделях
     bool loadTextureForModel(int modelIndex, const QString& texturePath);
     bool loadTextureForModel(int modelIndex, const QImage& image);
     bool loadTextureForModel(int modelIndex, const unsigned char *data, int width, int height, GLenum format = GL_RGBA);

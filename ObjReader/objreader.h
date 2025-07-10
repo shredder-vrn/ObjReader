@@ -22,7 +22,7 @@ bool parseFace(
         QVector<int> &faceNormalIndices,
         QVector<int> &polygonStarts);
 
-
+//! REIVIEW: как-то я пропустил, но из парса пропала конкретная ошибка. получается вроде вот тебе дорогой пользователь строка, гадай что с ней не так
 bool parseTokens(QTextStream &in, ModelData &model, QString *errorLine = nullptr, int *errorLineNum = nullptr);
 
 bool parseObj(const QString &filePath, ModelData &modelData);

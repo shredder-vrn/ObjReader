@@ -6,6 +6,7 @@
 
 namespace Viewer {
 
+//! REIVIEW: а есть какой-то способ триангуляции без опоры на вершины? чисто по тоопологии?
 void simpleTriangulateModel(
     const QVector<QVector3D> &vertices,
     QVector<int> &faceVertexIndices,

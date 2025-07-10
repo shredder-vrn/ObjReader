@@ -206,6 +206,7 @@ bool parseTokens(QTextStream &in, ModelData &model, QString *errorLine, int *err
         const QString type = tokens[0];
 
         if (type == "v" && !parseVertex(tokens, vertices)) {
+            //! REIVIEW: по код стайлу надо после ифа переносить на след строку. так дебажить удобнее
             if (errorLine) *errorLine = line;
             if (errorLineNum) *errorLineNum = lineNum;
             return false;

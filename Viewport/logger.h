@@ -5,6 +5,7 @@
 
 namespace Viewer {
 
+//! REIVIEW: нейминг не по кодстайлу + не используется кажэется
 inline void LogDebug(const QString& msg) {
     qDebug() << "[DEBUG]" << msg;
 }
