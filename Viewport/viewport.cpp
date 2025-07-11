@@ -226,8 +226,7 @@ void ViewportWidget::setModels(const QVector<ObjectGL*>& models, const QVector<Q
     }
     m_modelTransforms = transforms;
     update();
-    qDebug() << "qwe";
-    qDebug() << "qwe";
+
 
 }
 
