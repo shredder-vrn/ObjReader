@@ -180,7 +180,7 @@ void OpenGLRenderer::renderGrid(const GridGL &gridGL, const QMatrix4x4 &mvp)
     shaderProgram->get()->setUniformValue("useNormal", false);
 
     glBindVertexArray(gridGL.vao());
-    glDrawArrays(GL_LINES, 0, gridGL.vertexCount());
+    glDrawArrays(GL_TRIANGLES, 0, gridGL.vertexCount());
     glBindVertexArray(0);
 
     shaderProgram->get()->release();
